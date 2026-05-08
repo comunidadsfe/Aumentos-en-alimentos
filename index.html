@@ -3,152 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Presupuesto Mensual</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; padding: 20px; color: #212529; }
-        .container { max-width: 500px; margin: auto; background: white; padding: 35px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: #0d6efd; margin-bottom: 30px; font-weight: bold; }
-        .field { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 15px; }
-        input, select { width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: border-color 0.3s; }
-        input:focus, select:focus { border-color: #0d6efd; outline: none; }
-        button { width: 100%; padding: 15px; background-color: #0d6efd; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
-        button:hover { background-color: #0b5ed7; box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3); }
-        
-        .res-box { margin-top: 25px; padding: 20px; border-radius: 10px; display: none; text-align: center; }
-        .pos { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
-        .neg { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
-        
-        .progress-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin: 15px 0; height: 18px; overflow: hidden; border: 1px solid #dee2e6; }
-        .progress-bar { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
-        
-        .info-nota { font-size: 0.82em; color: #6c757d; margin-top: 5px; line-height: 1.4; }
-    </style>
+    <title>Calculadora de Poder Adquisitivo - Comunidad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-
-<div class="container">
-    <h2>Mi Calculadora</h2>
-
-    <div class="field">
-        <label>Tus Ingresos Mensuales ($)</label>
-        <input type="number" id="ingreso" placeholder="Ingresa el monto total">
-    </div>
-
-    <div class="field">
-        <label>Alquiler</label>
-        <select id="alquiler">
-            <option value="0">No alquilo / Propio</option>
-            <option value="430000">1 ambiente</option>
-            <option value="600000">2 ambientes</option>
-            <option value="700000">3 ambientes</option>
-            <option value="830000">4 ambientes</option>
-        </select>
-    </div>
-
-    <div class="field">
-        <label>Tarifas (Luz, Gas y Agua)</label>
-        <select id="tarifas">
-            <option value="141722.99">Con subsidios consumo medio</option>
-            <option value="181337.99">Sin subsidios consumo medio</option>
-            <option value="186886.99">Con subsidios consumo medio/alto</option>
-            <option value="214289.99">Sin subsidios consumo medio/alto</option>
-        </select>
-        <div class="info-nota">* Basado en promedios según subsidios y consumo.</div>
-    </div>
-
-    <div class="field">
-        <label>Cobertura Médica (Prepaga)</label>
-        <select id="prepaga">
-            <option value="0">No tengo / Obra Social</option>
-            <option value="106000">Individual: Opción económica</option>
-            <option value="121916">Individual: Opción media</option>
-            <option value="144000">Individual: Opción alta</option>
-            <option value="385454">Familiar: Opción económica</option>
-            <option value="500463">Familiar: Opción media</option>
-            <option value="764223">Familiar: Opción alta</option>
-        </select>
-    </div>
-
-    <div class="field">
-        <label>Litros de Nafta (al mes)</label>
-        <input type="number" id="nafta" placeholder="Cantidad de litros">
-        <div class="info-nota">* Costo por litro: $1.850</div>
-    </div>
-
-    <div class="field">
-        <label>Boletos de Colectivo (al mes)</label>
-        <input type="number" id="colectivo" placeholder="Cantidad de boletos">
-        <div class="info-nota">* Costo por boleto: $1.720</div>
-    </div>
-
-    <button onclick="calcular()">Calcular Saldo y Porcentaje</button>
-
-    <div id="resultado" class="res-box">
-        <div id="monto-final" style="font-size: 1.6em; font-weight: bold;"></div>
-        <div id="porcentaje-texto" style="margin: 10px 0; font-weight: 600;"></div>
+<body class="bg-gray-100 p-4 md:p-10 font-sans">
+    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
         
-        <div class="progress-container">
-            <div id="barra" class="progress-bar"></div>
+        <div class="bg-blue-900 p-6">
+            <h1 class="text-2xl font-bold text-white text-center">Comparador de Poder Adquisitivo</h1>
+            <p class="text-blue-200 text-center text-sm mt-1">Noviembre 2023 vs. Marzo 2026</p>
         </div>
+        
+        <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Seleccionar Ingresos:</label>
+                        <select id="presetIncome" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none" onchange="updateIncome()">
+                            <option value="custom">Ingreso Manual</option>
+                            <option value="smvm">Salario Mínimo (SMVM)</option>
+                            <option value="jubilacion">Jubilación Mínima</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ingresos Nov 2023</label>
+                            <input type="number" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none" oninput="calculate()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ingresos hoy</label>
+                            <input type="number" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none" oninput="calculate()">
+                        </div>
+                    </div>
+                </div>
 
-        <div id="desglose" style="font-size: 0.9em; margin-top: 10px;"></div>
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Fuente de Precios:</label>
+                        <select id="priceSource" class="w-full p-3 border-2 border-blue-200 bg-blue-50 rounded-lg focus:border-blue-500 outline-none font-bold text-blue-900" onchange="calculate()">
+                            <option value="ipec">Canasta Datos IPEC (Oficial)</option>
+                            <option value="alvear">Canasta Alvear (Supermercado)</option>
+                        </select>
+                    </div>
+                    <div class="flex justify-end mt-4">
+                        <button onclick="resetAll()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center text-xs uppercase tracking-wider">
+                            Reiniciar cálculo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-hidden rounded-lg border border-gray-200 shadow-sm mb-10">
+                <div class="max-h-[500px] overflow-y-auto">
+                    <table class="w-full text-left">
+                        <thead class="sticky top-0 z-10 bg-gray-800 text-white">
+                            <tr>
+                                <th class="p-4 text-xs font-bold uppercase">Producto</th>
+                                <th class="p-4 text-center text-xs font-bold uppercase">¿Cuánto comprabas en 2023?</th>
+                                <th class="p-4 text-center text-xs font-bold uppercase">¿Cuánto comprás hoy?</th>
+                                <th class="p-4 text-center text-xs font-bold uppercase">Variación</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTable" class="divide-y divide-gray-100 text-gray-700 bg-white">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="totalSummary" class="mt-8 p-6 bg-red-50 rounded-xl border border-red-100 hidden">
+                <div class="flex flex-col md:flex-row items-center justify-between text-center md:text-left">
+                    <div>
+                        <h3 class="text-red-800 font-bold text-lg">Pérdida Promedio de Poder Adquisitivo</h3>
+                        <p class="text-red-600 text-sm italic">Considerando la canasta completa de productos analizados.</p>
+                    </div>
+                    <div id="totalPercentage" class="text-5xl font-black text-red-600 mt-4 md:mt-0 tracking-tighter">
+                        0%
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-    function calcular() {
-        const PRECIO_NAFTA = 1850;
-        const PRECIO_BOLETO = 1720;
+    <script>
+        const dataIPEC = [
+            { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
+            { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
+            { name: "Galletitas dulces (150 g.)", p2023: 420.35, pHoy: 1464.71 },
+            { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
+            { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
+            { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
+            { name: "Fideos Secos Guisero (500 g.)", p2023: 642.99, pHoy: 1471.06 },
+            { name: "Asado (Kg.)", p2023: 4116.28, pHoy: 22305.00 },
+            { name: "Carne picada especial (Kg.)", p2023: 3674.89, pHoy: 17076.20 },
+            { name: "Paleta (Kg.)", p2023: 3759.50, pHoy: 19063.86 },
+            { name: "Cuadril (Kg.)", p2023: 4526.12, pHoy: 22569.99 },
+            { name: "Nalga (Kg.)", p2023: 4429.40, pHoy: 22524.60 },
+            { name: "Hígado (Kg.)", p2023: 1097.16, pHoy: 5542.88 },
+            { name: "Hamburguesas congeladas (4 u.)", p2023: 1609.24, pHoy: 6702.00 },
+            { name: "Pollo entero (Kg.)", p2023: 1417.83, pHoy: 5279.56 },
+            { name: "Filet de merluza fresco (Kg.)", p2023: 2994.08, pHoy: 12684.06 },
+            { name: "Salchicha tipo Viena (6 u.)", p2023: 690.01, pHoy: 2562.66 },
+            { name: "Jamón cocido (Kg.)", p2023: 5763.80, pHoy: 18956.52 },
+            { name: "Salchichón (Kg.)", p2023: 3531.42, pHoy: 11963.98 },
+            { name: "Salame (Kg.)", p2023: 6402.78, pHoy: 23098.17 },
+            { name: "Aceite de girasol (1,5 L.)", p2023: 1495.50, pHoy: 6541.07 },
+            { name: "Leche fresca entera (Sachet)", p2023: 560.48, pHoy: 1811.38 },
+            { name: "Leche en polvo (800 g.)", p2023: 3513.07, pHoy: 12855.28 },
+            { name: "Queso crema (280 g.)", p2023: 1213.22, pHoy: 4015.38 },
+            { name: "Queso Sardo (Kg.)", p2023: 4982.96, pHoy: 21766.92 },
+            { name: "Manteca (150 g.)", p2023: 792.13, pHoy: 3048.66 },
+            { name: "Yogur firme (195 cc.)", p2023: 430.21, pHoy: 1780.65 },
+            { name: "Dulce de leche (450 g.)", p2023: 1039.08, pHoy: 3571.45 },
+            { name: "Huevos de gallina (12 u.)", p2023: 1196.71, pHoy: 3599.42 },
+            { name: "Manzana deliciosa (Kg.)", p2023: 1084.17, pHoy: 4315.55 },
+            { name: "Naranja (Kg.)", p2023: 562.89, pHoy: 2070.54 },
+            { name: "Banana (Kg.)", p2023: 1281.06, pHoy: 3015.44 },
+            { name: "Papa (Kg.)", p2023: 579.67, pHoy: 1232.51 },
+            { name: "Cebolla (Kg.)", p2023: 358.53, pHoy: 1011.09 },
+            { name: "Lechuga (Kg.)", p2023: 725.25, pHoy: 4427.59 },
+            { name: "Tomate redondo (Kg.)", p2023: 1387.50, pHoy: 2419.70 },
+            { name: "Tomate en conserva (230 g.)", p2023: 418.04, pHoy: 1301.98 },
+            { name: "Lentejas secas (400 g.)", p2023: 813.91, pHoy: 1727.29 },
+            { name: "Azúcar (Kg.)", p2023: 1083.62, pHoy: 1435.80 },
+            { name: "Sal fina (500 g.)", p2023: 318.53, pHoy: 1355.67 },
+            { name: "Gaseosa cola (1,5 L.)", p2023: 955.46, pHoy: 3807.16 },
+            { name: "Agua sin Gas (1,5 L.)", p2023: 379.88, pHoy: 1899.67 },
+            { name: "Soda sifón (2 L.)", p2023: 551.25, pHoy: 1590.26 },
+            { name: "Cerveza en botella (L.)", p2023: 1100.56, pHoy: 3794.73 },
+            { name: "Cerveza en lata (350 cc.)", p2023: 505.06, pHoy: 1589.57 },
+            { name: "Vino común (L.)", p2023: 1094.44, pHoy: 2409.64 },
+            { name: "Café molido (500 g.)", p2023: 2740.36, pHoy: 12325.65 },
+            { name: "Yerba mate (500 g.)", p2023: 1181.03, pHoy: 2359.58 }
+        ];
 
-        const ingreso = parseFloat(document.getElementById('ingreso').value) || 0;
-        if (ingreso <= 0) {
-            alert("Por favor, ingresa tu sueldo mensual.");
-            return;
+        const dataAlvear = [
+            { name: "Pechito de Cerdo 1K", p2023: 2549, pHoy: 9490 },
+            { name: "Chorizo Parrillero", p2023: 2790, pHoy: 13490 },
+            { name: "Pollo Las Camelias", p2023: 1299, pHoy: 6199 },
+            { name: "Marucha de ternera", p2023: 3149, pHoy: 18490 },
+            { name: "Nalga de ternera", p2023: 4290, pHoy: 26990 },
+            { name: "Picada ternera", p2023: 2699, pHoy: 12990 },
+            { name: "Manteca tonadita", p2023: 599, pHoy: 3199 },
+            { name: "Queso cremón", p2023: 2790, pHoy: 13999 },
+            { name: "Harina Pureza pizzas", p2023: 495, pHoy: 1990 },
+            { name: "Mayonesa Hellmans", p2023: 423, pHoy: 4999 },
+            { name: "Jabón Skip 500cc", p2023: 2159, pHoy: 11999 },
+            { name: "Ayudín 2L", p2023: 679, pHoy: 3499 },
+            { name: "Toalla femenina x8", p2023: 299, pHoy: 3029 }
+        ];
+
+        const presets = {
+            smvm: { v2023: 156000, vHoy: 363000 },
+            jubilacion: { v2023: 160713, vHoy: 463174 }
+        };
+
+        function updateIncome() {
+            const selected = document.getElementById('presetIncome').value;
+            if (selected !== "custom") {
+                document.getElementById('income2023').value = presets[selected].v2023;
+                document.getElementById('incomeHoy').value = presets[selected].vHoy;
+                calculate();
+            }
         }
 
-        const vAlquiler = parseFloat(document.getElementById('alquiler').value);
-        const vTarifas = parseFloat(document.getElementById('tarifas').value);
-        const vPrepaga = parseFloat(document.getElementById('prepaga').value);
-        const litrosNafta = parseFloat(document.getElementById('nafta').value) || 0;
-        const cantBoletos = parseFloat(document.getElementById('colectivo').value) || 0;
+        function calculate() {
+            const inc2023 = parseFloat(document.getElementById('income2023').value) || 0;
+            const incHoy = parseFloat(document.getElementById('incomeHoy').value) || 0;
+            const source = document.getElementById('priceSource').value;
+            const products = source === 'ipec' ? dataIPEC : dataAlvear;
+            
+            const table = document.getElementById('resultsTable');
+            const summaryDiv = document.getElementById('totalSummary');
+            const totalText = document.getElementById('totalPercentage');
+            
+            table.innerHTML = "";
+            let totalVariation = 0;
 
-        const totalTransporte = (litrosNafta * PRECIO_NAFTA) + (cantBoletos * PRECIO_BOLETO);
-        const totalGastos = vAlquiler + vTarifas + vPrepaga + totalTransporte;
-        const saldo = ingreso - totalGastos;
-        
-        // Lógica de porcentajes
-        const porcentajeLibre = (saldo / ingreso) * 100;
-        const porcentajeGastado = (totalGastos / ingreso) * 100;
+            if (inc2023 > 0 && incHoy > 0) {
+                products.forEach(p => {
+                    const u2023 = inc2023 / p.p2023;
+                    const uHoy = incHoy / p.pHoy;
+                    const diff = ((uHoy / u2023) - 1) * 100;
+                    totalVariation += diff;
 
-        const resDiv = document.getElementById('resultado');
-        const barra = document.getElementById('barra');
-        resDiv.style.display = 'block';
-        
-        const formatoMoneda = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+                    table.innerHTML += `
+                        <tr class="hover:bg-blue-50 border-b border-gray-100 transition-colors">
+                            <td class="p-4 text-sm font-bold text-gray-800">${p.name}</td>
+                            <td class="p-4 text-center text-gray-500 font-mono">${u2023.toFixed(1)}</td>
+                            <td class="p-4 text-center text-gray-700 font-mono font-bold">${uHoy.toFixed(1)}</td>
+                            <td class="p-4 text-center font-black ${diff < 0 ? 'text-red-600' : 'text-green-600'}">
+                                ${diff.toFixed(1)}%
+                            </td>
+                        </tr>`;
+                });
 
-        if (saldo >= 0) {
-            resDiv.className = 'res-box pos';
-            barra.style.backgroundColor = '#198754';
-            document.getElementById('monto-final').innerText = "Te quedan: " + formatoMoneda.format(saldo);
-            document.getElementById('porcentaje-texto').innerText = "Dispones del " + porcentajeLibre.toFixed(1) + "% de tu sueldo.";
-        } else {
-            resDiv.className = 'res-box neg';
-            barra.style.backgroundColor = '#dc3545';
-            document.getElementById('monto-final').innerText = "Saldo en contra: " + formatoMoneda.format(Math.abs(saldo));
-            document.getElementById('porcentaje-texto').innerText = "Tus gastos exceden tu sueldo en un " + Math.abs(porcentajeLibre).toFixed(1) + "%.";
+                const averageLoss = (totalVariation / products.length).toFixed(1);
+                summaryDiv.classList.remove('hidden');
+                totalText.innerText = `${averageLoss}%`;
+            } else {
+                summaryDiv.classList.add('hidden');
+            }
         }
 
-        // Animación de la barra
-        let anchoVisual = Math.max(0, Math.min(100, porcentajeLibre));
-        barra.style.width = anchoVisual + "%";
-        
-        document.getElementById('desglose').innerHTML = `
-            <strong>Gastos totales:</strong> ${formatoMoneda.format(totalGastos)} <br>
-            Representan el <strong>${porcentajeGastado.toFixed(1)}%</strong> de tus ingresos.
-        `;
-    }
-</script>
-
+        function resetAll() {
+            document.getElementById('presetIncome').value = "custom";
+            document.getElementById('priceSource').value = "ipec";
+            document.getElementById('income2023').value = "";
+            document.getElementById('incomeHoy').value = "";
+            document.getElementById('resultsTable').innerHTML = "";
+            document.getElementById('totalSummary').classList.add('hidden');
+        }
+    </script>
 </body>
 </html>
