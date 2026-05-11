@@ -52,11 +52,11 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div class="flex flex-col">
                             <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Noviembre 2023</span>
-                            <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="formatAndCalculate(this)">
+                            <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleInput(this)">
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Hoy</span>
-                            <input type="text" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="formatAndCalculate(this)">
+                            <input type="text" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleInput(this)">
                         </div>
                     </div>
                 </div>
@@ -95,22 +95,19 @@
     </div>
 
     <div id="stickyResultBar" class="sticky-result-bar hidden">
-        <div class="flex items-center gap-4">
-            <div>
-                <p class="text-[10px] md:text-xs font-black uppercase leading-none opacity-90 tracking-tighter italic">Pérdida de Poder Adquisitivo</p>
-                <p class="text-[9px] md:text-xs font-bold uppercase mt-1 opacity-70">Basado en los productos que elegiste</p>
-            </div>
+        <div>
+            <p class="text-[10px] md:text-xs font-black uppercase leading-none opacity-90 tracking-tighter italic">Pérdida de Poder Adquisitivo</p>
+            <p class="text-[9px] md:text-xs font-bold uppercase mt-1 opacity-70">Basado en los productos que elegiste</p>
         </div>
         <div id="totalPercentageBar" class="text-4xl md:text-6xl font-black tracking-tighter">-0%</div>
     </div>
 
     <script>
-        // Bases de datos (Se mantienen igual)
         const dataIPEC = [
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
                 { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
-                { name: "Galletitas dulces s/relleno (150 g.)", p2023: 420.35, pHoy: 1464.71 },
+                { name: "Galletitas dulces (150 g.)", p2023: 420.35, pHoy: 1464.71 },
                 { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
                 { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
                 { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
@@ -201,7 +198,7 @@
                 { name: "Fiambre de cerdo (1K)", p2023: 3440, pHoy: 9799 },
                 { name: "Jamón Cocido Lario (1K)", p2023: 4669, pHoy: 21935 },
                 { name: "Salamín picado fino (1K)", p2023: 6475, pHoy: 33999 },
-                { name: "Queso cremoso primera marca", p2023: 2099, pHoy: 10999 },
+                { name: "Queso cremoso 1era marca", p2023: 2099, pHoy: 10999 },
                 { name: "Queso pategras (1K)", p2023: 3399, pHoy: 19999 },
                 { name: "Queso Reggianito (1K)", p2023: 3999, pHoy: 23999 },
                 { name: "Queso Tybo La Paulina (1K)", p2023: 2899, pHoy: 17699 }
@@ -229,18 +226,31 @@
             docente: { v2023: 269574, vHoy: 1037205 }
         };
 
-        function formatNumber(n) {
-            return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
+        function parseCleanNumber(str) {
+            if (!str) return 0;
+            // Elimina signo pesos, puntos de miles y cambia coma por punto
+            let clean = str.replace(/\$/g, '').replace(/\./g, '').replace(',', '.').trim();
+            return parseFloat(clean) || 0;
         }
 
-        function parseCurrency(v) {
-            return parseFloat(v.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
+        function formatDisplayCurrency(val) {
+            return new Intl.NumberFormat('es-AR', {
+                style: 'currency',
+                currency: 'ARS',
+                minimumFractionDigits: 0
+            }).format(val);
         }
 
-        function formatAndCalculate(input) {
-            let val = parseCurrency(input.value);
-            if (!isNaN(val)) {
-                input.value = formatNumber(val);
+        function handleInput(input) {
+            let cursor = input.selectionStart;
+            let oldLen = input.value.length;
+            let val = parseCleanNumber(input.value);
+            
+            if (val > 0) {
+                input.value = formatDisplayCurrency(val);
+                // Ajustar cursor
+                let newLen = input.value.length;
+                input.setSelectionRange(cursor + (newLen - oldLen), cursor + (newLen - oldLen));
             }
             calculateImpact();
         }
@@ -248,8 +258,8 @@
         function updateIncome() {
             const s = document.getElementById('presetIncome').value;
             if (s !== "custom") {
-                document.getElementById('income2023').value = formatNumber(presets[s].v2023);
-                document.getElementById('incomeHoy').value = formatNumber(presets[s].vHoy);
+                document.getElementById('income2023').value = formatDisplayCurrency(presets[s].v2023);
+                document.getElementById('incomeHoy').value = formatDisplayCurrency(presets[s].vHoy);
                 calculateImpact();
             }
         }
@@ -299,8 +309,8 @@
         }
 
         function calculateImpact() {
-            const inc2023 = parseCurrency(document.getElementById('income2023').value);
-            const incHoy = parseCurrency(document.getElementById('incomeHoy').value);
+            const inc2023 = parseCleanNumber(document.getElementById('income2023').value);
+            const incHoy = parseCleanNumber(document.getElementById('incomeHoy').value);
             const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
             
             let totalVar = 0, countTotal = 0;
@@ -309,55 +319,4 @@
             rows.forEach(row => {
                 const check = row.querySelector('.prod-check');
                 const catSlug = check.dataset.category;
-                if (!rubroData[catSlug]) rubroData[catSlug] = { sum: 0, count: 0 };
-
-                if (check.checked && inc2023 > 0 && incHoy > 0) {
-                    const p2023 = parseFloat(check.dataset.p2023);
-                    const pHoy = parseFloat(check.dataset.phoy);
-                    const u2023 = inc2023 / p2023;
-                    const uHoy = incHoy / pHoy;
-                    const diff = ((uHoy / u2023) - 1) * 100;
-                    
-                    row.querySelector('.res-2023').innerText = u2023.toFixed(1);
-                    row.querySelector('.res-hoy').innerText = uHoy.toFixed(1);
-                    const dc = row.querySelector('.res-diff');
-                    dc.innerText = `${diff.toFixed(1)}%`;
-                    dc.className = `p-4 text-center font-black text-xl res-diff ${diff < 0 ? 'text-red-600' : 'text-green-600'}`;
-                    
-                    totalVar += diff;
-                    countTotal++;
-                    rubroData[catSlug].sum += diff;
-                    rubroData[catSlug].count++;
-                } else {
-                    row.querySelectorAll('.res-2023, .res-hoy, .res-diff').forEach(c => c.innerText = "-");
-                }
-            });
-
-            for (const slug in rubroData) {
-                const badge = document.getElementById(`badge-${slug}`);
-                if (rubroData[slug].count > 0) {
-                    badge.innerText = `${(rubroData[slug].sum / rubroData[slug].count).toFixed(1)}%`;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
-            }
-
-            const bar = document.getElementById('stickyResultBar');
-            if (countTotal > 0) {
-                bar.classList.remove('hidden');
-                document.getElementById('totalPercentageBar').innerText = `${(totalVar / countTotal).toFixed(1)}%`;
-            } else {
-                bar.classList.add('hidden');
-            }
-        }
-
-        function selectAll(val) {
-            document.querySelectorAll('.prod-check, .cat-check').forEach(c => c.checked = val);
-            calculateImpact();
-        }
-
-        renderTable();
-    </script>
-</body>
-</html>
+                if (!rubroData[catSlug]) rubroData
