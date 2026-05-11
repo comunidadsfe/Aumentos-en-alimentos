@@ -105,7 +105,6 @@
     </div>
 
     <script>
-        // --- BASES DE DATOS ---
         const dataIPEC = [
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
@@ -209,31 +208,26 @@
                 { name: "Chuleta de Jamón de cerdo", p2023: 1399, pHoy: 6200 },
                 { name: "Chuleta de Paleta de Cerdo", p2023: 1399.9, pHoy: 4800 },
                 { name: "Pata Muslo con piel", p2023: 999.9, pHoy: 3999 }
-            ]},
-            { cat: "Fiambrería y Quesos", items: [
-                { name: "Mortadela Minicampo (300g)", p2023: 939, pHoy: 3759 },
-                { name: "Fiambre de cerdo (1K)", p2023: 3440, pHoy: 9799 },
-                { name: "Jamón Cocido Lario (1K)", p2023: 4669, pHoy: 21935 },
-                { name: "Salamín picado fino (1K)", p2023: 6475, pHoy: 33999 },
-                { name: "Queso cremoso 1era marca", p2023: 2099, pHoy: 10999 },
-                { name: "Queso pategras (1K)", p2023: 3399, pHoy: 19999 },
-                { name: "Queso Reggianito (1K)", p2023: 3999, pHoy: 23999 },
-                { name: "Queso Tybo La Paulina (1K)", p2023: 2899, pHoy: 17699 }
             ]}
         ];
 
         const presets = {
-            smvm: { v2023: 156000, vHoy: 363000 },
-            jubilacion: { v2023: 160713, vHoy: 463174 },
-            municipal: { v2023: 223797, vHoy: 1065000 },
-            comercio: { v2023: 332959.88, vHoy: 1095562.81 },
-            docente: { v2023: 269574, vHoy: 1037205 }
+            smvm: { v2023: "156.000", vHoy: "363.000" },
+            jubilacion: { v2023: "160.713", vHoy: "463.174" },
+            municipal: { v2023: "223.797", vHoy: "1.065.000" },
+            comercio: { v2023: "332.959,88", vHoy: "1.095.562,81" },
+            docente: { v2023: "269.574", vHoy: "1.037.205" }
         };
 
-        // --- LÓGICA ---
+        // --- FUNCIÓN CORREGIDA PARA FORMATO ARGENTINO ---
         function getRawValue(str) {
             if (!str) return 0;
-            let clean = str.toString().replace(/\$/g, '').replace(/\./g, '').replace(',', '.').trim();
+            // 1. Quita el signo $ y espacios
+            let clean = str.toString().replace(/\$/g, '').trim();
+            // 2. Quita los puntos de miles
+            clean = clean.split('.').join('');
+            // 3. Cambia la coma decimal por punto
+            clean = clean.replace(',', '.');
             return parseFloat(clean) || 0;
         }
 
@@ -335,7 +329,6 @@
                     dc.innerText = `${diff.toFixed(1)}%`;
                     dc.className = `p-4 text-center font-black text-xl res-diff ${diff < 0 ? 'text-red-600' : 'text-green-600'}`;
                     
-                    // Metodología de Canasta: Sumamos costos unitarios
                     totalCosto2023 += p2023;
                     totalCostoHoy += pHoy;
                     countTotal++;
@@ -350,14 +343,11 @@
                 }
             });
 
-            // Badges de Rubro (Usando lógica de canasta)
             for (const slug in rubroData) {
                 const badge = document.getElementById(`badge-${slug}`);
                 if (rubroData[slug].count > 0) {
-                    const c23 = rubroData[slug].costo2023;
-                    const cHoy = rubroData[slug].costoHoy;
-                    const canastasAntes = inc2023 / c23;
-                    const canastasAhora = incHoy / cHoy;
+                    const canastasAntes = inc2023 / rubroData[slug].costo2023;
+                    const canastasAhora = incHoy / rubroData[slug].costoHoy;
                     const varRubro = ((canastasAhora / canastasAntes) - 1) * 100;
                     badge.innerText = `${varRubro.toFixed(1)}%`;
                     badge.classList.remove('hidden');
@@ -366,7 +356,6 @@
                 }
             }
 
-            // Barra Total (Lógica de Canasta Seleccionada)
             const bar = document.getElementById('stickyResultBar');
             if (countTotal > 0) {
                 const canastasTotalesAntes = inc2023 / totalCosto2023;
