@@ -10,11 +10,11 @@
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
             tr { margin-bottom: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background: white; }
-            td { border: none; position: relative; padding-left: 50% !important; text-align: right !important; border-bottom: 1px solid #f3f4f6; min-height: 3rem; display: flex; align-items: center; justify-content: flex-end; }
+            td { border: none; position: relative; padding-left: 50% !important; text-align: right !important; border-bottom: 1px solid #f3f4f6; min-height: 3.5rem; display: flex; align-items: center; justify-content: flex-end; }
             td:before { position: absolute; left: 1rem; width: 45%; padding-right: 10px; white-space: nowrap; text-align: left; font-weight: bold; color: #6b7280; content: attr(data-label); text-transform: uppercase; font-size: 0.65rem; }
             td:last-child { border-bottom: 0; background-color: #f9fafb; }
             .checkbox-cell { justify-content: center !important; padding-left: 0 !important; background: #f0f7ff; }
-            .checkbox-cell:before { content: "Seleccionar"; position: relative; width: auto; left: 0; margin-right: 10px; }
+            .checkbox-cell:before { content: "ELEGIR"; position: relative; width: auto; left: 0; margin-right: 10px; }
         }
         .sticky-header { position: sticky; top: 0; z-index: 20; }
         .category-row { background-color: #f3f4f6; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #374151; letter-spacing: 0.05em; }
@@ -25,34 +25,34 @@
         
         <div class="bg-blue-900 p-8 text-white">
             <h1 class="text-3xl font-black uppercase tracking-tighter text-center italic">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-blue-200 text-center text-sm mt-2 font-bold uppercase tracking-widest">Nov 2023 vs. Mar 2026</p>
+            <p class="text-blue-200 text-center text-sm mt-2 font-bold uppercase tracking-widest text-[10px]">Nov 2023 vs. Mar 2026</p>
         </div>
         
         <div class="p-4 md:p-10">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                 <div class="bg-gray-50 p-6 rounded-xl border-2 border-gray-100">
-                    <label class="block text-sm font-black text-blue-900 uppercase mb-4 italic italic">1. Tus Ingresos</label>
+                    <label class="block text-sm font-black text-blue-900 uppercase mb-4 italic">1. Tus Ingresos</label>
                     <select id="presetIncome" class="w-full p-3 mb-4 bg-white border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold" onchange="updateIncome()">
                         <option value="custom">INGRESO MANUAL</option>
                         <option value="smvm">SALARIO MÍNIMO (SMVM)</option>
                         <option value="jubilacion">JUBILACIÓN MÍNIMA</option>
                     </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="number" id="income2023" placeholder="Nov 2023" class="p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold">
-                        <input type="number" id="incomeHoy" placeholder="Hoy" class="p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold">
+                        <input type="number" id="income2023" placeholder="Nov 2023" class="p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold" oninput="calculateImpact()">
+                        <input type="number" id="incomeHoy" placeholder="Hoy" class="p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold" oninput="calculateImpact()">
                     </div>
                 </div>
 
                 <div class="bg-blue-50 p-6 rounded-xl border-2 border-blue-100">
-                    <label class="block text-sm font-black text-blue-900 uppercase mb-4 italic">2. Elegir Fuente</label>
+                    <label class="block text-sm font-black text-blue-900 uppercase mb-4 italic">2. Elegir Canasta</label>
                     <select id="priceSource" class="w-full p-3 mb-6 bg-white border-2 border-blue-300 rounded-lg focus:border-blue-600 outline-none font-black text-blue-900" onchange="renderTable()">
                         <option value="ipec">CANASTA OFICIAL IPEC (48 Prod.)</option>
                         <option value="alvear">CANASTA ALVEAR (Rubros)</option>
                         <option value="coto">CANASTA COTO (Rubros)</option>
                     </select>
                     <div class="flex gap-2">
-                        <button onclick="selectAll(true)" class="flex-1 bg-blue-900 text-white text-[10px] font-black py-3 rounded-lg hover:bg-blue-800 uppercase tracking-tighter">Calcular Todo</button>
-                        <button onclick="calculateImpact()" class="flex-1 bg-yellow-400 text-blue-900 text-[10px] font-black py-3 rounded-lg hover:bg-yellow-300 uppercase tracking-tighter">Calcular Selección</button>
+                        <button onclick="selectAll(true)" class="flex-1 bg-blue-900 text-white text-[10px] font-black py-4 rounded-lg hover:bg-blue-800 uppercase">Calcular Todo</button>
+                        <button onclick="selectAll(false)" class="flex-1 bg-gray-200 text-gray-600 text-[10px] font-black py-4 rounded-lg hover:bg-gray-300 uppercase">Limpiar</button>
                     </div>
                 </div>
             </div>
@@ -64,8 +64,8 @@
                             <tr>
                                 <th class="p-4 w-12 text-center">🛒</th>
                                 <th class="p-4">Producto</th>
-                                <th class="p-4 text-center">¿Cuánto comprabas?</th>
-                                <th class="p-4 text-center">¿Cuánto comprás hoy?</th>
+                                <th class="p-4 text-center">¿En 2023 comprabas?</th>
+                                <th class="p-4 text-center">¿Hoy comprás?</th>
                                 <th class="p-4 text-center">Variación</th>
                             </tr>
                         </thead>
@@ -82,7 +82,6 @@
                     </div>
                     <div id="totalPercentage" class="text-6xl md:text-8xl font-black tracking-tighter">-0%</div>
                 </div>
-                <button onclick="resetAll()" class="w-full mt-4 text-[10px] font-black text-gray-400 uppercase underline">Reiniciar cálculo</button>
             </div>
         </div>
     </div>
@@ -92,7 +91,7 @@
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
                 { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
-                { name: "Galletitas dulces s/relleno (150 g.)", p2023: 420.35, pHoy: 1464.71 },
+                { name: "Galletitas dulces (150 g.)", p2023: 420.35, pHoy: 1464.71 },
                 { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
                 { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
                 { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
@@ -140,7 +139,7 @@
                 { name: "Tomate en conserva (lata)", p2023: 418.04, pHoy: 1301.98 },
                 { name: "Lentejas secas (400 g.)", p2023: 813.91, pHoy: 1727.29 },
                 { name: "Sal fina (500 g.)", p2023: 318.53, pHoy: 1355.67 },
-                { name: "Gaseosa base cola (1,5 L.)", p2023: 955.46, pHoy: 3807.16 },
+                { name: "Gaseosa cola (1,5 L.)", p2023: 955.46, pHoy: 3807.16 },
                 { name: "Agua sin Gas (1,5 L.)", p2023: 379.88, pHoy: 1899.67 },
                 { name: "Soda sifón (2 L.)", p2023: 551.25, pHoy: 1590.26 },
                 { name: "Cerveza en botella (L.)", p2023: 1100.56, pHoy: 3794.73 },
@@ -213,6 +212,7 @@
             if (s !== "custom") {
                 document.getElementById('income2023').value = presets[s].v2023;
                 document.getElementById('incomeHoy').value = presets[s].vHoy;
+                calculateImpact();
             }
         }
 
@@ -224,16 +224,15 @@
 
             data.forEach(cat => {
                 body.innerHTML += `<tr class="category-row"><td colspan="5" class="p-2 pl-4">${cat.cat}</td></tr>`;
-                cat.items.forEach((p, i) => {
-                    const id = `p-${p.name.replace(/\s/g, '')}`;
+                cat.items.forEach(p => {
                     body.innerHTML += `
                         <tr class="hover:bg-blue-50 transition border-b border-gray-100">
                             <td class="p-4 text-center checkbox-cell">
-                                <input type="checkbox" class="w-5 h-5 prod-check" data-p2023="${p.p2023}" data-phoy="${p.pHoy}">
+                                <input type="checkbox" class="w-5 h-5 prod-check" data-p2023="${p.p2023}" data-phoy="${p.pHoy}" onchange="calculateImpact()">
                             </td>
                             <td class="p-4 text-sm font-bold text-gray-800" data-label="Producto">${p.name}</td>
-                            <td class="p-4 text-center font-mono text-gray-400 res-2023" data-label="¿Cuánto comprabas?">-</td>
-                            <td class="p-4 text-center font-mono font-bold text-gray-600 res-hoy" data-label="¿Cuánto comprás hoy?">-</td>
+                            <td class="p-4 text-center font-mono text-gray-400 res-2023" data-label="¿En 2023 comprabas?">-</td>
+                            <td class="p-4 text-center font-mono font-bold text-gray-600 res-hoy" data-label="¿Hoy comprás?">-</td>
                             <td class="p-4 text-center font-black text-xl res-diff" data-label="Variación">-</td>
                         </tr>`;
                 });
@@ -244,8 +243,7 @@
         function calculateImpact() {
             const inc2023 = parseFloat(document.getElementById('income2023').value) || 0;
             const incHoy = parseFloat(document.getElementById('incomeHoy').value) || 0;
-            if (!inc2023 || !incHoy) return alert("Cargá los ingresos primero");
-
+            
             const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
             let totalVar = 0, count = 0;
 
@@ -254,7 +252,7 @@
                 const p2023 = parseFloat(check.dataset.p2023);
                 const pHoy = parseFloat(check.dataset.phoy);
                 
-                if (check.checked) {
+                if (check.checked && inc2023 > 0 && incHoy > 0) {
                     const u2023 = inc2023 / p2023;
                     const uHoy = incHoy / pHoy;
                     const diff = ((uHoy / u2023) - 1) * 100;
@@ -272,9 +270,12 @@
                 }
             });
 
+            const summary = document.getElementById('totalSummary');
             if (count > 0) {
-                document.getElementById('totalSummary').classList.remove('hidden');
+                summary.classList.remove('hidden');
                 document.getElementById('totalPercentage').innerText = `${(totalVar / count).toFixed(1)}%`;
+            } else {
+                summary.classList.add('hidden');
             }
         }
 
@@ -286,10 +287,9 @@
         function resetAll() {
             document.getElementById('income2023').value = "";
             document.getElementById('incomeHoy').value = "";
-            renderTable();
+            selectAll(false);
         }
 
-        // Carga inicial
         renderTable();
     </script>
 </body>
