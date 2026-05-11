@@ -34,7 +34,7 @@
         
         <div class="bg-blue-900 p-8 text-white text-center">
             <h1 class="text-3xl font-black uppercase italic tracking-tighter">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-blue-200 font-bold text-xs mt-2 uppercase tracking-wide">Comparamos precios de supermercados entre noviembre de 2023 y hoy</p>
+            <p class="text-blue-200 font-bold text-xs mt-2 uppercase tracking-wide">Comparamos precios entre noviembre de 2023 y hoy</p>
         </div>
 
         <div class="p-4 md:p-10">
@@ -98,7 +98,7 @@
     <div id="stickyResultBar" class="sticky-result-bar hidden">
         <div>
             <p class="text-[10px] md:text-xs font-black uppercase leading-none opacity-90 tracking-tighter italic">Pérdida de Poder Adquisitivo</p>
-            <p class="text-[9px] md:text-xs font-bold uppercase mt-1 opacity-70">Basado en los productos que elegiste</p>
+            <p class="text-[9px] md:text-xs font-bold uppercase mt-1 opacity-70">Basado en los productos elegidos</p>
         </div>
         <div id="totalPercentageBar" class="text-4xl md:text-6xl font-black tracking-tighter">-0%</div>
     </div>
@@ -267,9 +267,14 @@
 
         function renderTable() {
             const src = document.getElementById('priceSource').value;
-            let data = dataIPEC; // IPEC por defecto
-            if (src === 'alvear') data = dataAlvear;
-            if (src === 'coto') data = dataCoto;
+            let data;
+            if (src === 'alvear') {
+                data = dataAlvear;
+            } else if (src === 'coto') {
+                data = dataCoto;
+            } else {
+                data = dataIPEC;
+            }
             
             const body = document.getElementById('resultsTable');
             body.innerHTML = "";
