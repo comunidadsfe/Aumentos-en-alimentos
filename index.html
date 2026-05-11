@@ -6,13 +6,10 @@
     <title>Calculadora de Poder Adquisitivo - Comunidad</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* CONFIGURACIÓN PC */
         @media (min-width: 769px) {
             .container-main { max-width: 1100px; margin: 40px auto; }
             .table-container { border-radius: 12px; border: 1px solid #e5e7eb; overflow: hidden; }
         }
-
-        /* CONFIGURACIÓN CELULARES */
         @media (max-width: 768px) {
             .table-pc-head { display: none; }
             table, tbody, tr, td { display: block; width: 100%; }
@@ -22,24 +19,11 @@
             .checkbox-cell { background: #f0f7ff; justify-content: center !important; padding: 15px !important; }
             .checkbox-cell::before { content: "INCLUIR"; }
         }
-
-        /* BARRA FLOTANTE UNIVERSAL */
         .sticky-result-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100;
-            background: #dc2626;
-            color: white;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
-            border-top: 4px solid #b91c1c;
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; background: #dc2626; color: white;
+            padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3); border-top: 4px solid #b91c1c;
         }
-
         .category-row { background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; }
         .rubro-badge { background-color: #1e3a8a; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 900; font-size: 0.8rem; }
     </style>
@@ -50,7 +34,7 @@
         
         <div class="bg-blue-900 p-8 text-white text-center">
             <h1 class="text-3xl font-black uppercase italic tracking-tighter">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-blue-300 font-bold text-[10px] mt-2 uppercase tracking-widest">Comparativa Nov 2023 vs. Mar 2026</p>
+            <p class="text-blue-200 font-bold text-xs mt-2 uppercase tracking-wide">Comparamos precios de supermercados entre noviembre de 2023 y hoy</p>
         </div>
 
         <div class="p-4 md:p-10">
@@ -59,17 +43,20 @@
                     <label class="block text-xs font-black text-blue-900 uppercase mb-3 italic">1. Tus Ingresos</label>
                     <select id="presetIncome" class="w-full p-3 mb-4 bg-white border-2 border-gray-200 rounded-lg font-bold outline-none" onchange="updateIncome()">
                         <option value="custom">CARGA MANUAL</option>
-                        <option value="smvm">SALARIO MÍNIMO (SMVM)</option>
-                        <option value="jubilacion">JUBILACIÓN MÍNIMA</option>
+                        <option value="smvm">Salario Mínimo (SMVM)</option>
+                        <option value="jubilacion">Jubilación Mínima</option>
+                        <option value="municipal">Mínimo Garantizado Municipal</option>
+                        <option value="comercio">Salario Comercio</option>
+                        <option value="docente">Salario Docente</option>
                     </select>
                     <div class="grid grid-cols-2 gap-3">
                         <div class="flex flex-col">
-                            <span class="text-[9px] font-bold text-gray-400 uppercase mb-1">Noviembre 2023</span>
-                            <input type="number" id="income2023" placeholder="$" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="calculateImpact()">
+                            <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Noviembre 2023</span>
+                            <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="formatAndCalculate(this)">
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[9px] font-bold text-gray-400 uppercase mb-1">Marzo 2026</span>
-                            <input type="number" id="incomeHoy" placeholder="$" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="calculateImpact()">
+                            <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Hoy</span>
+                            <input type="text" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="formatAndCalculate(this)">
                         </div>
                     </div>
                 </div>
@@ -77,9 +64,9 @@
                 <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 shadow-sm">
                     <label class="block text-xs font-black text-blue-900 uppercase mb-3 italic">2. Fuente de Precios</label>
                     <select id="priceSource" class="w-full p-3 mb-4 bg-white border-2 border-blue-200 rounded-lg font-black text-blue-900" onchange="renderTable()">
-                        <option value="ipec">IPEC (OFICIAL)</option>
-                        <option value="alvear">ALVEAR</option>
-                        <option value="coto">COTO</option>
+                        <option value="ipec">IPEC - 48 artículos</option>
+                        <option value="alvear">ALVEAR - 13 artículos</option>
+                        <option value="coto">COTO - 23 artículos</option>
                     </select>
                     <div class="flex gap-2">
                         <button onclick="selectAll(true)" class="flex-1 bg-blue-900 text-white text-[10px] font-black py-4 rounded-lg uppercase">Seleccionar Todo</button>
@@ -109,20 +96,12 @@
 
     <div id="stickyResultBar" class="sticky-result-bar hidden">
         <div class="flex items-center gap-4">
-            <div class="hidden md:block bg-white/20 p-2 rounded">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                </svg>
-            </div>
             <div>
-                <p class="text-[10px] md:text-xs font-black uppercase leading-none opacity-90 tracking-tighter">Pérdida Total de Poder Adquisitivo</p>
-                <p class="text-[9px] md:text-xs font-bold uppercase italic opacity-70">Basado en tu canasta personalizada</p>
+                <p class="text-[10px] md:text-xs font-black uppercase leading-none opacity-90 tracking-tighter italic">Pérdida de Poder Adquisitivo</p>
+                <p class="text-[9px] md:text-xs font-bold uppercase mt-1 opacity-70">Basado en los productos que elegiste</p>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <span class="text-xs font-black hidden md:inline uppercase">Impacto:</span>
-            <div id="totalPercentageBar" class="text-4xl md:text-6xl font-black tracking-tighter">-0%</div>
-        </div>
+        <div id="totalPercentageBar" class="text-4xl md:text-6xl font-black tracking-tighter">-0%</div>
     </div>
 
     <script>
@@ -131,7 +110,7 @@
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
                 { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
-                { name: "Galletitas dulces (150 g.)", p2023: 420.35, pHoy: 1464.71 },
+                { name: "Galletitas dulces s/relleno (150 g.)", p2023: 420.35, pHoy: 1464.71 },
                 { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
                 { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
                 { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
@@ -244,14 +223,33 @@
 
         const presets = {
             smvm: { v2023: 156000, vHoy: 363000 },
-            jubilacion: { v2023: 160713, vHoy: 463174 }
+            jubilacion: { v2023: 160713, vHoy: 463174 },
+            municipal: { v2023: 223797, vHoy: 1065000 },
+            comercio: { v2023: 332959.88, vHoy: 1095562.81 },
+            docente: { v2023: 269574, vHoy: 1037205 }
         };
+
+        function formatNumber(n) {
+            return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
+        }
+
+        function parseCurrency(v) {
+            return parseFloat(v.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0;
+        }
+
+        function formatAndCalculate(input) {
+            let val = parseCurrency(input.value);
+            if (!isNaN(val)) {
+                input.value = formatNumber(val);
+            }
+            calculateImpact();
+        }
 
         function updateIncome() {
             const s = document.getElementById('presetIncome').value;
             if (s !== "custom") {
-                document.getElementById('income2023').value = presets[s].v2023;
-                document.getElementById('incomeHoy').value = presets[s].vHoy;
+                document.getElementById('income2023').value = formatNumber(presets[s].v2023);
+                document.getElementById('incomeHoy').value = formatNumber(presets[s].vHoy);
                 calculateImpact();
             }
         }
@@ -296,15 +294,13 @@
         }
 
         function selectCategory(slug, val) {
-            document.querySelectorAll(`.${slug} .prod-check`).forEach(c => {
-                c.checked = val;
-            });
+            document.querySelectorAll(`.${slug} .prod-check`).forEach(c => c.checked = val);
             calculateImpact();
         }
 
         function calculateImpact() {
-            const inc2023 = parseFloat(document.getElementById('income2023').value) || 0;
-            const incHoy = parseFloat(document.getElementById('incomeHoy').value) || 0;
+            const inc2023 = parseCurrency(document.getElementById('income2023').value);
+            const incHoy = parseCurrency(document.getElementById('incomeHoy').value);
             const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
             
             let totalVar = 0, countTotal = 0;
@@ -313,7 +309,6 @@
             rows.forEach(row => {
                 const check = row.querySelector('.prod-check');
                 const catSlug = check.dataset.category;
-                
                 if (!rubroData[catSlug]) rubroData[catSlug] = { sum: 0, count: 0 };
 
                 if (check.checked && inc2023 > 0 && incHoy > 0) {
@@ -338,25 +333,20 @@
                 }
             });
 
-            // Actualizar Badges de Rubros
             for (const slug in rubroData) {
                 const badge = document.getElementById(`badge-${slug}`);
                 if (rubroData[slug].count > 0) {
-                    const rubroProm = rubroData[slug].sum / rubroData[slug].count;
-                    badge.innerText = `${rubroProm.toFixed(1)}%`;
+                    badge.innerText = `${(rubroData[slug].sum / rubroData[slug].count).toFixed(1)}%`;
                     badge.classList.remove('hidden');
                 } else {
                     badge.classList.add('hidden');
                 }
             }
 
-            // Barra Flotante Universal
-            const finalVal = countTotal > 0 ? `${(totalVar / countTotal).toFixed(1)}%` : "0%";
             const bar = document.getElementById('stickyResultBar');
-            
             if (countTotal > 0) {
                 bar.classList.remove('hidden');
-                document.getElementById('totalPercentageBar').innerText = finalVal;
+                document.getElementById('totalPercentageBar').innerText = `${(totalVar / countTotal).toFixed(1)}%`;
             } else {
                 bar.classList.add('hidden');
             }
