@@ -26,6 +26,7 @@
         }
         .category-row { background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; }
         .rubro-badge { background-color: #1e3a8a; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 900; font-size: 0.8rem; }
+        .hidden-inputs { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans pb-32">
@@ -49,7 +50,8 @@
                         <option value="comercio">Salario Comercio</option>
                         <option value="docente">Salario Docente</option>
                     </select>
-                    <div class="grid grid-cols-2 gap-3">
+                    
+                    <div id="manualInputsContainer" class="grid grid-cols-2 gap-3">
                         <div class="flex flex-col">
                             <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Noviembre 2023</span>
                             <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleManualInput(this)">
@@ -103,7 +105,7 @@
     </div>
 
     <script>
-        // Datos IPEC, Alvear y Coto integrados correctamente
+        // --- BASES DE DATOS ---
         const dataIPEC = [
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
@@ -227,10 +229,10 @@
             docente: { v2023: 269574, vHoy: 1037205 }
         };
 
-        // Función esencial para limpiar el número antes de calcular
+        // --- LÓGICA DE CONTROL ---
+
         function getRawValue(str) {
             if (!str) return 0;
-            // Elimina signo $, puntos de miles, y cambia coma decimal por punto
             let clean = str.toString().replace(/\$/g, '').replace(/\./g, '').replace(',', '.').trim();
             return parseFloat(clean) || 0;
         }
@@ -244,17 +246,25 @@
         }
 
         function handleManualInput(input) {
-            // No formateamos mientras escribe para evitar errores de cursor, solo limpiamos y calculamos
             calculateImpact();
         }
 
         function updateIncome() {
             const s = document.getElementById('presetIncome').value;
+            const container = document.getElementById('manualInputsContainer');
+            
             if (s !== "custom") {
+                // Ocultar montos y asignar valores silenciosamente
+                container.classList.add('hidden-inputs');
                 document.getElementById('income2023').value = formatToCurrency(presets[s].v2023);
                 document.getElementById('incomeHoy').value = formatToCurrency(presets[s].vHoy);
-                calculateImpact();
+            } else {
+                // Mostrar montos para carga manual
+                container.classList.remove('hidden-inputs');
+                document.getElementById('income2023').value = "";
+                document.getElementById('incomeHoy').value = "";
             }
+            calculateImpact();
         }
 
         function renderTable() {
@@ -317,7 +327,6 @@
                 if (check.checked && inc2023 > 0 && incHoy > 0) {
                     const p2023 = parseFloat(check.dataset.p2023);
                     const pHoy = parseFloat(check.dataset.phoy);
-                    
                     const u2023 = inc2023 / p2023;
                     const uHoy = incHoy / pHoy;
                     const diff = ((uHoy / u2023) - 1) * 100;
@@ -337,12 +346,10 @@
                 }
             });
 
-            // Actualizar porcentajes por rubro
             for (const slug in rubroData) {
                 const badge = document.getElementById(`badge-${slug}`);
                 if (rubroData[slug].count > 0) {
-                    const prom = rubroData[slug].sum / rubroData[slug].count;
-                    badge.innerText = `${prom.toFixed(1)}%`;
+                    badge.innerText = `${(rubroData[slug].sum / rubroData[slug].count).toFixed(1)}%`;
                     badge.classList.remove('hidden');
                 } else {
                     badge.classList.add('hidden');
@@ -363,7 +370,6 @@
             calculateImpact();
         }
 
-        // Iniciar tabla
         renderTable();
     </script>
 </body>
