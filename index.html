@@ -17,7 +17,7 @@
             td { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px !important; border-bottom: 1px solid #f3f4f6; text-align: right; }
             td::before { content: attr(data-label); font-weight: 800; text-transform: uppercase; font-size: 0.65rem; color: #6b7280; text-align: left; margin-right: 10px; }
             .checkbox-cell { background: #f0f7ff; justify-content: center !important; padding: 15px !important; }
-            .checkbox-cell::before { content: "INCLUIR"; }
+            .checkbox-cell:before { content: "INCLUIR"; }
         }
         .sticky-result-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; background: #dc2626; color: white;
@@ -52,11 +52,11 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div class="flex flex-col">
                             <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Noviembre 2023</span>
-                            <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleInput(this)">
+                            <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleManualInput(this)">
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Hoy</span>
-                            <input type="text" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleInput(this)">
+                            <input type="text" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleManualInput(this)">
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
             </div>
 
             <div class="table-container mb-8">
-                <div class="max-h-[600px] overflow-y-auto">
+                <div class="max-h-[600px] overflow-y-auto bg-white">
                     <table class="w-full">
                         <thead class="table-pc-head bg-gray-800 text-white text-[10px] font-black uppercase sticky top-0 z-10">
                             <tr>
@@ -103,6 +103,7 @@
     </div>
 
     <script>
+        // Datos IPEC, Alvear y Coto integrados correctamente
         const dataIPEC = [
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
@@ -226,14 +227,15 @@
             docente: { v2023: 269574, vHoy: 1037205 }
         };
 
-        function parseCleanNumber(str) {
+        // Función esencial para limpiar el número antes de calcular
+        function getRawValue(str) {
             if (!str) return 0;
-            // Elimina signo pesos, puntos de miles y cambia coma por punto
-            let clean = str.replace(/\$/g, '').replace(/\./g, '').replace(',', '.').trim();
+            // Elimina signo $, puntos de miles, y cambia coma decimal por punto
+            let clean = str.toString().replace(/\$/g, '').replace(/\./g, '').replace(',', '.').trim();
             return parseFloat(clean) || 0;
         }
 
-        function formatDisplayCurrency(val) {
+        function formatToCurrency(val) {
             return new Intl.NumberFormat('es-AR', {
                 style: 'currency',
                 currency: 'ARS',
@@ -241,25 +243,16 @@
             }).format(val);
         }
 
-        function handleInput(input) {
-            let cursor = input.selectionStart;
-            let oldLen = input.value.length;
-            let val = parseCleanNumber(input.value);
-            
-            if (val > 0) {
-                input.value = formatDisplayCurrency(val);
-                // Ajustar cursor
-                let newLen = input.value.length;
-                input.setSelectionRange(cursor + (newLen - oldLen), cursor + (newLen - oldLen));
-            }
+        function handleManualInput(input) {
+            // No formateamos mientras escribe para evitar errores de cursor, solo limpiamos y calculamos
             calculateImpact();
         }
 
         function updateIncome() {
             const s = document.getElementById('presetIncome').value;
             if (s !== "custom") {
-                document.getElementById('income2023').value = formatDisplayCurrency(presets[s].v2023);
-                document.getElementById('incomeHoy').value = formatDisplayCurrency(presets[s].vHoy);
+                document.getElementById('income2023').value = formatToCurrency(presets[s].v2023);
+                document.getElementById('incomeHoy').value = formatToCurrency(presets[s].vHoy);
                 calculateImpact();
             }
         }
@@ -309,8 +302,8 @@
         }
 
         function calculateImpact() {
-            const inc2023 = parseCleanNumber(document.getElementById('income2023').value);
-            const incHoy = parseCleanNumber(document.getElementById('incomeHoy').value);
+            const inc2023 = getRawValue(document.getElementById('income2023').value);
+            const incHoy = getRawValue(document.getElementById('incomeHoy').value);
             const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
             
             let totalVar = 0, countTotal = 0;
@@ -319,4 +312,59 @@
             rows.forEach(row => {
                 const check = row.querySelector('.prod-check');
                 const catSlug = check.dataset.category;
-                if (!rubroData[catSlug]) rubroData
+                if (!rubroData[catSlug]) rubroData[catSlug] = { sum: 0, count: 0 };
+
+                if (check.checked && inc2023 > 0 && incHoy > 0) {
+                    const p2023 = parseFloat(check.dataset.p2023);
+                    const pHoy = parseFloat(check.dataset.phoy);
+                    
+                    const u2023 = inc2023 / p2023;
+                    const uHoy = incHoy / pHoy;
+                    const diff = ((uHoy / u2023) - 1) * 100;
+                    
+                    row.querySelector('.res-2023').innerText = u2023.toFixed(1);
+                    row.querySelector('.res-hoy').innerText = uHoy.toFixed(1);
+                    const dc = row.querySelector('.res-diff');
+                    dc.innerText = `${diff.toFixed(1)}%`;
+                    dc.className = `p-4 text-center font-black text-xl res-diff ${diff < 0 ? 'text-red-600' : 'text-green-600'}`;
+                    
+                    totalVar += diff;
+                    countTotal++;
+                    rubroData[catSlug].sum += diff;
+                    rubroData[catSlug].count++;
+                } else {
+                    row.querySelectorAll('.res-2023, .res-hoy, .res-diff').forEach(c => c.innerText = "-");
+                }
+            });
+
+            // Actualizar porcentajes por rubro
+            for (const slug in rubroData) {
+                const badge = document.getElementById(`badge-${slug}`);
+                if (rubroData[slug].count > 0) {
+                    const prom = rubroData[slug].sum / rubroData[slug].count;
+                    badge.innerText = `${prom.toFixed(1)}%`;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            }
+
+            const bar = document.getElementById('stickyResultBar');
+            if (countTotal > 0) {
+                bar.classList.remove('hidden');
+                document.getElementById('totalPercentageBar').innerText = `${(totalVar / countTotal).toFixed(1)}%`;
+            } else {
+                bar.classList.add('hidden');
+            }
+        }
+
+        function selectAll(val) {
+            document.querySelectorAll('.prod-check, .cat-check').forEach(c => c.checked = val);
+            calculateImpact();
+        }
+
+        // Iniciar tabla
+        renderTable();
+    </script>
+</body>
+</html>
