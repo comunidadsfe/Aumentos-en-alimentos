@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Poder Adquisitivo</title>
+    <title>Calculadora de Poder Adquisitivo - Comunidad</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media (min-width: 769px) {
@@ -20,10 +20,14 @@
             .checkbox-cell:before { content: "INCLUIR"; }
         }
         .sticky-result-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; background: #dc2626; color: white;
+            position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100;
             padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.3); border-top: 4px solid #b91c1c;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3); border-top: 4px solid rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
+        .bg-loss { background: #dc2626; color: white; }
+        .bg-gain { background: #16a34a; color: white; }
+        
         .category-row { background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; }
         .rubro-badge { background-color: #1e3a8a; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 900; font-size: 0.8rem; }
         .price-subtext { font-size: 0.75rem; color: #9ca3af; font-weight: 500; display: block; }
@@ -98,14 +102,15 @@
 
     <div id="stickyResultBar" class="sticky-result-bar hidden">
         <div>
-            <p class="text-[10px] md:text-xs font-black uppercase leading-none opacity-90 tracking-tighter italic">Pérdida de Poder Adquisitivo</p>
+            <p id="resultLabel" class="text-[10px] md:text-xs font-black uppercase leading-none opacity-90 tracking-tighter italic">Resultado</p>
             <p class="text-[9px] md:text-xs font-bold uppercase mt-1 opacity-70 italic">Basado en productos seleccionados</p>
         </div>
-        <div id="totalPercentageBar" class="text-4xl md:text-6xl font-black tracking-tighter">-0%</div>
+        <div id="totalPercentageBar" class="text-4xl md:text-6xl font-black tracking-tighter">0%</div>
     </div>
 
     <script>
-        // DATOS COMPLETOS CARGADOS
+        // ... (Aquí van los objetos dataIPEC, dataAlvear y dataCoto que ya tenemos)
+        // [INSERTE AQUÍ LAS LISTAS DE PRODUCTOS DE LA VERSIÓN ANTERIOR]
         const dataIPEC = [
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
@@ -245,35 +250,29 @@
             docente: { v2023: "269.574", vHoy: "1.037.205" }
         };
 
-        // --- FUNCIÓN DE LIMPIEZA DE VALORES ARGENTINOS ---
         function getRawValue(str) {
             if (!str) return 0;
             let clean = str.toString().replace(/\$/g, '').trim();
-            // Quita puntos de miles
             clean = clean.split('.').join('');
-            // Cambia coma por punto decimal
             clean = clean.replace(',', '.');
             return parseFloat(clean) || 0;
         }
 
         function updateIncome() {
             const s = document.getElementById('presetIncome').value;
-            const container = document.getElementById('manualInputsContainer');
             const in2023 = document.getElementById('income2023');
             const inHoy = document.getElementById('incomeHoy');
-            
             if (s !== "custom") {
-                container.style.display = 'none';
+                document.getElementById('manualInputsContainer').style.display = 'none';
                 in2023.value = presets[s].v2023;
                 inHoy.value = presets[s].vHoy;
             } else {
-                container.style.display = 'grid';
+                document.getElementById('manualInputsContainer').style.display = 'grid';
             }
             calculateImpact();
         }
 
         function changeSource() {
-            // Al cambiar la fuente, forzamos un reseteo visual y de datos
             renderTable();
             document.getElementById('stickyResultBar').classList.add('hidden');
         }
@@ -283,7 +282,6 @@
             let data = src === 'alvear' ? dataAlvear : (src === 'coto' ? dataCoto : dataIPEC);
             const body = document.getElementById('resultsTable');
             body.innerHTML = "";
-
             data.forEach((cat, idx) => {
                 const catSlug = `cat-${idx}`;
                 body.innerHTML += `
@@ -296,16 +294,12 @@
                             <span id="badge-${catSlug}" class="rubro-badge hidden">-0%</span>
                         </td>
                     </tr>`;
-                
                 cat.items.forEach(p => {
                     body.innerHTML += `
                         <tr class="hover:bg-blue-50 transition border-b border-gray-100 ${catSlug}">
                             <td class="p-4 text-center checkbox-cell">
                                 <input type="checkbox" class="w-6 h-6 prod-check cursor-pointer" 
-                                    data-category="${catSlug}"
-                                    data-p2023="${p.p2023}" 
-                                    data-phoy="${p.pHoy}" 
-                                    onchange="calculateImpact()">
+                                    data-category="${catSlug}" data-p2023="${p.p2023}" data-phoy="${p.pHoy}" onchange="calculateImpact()">
                             </td>
                             <td class="p-4 font-bold text-gray-800" data-label="Producto">${p.name}</td>
                             <td class="p-4 text-center font-bold text-gray-400" data-label="2023:">
@@ -331,39 +325,26 @@
             const inc2023 = getRawValue(document.getElementById('income2023').value);
             const incHoy = getRawValue(document.getElementById('incomeHoy').value);
             const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
-            
-            let totalCosto2023 = 0;
-            let totalCostoHoy = 0;
-            let countTotal = 0;
-
+            let tC23 = 0, tCHoy = 0, countTotal = 0;
             const rubroData = {};
 
             rows.forEach(row => {
                 const check = row.querySelector('.prod-check');
                 const catSlug = check.dataset.category;
-                const p2023 = parseFloat(check.dataset.p2023);
+                const p23 = parseFloat(check.dataset.p2023);
                 const pHoy = parseFloat(check.dataset.phoy);
-
-                if (!rubroData[catSlug]) rubroData[catSlug] = { costo2023: 0, costoHoy: 0, count: 0 };
-
+                if (!rubroData[catSlug]) rubroData[catSlug] = { c23: 0, cHoy: 0, count: 0 };
                 if (check.checked && inc2023 > 0 && incHoy > 0) {
-                    const u2023 = inc2023 / p2023;
-                    const uHoy = incHoy / pHoy;
-                    const diff = ((uHoy / u2023) - 1) * 100;
-                    
-                    row.querySelector('.res-2023').innerText = u2023.toFixed(1);
-                    row.querySelector('.res-hoy').innerText = uHoy.toFixed(1);
+                    const u23 = inc2023 / p23;
+                    const uH = incHoy / pHoy;
+                    const diff = ((uH / u23) - 1) * 100;
+                    row.querySelector('.res-2023').innerText = u23.toFixed(1);
+                    row.querySelector('.res-hoy').innerText = uH.toFixed(1);
                     const dc = row.querySelector('.res-diff');
-                    dc.innerText = `${diff.toFixed(1)}%`;
+                    dc.innerText = (diff > 0 ? "+" : "") + diff.toFixed(1) + "%";
                     dc.className = `p-4 text-center font-black text-xl res-diff ${diff < 0 ? 'text-red-600' : 'text-green-600'}`;
-                    
-                    totalCosto2023 += p2023;
-                    totalCostoHoy += pHoy;
-                    countTotal++;
-
-                    rubroData[catSlug].costo2023 += p2023;
-                    rubroData[catSlug].costoHoy += pHoy;
-                    rubroData[catSlug].count++;
+                    tC23 += p23; tCHoy += pHoy; countTotal++;
+                    rubroData[catSlug].c23 += p23; rubroData[catSlug].cHoy += pHoy; rubroData[catSlug].count++;
                 } else {
                     row.querySelector('.res-2023').innerText = "-";
                     row.querySelector('.res-hoy').innerText = "-";
@@ -371,28 +352,23 @@
                 }
             });
 
-            // Actualizar Badges de Categoría
-            for (const slug in rubroData) {
-                const badge = document.getElementById(`badge-${slug}`);
-                if (rubroData[slug].count > 0) {
-                    const canastasAntes = inc2023 / rubroData[slug].costo2023;
-                    const canastasAhora = incHoy / rubroData[slug].costoHoy;
-                    const varRubro = ((canastasAhora / canastasAntes) - 1) * 100;
-                    badge.innerText = `${varRubro.toFixed(1)}%`;
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
-            }
-
             const bar = document.getElementById('stickyResultBar');
+            const label = document.getElementById('resultLabel');
+            const percent = document.getElementById('totalPercentageBar');
+
             if (countTotal > 0) {
-                const canastasTotalesAntes = inc2023 / totalCosto2023;
-                const canastasTotalesAhora = incHoy / totalCostoHoy;
-                const perdidaReal = ((canastasTotalesAhora / canastasTotalesAntes) - 1) * 100;
-                
+                const can23 = inc2023 / tC23;
+                const canHoy = incHoy / tCHoy;
+                const res = ((canHoy / can23) - 1) * 100;
                 bar.classList.remove('hidden');
-                document.getElementById('totalPercentageBar').innerText = `${perdidaReal.toFixed(1)}%`;
+                percent.innerText = (res > 0 ? "+" : "") + res.toFixed(1) + "%";
+                if (res >= 0) {
+                    bar.className = "sticky-result-bar bg-gain";
+                    label.innerText = "Mejora de Poder Adquisitivo";
+                } else {
+                    bar.className = "sticky-result-bar bg-loss";
+                    label.innerText = "Pérdida de Poder Adquisitivo";
+                }
             } else {
                 bar.classList.add('hidden');
             }
@@ -403,7 +379,6 @@
             calculateImpact();
         }
 
-        // Inicio
         renderTable();
     </script>
 </body>
