@@ -6,195 +6,201 @@
     <title>Calculadora de Poder Adquisitivo - Comunidad</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estilos para transformar la tabla en tarjetas en móviles */
         @media (max-width: 768px) {
-            table, thead, tbody, th, td, tr { 
-                display: block; 
-            }
-            thead tr { 
-                position: absolute;
-                top: -9999px;
-                left: -9999px;
-            }
-            tr { 
-                margin-bottom: 1rem;
-                border: 2px solid #e5e7eb;
-                border-radius: 0.5rem;
-                overflow: hidden;
-            }
-            td { 
-                border: none;
-                position: relative;
-                padding-left: 50% !important; 
-                text-align: right !important;
-                border-bottom: 1px solid #f3f4f6;
-            }
-            td:before { 
-                position: absolute;
-                left: 1rem;
-                width: 45%; 
-                padding-right: 10px; 
-                white-space: nowrap;
-                text-align: left;
-                font-weight: bold;
-                color: #6b7280;
-                content: attr(data-label);
-                text-transform: uppercase;
-                font-size: 0.65rem;
-            }
-            td:last-child {
-                border-bottom: 0;
-                background-color: #f9fafb;
-            }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { margin-bottom: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; background: white; }
+            td { border: none; position: relative; padding-left: 50% !important; text-align: right !important; border-bottom: 1px solid #f3f4f6; min-height: 3rem; display: flex; align-items: center; justify-content: flex-end; }
+            td:before { position: absolute; left: 1rem; width: 45%; padding-right: 10px; white-space: nowrap; text-align: left; font-weight: bold; color: #6b7280; content: attr(data-label); text-transform: uppercase; font-size: 0.65rem; }
+            td:last-child { border-bottom: 0; background-color: #f9fafb; }
+            .checkbox-cell { justify-content: center !important; padding-left: 0 !important; background: #f0f7ff; }
+            .checkbox-cell:before { content: "Seleccionar"; position: relative; width: auto; left: 0; margin-right: 10px; }
         }
+        .sticky-header { position: sticky; top: 0; z-index: 20; }
+        .category-row { background-color: #f3f4f6; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #374151; letter-spacing: 0.05em; }
     </style>
 </head>
 <body class="bg-gray-100 p-2 md:p-10 font-sans">
-    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden">
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden border-t-8 border-blue-900">
         
-        <div class="bg-blue-900 p-6">
-            <h1 class="text-xl md:text-2xl font-bold text-white text-center italic uppercase">¿Cuánto perdimos?</h1>
-            <p class="text-blue-200 text-center text-xs mt-1">Comparativa: Noviembre 2023 vs. Marzo 2026</p>
+        <div class="bg-blue-900 p-8 text-white">
+            <h1 class="text-3xl font-black uppercase tracking-tighter text-center italic">¿CUÁNTO PERDIMOS?</h1>
+            <p class="text-blue-200 text-center text-sm mt-2 font-bold uppercase tracking-widest">Nov 2023 vs. Mar 2026</p>
         </div>
         
-        <div class="p-4 md:p-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2 italic uppercase">1. Ingresos (Nov 2023 / Hoy)</label>
-                        <select id="presetIncome" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold text-gray-600" onchange="updateIncome()">
-                            <option value="custom">CARGA MANUAL</option>
-                            <option value="smvm">SALARIO MÍNIMO (SMVM)</option>
-                            <option value="jubilacion">JUBILACIÓN MÍNIMA</option>
-                        </select>
-                    </div>
+        <div class="p-4 md:p-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="bg-gray-50 p-6 rounded-xl border-2 border-gray-100">
+                    <label class="block text-sm font-black text-blue-900 uppercase mb-4 italic italic">1. Tus Ingresos</label>
+                    <select id="presetIncome" class="w-full p-3 mb-4 bg-white border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold" onchange="updateIncome()">
+                        <option value="custom">INGRESO MANUAL</option>
+                        <option value="smvm">SALARIO MÍNIMO (SMVM)</option>
+                        <option value="jubilacion">JUBILACIÓN MÍNIMA</option>
+                    </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 uppercase mb-1">Nov 2023</label>
-                            <input type="number" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-100 rounded-lg focus:border-blue-500 outline-none font-bold text-lg" oninput="calculate()">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-gray-400 uppercase mb-1">Hoy</label>
-                            <input type="number" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-100 rounded-lg focus:border-blue-500 outline-none font-bold text-lg" oninput="calculate()">
-                        </div>
+                        <input type="number" id="income2023" placeholder="Nov 2023" class="p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold">
+                        <input type="number" id="incomeHoy" placeholder="Hoy" class="p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none font-bold">
                     </div>
                 </div>
 
-                <div class="flex flex-col justify-between">
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2 italic uppercase">2. Seleccionar Canasta</label>
-                        <select id="priceSource" class="w-full p-3 border-2 border-blue-200 bg-blue-50 rounded-lg focus:border-blue-500 outline-none font-black text-blue-900" onchange="calculate()">
-                            <option value="ipec">DATOS OFICIALES IPEC</option>
-                            <option value="alvear">SUPERMERCADO ALVEAR</option>
-                        </select>
-                    </div>
-                    <div class="flex justify-end mt-4">
-                        <button onclick="resetAll()" class="text-[10px] font-black text-gray-400 underline uppercase tracking-widest hover:text-red-500">
-                            Reiniciar cálculo
-                        </button>
+                <div class="bg-blue-50 p-6 rounded-xl border-2 border-blue-100">
+                    <label class="block text-sm font-black text-blue-900 uppercase mb-4 italic">2. Elegir Fuente</label>
+                    <select id="priceSource" class="w-full p-3 mb-6 bg-white border-2 border-blue-300 rounded-lg focus:border-blue-600 outline-none font-black text-blue-900" onchange="renderTable()">
+                        <option value="ipec">CANASTA OFICIAL IPEC (48 Prod.)</option>
+                        <option value="alvear">CANASTA ALVEAR (Rubros)</option>
+                        <option value="coto">CANASTA COTO (Rubros)</option>
+                    </select>
+                    <div class="flex gap-2">
+                        <button onclick="selectAll(true)" class="flex-1 bg-blue-900 text-white text-[10px] font-black py-3 rounded-lg hover:bg-blue-800 uppercase tracking-tighter">Calcular Todo</button>
+                        <button onclick="calculateImpact()" class="flex-1 bg-yellow-400 text-blue-900 text-[10px] font-black py-3 rounded-lg hover:bg-yellow-300 uppercase tracking-tighter">Calcular Selección</button>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-10">
-                <div class="max-h-[600px] overflow-y-auto md:border md:border-gray-200 md:rounded-lg">
-                    <table class="w-full text-left">
-                        <thead class="bg-gray-800 text-white sticky top-0">
+            <div class="mb-10 overflow-hidden border-2 border-gray-200 rounded-xl shadow-sm">
+                <div class="max-h-[550px] overflow-y-auto bg-gray-50">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky-header bg-gray-800 text-white text-[10px] uppercase font-black">
                             <tr>
-                                <th class="p-4 text-xs font-bold uppercase">Producto</th>
-                                <th class="p-4 text-center text-xs font-bold uppercase">¿Cuánto comprabas en 2023?</th>
-                                <th class="p-4 text-center text-xs font-bold uppercase">¿Cuánto comprás hoy?</th>
-                                <th class="p-4 text-center text-xs font-bold uppercase">Variación</th>
+                                <th class="p-4 w-12 text-center">🛒</th>
+                                <th class="p-4">Producto</th>
+                                <th class="p-4 text-center">¿Cuánto comprabas?</th>
+                                <th class="p-4 text-center">¿Cuánto comprás hoy?</th>
+                                <th class="p-4 text-center">Variación</th>
                             </tr>
                         </thead>
-                        <tbody id="resultsTable" class="divide-y divide-gray-100 text-gray-700 bg-white">
-                        </tbody>
+                        <tbody id="resultsTable" class="bg-white"></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="totalSummary" class="hidden">
-                <div class="bg-red-600 rounded-xl p-1 shadow-xl">
-                    <div class="bg-white p-6 rounded-lg flex flex-col md:flex-row items-center justify-between border-2 border-red-50">
-                        <div class="text-center md:text-left mb-4 md:mb-0">
-                            <h3 class="text-red-600 font-black text-2xl uppercase italic leading-none">Pérdida Total</h3>
-                            <p class="text-gray-500 text-xs font-bold uppercase mt-1">De tu capacidad de compra</p>
-                        </div>
-                        <div id="totalPercentage" class="text-6xl md:text-7xl font-black text-red-600 tracking-tighter">
-                            -0%
-                        </div>
+                <div class="bg-red-600 p-6 rounded-xl shadow-2xl flex flex-col md:flex-row items-center justify-between text-white border-4 border-white">
+                    <div class="text-center md:text-left mb-4 md:mb-0">
+                        <h3 class="text-2xl font-black uppercase italic leading-none">Pérdida Total</h3>
+                        <p class="text-[10px] font-bold uppercase mt-1 text-red-100 tracking-widest">Impacto en tu bolsillo</p>
                     </div>
+                    <div id="totalPercentage" class="text-6xl md:text-8xl font-black tracking-tighter">-0%</div>
                 </div>
+                <button onclick="resetAll()" class="w-full mt-4 text-[10px] font-black text-gray-400 uppercase underline">Reiniciar cálculo</button>
             </div>
         </div>
     </div>
 
     <script>
         const dataIPEC = [
-            { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
-            { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
-            { name: "Galletitas dulces (150 g.)", p2023: 420.35, pHoy: 1464.71 },
-            { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
-            { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
-            { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
-            { name: "Fideos Secos Guisero (500 g.)", p2023: 642.99, pHoy: 1471.06 },
-            { name: "Asado (Kg.)", p2023: 4116.28, pHoy: 22305.00 },
-            { name: "Carne picada especial (Kg.)", p2023: 3674.89, pHoy: 17076.20 },
-            { name: "Paleta (Kg.)", p2023: 3759.50, pHoy: 19063.86 },
-            { name: "Cuadril (Kg.)", p2023: 22569.99, pHoy: 22569.99 },
-            { name: "Nalga (Kg.)", p2023: 4429.40, pHoy: 22524.60 },
-            { name: "Hígado (Kg.)", p2023: 1097.16, pHoy: 5542.88 },
-            { name: "Hamburguesas congeladas (4 u.)", p2023: 1609.24, pHoy: 6702.00 },
-            { name: "Pollo entero (Kg.)", p2023: 1417.83, pHoy: 5279.56 },
-            { name: "Filet de merluza fresco (Kg.)", p2023: 2994.08, pHoy: 12684.06 },
-            { name: "Salchicha tipo Viena (6 u.)", p2023: 690.01, pHoy: 2562.66 },
-            { name: "Jamón cocido (Kg.)", p2023: 5763.80, pHoy: 18956.52 },
-            { name: "Salchichón (Kg.)", p2023: 3531.42, pHoy: 11963.98 },
-            { name: "Salame (Kg.)", p2023: 6402.78, pHoy: 23098.17 },
-            { name: "Aceite de girasol (1,5 L.)", p2023: 1495.50, pHoy: 6541.07 },
-            { name: "Leche fresca entera (Sachet)", p2023: 560.48, pHoy: 1811.38 },
-            { name: "Leche en polvo (800 g.)", p2023: 3513.07, pHoy: 12855.28 },
-            { name: "Queso crema (280 g.)", p2023: 1213.22, pHoy: 4015.38 },
-            { name: "Queso Sardo (Kg.)", p2023: 4982.96, pHoy: 21766.92 },
-            { name: "Manteca (150 g.)", p2023: 792.13, pHoy: 3048.66 },
-            { name: "Yogur firme (195 cc.)", p2023: 430.21, pHoy: 1780.65 },
-            { name: "Dulce de leche (450 g.)", p2023: 1039.08, pHoy: 3571.45 },
-            { name: "Huevos de gallina (12 u.)", p2023: 1196.71, pHoy: 3599.42 },
-            { name: "Manzana deliciosa (Kg.)", p2023: 1084.17, pHoy: 4315.55 },
-            { name: "Naranja (Kg.)", p2023: 562.89, pHoy: 2070.54 },
-            { name: "Banana (Kg.)", p2023: 1281.06, pHoy: 3015.44 },
-            { name: "Papa (Kg.)", p2023: 579.67, pHoy: 1232.51 },
-            { name: "Cebolla (Kg.)", p2023: 358.53, pHoy: 1011.09 },
-            { name: "Lechuga (Kg.)", p2023: 725.25, pHoy: 4427.59 },
-            { name: "Tomate redondo (Kg.)", p2023: 1387.50, pHoy: 2419.70 },
-            { name: "Tomate en conserva (230 g.)", p2023: 418.04, pHoy: 1301.98 },
-            { name: "Lentejas secas (400 g.)", p2023: 813.91, pHoy: 1727.29 },
-            { name: "Azúcar (Kg.)", p2023: 1083.62, pHoy: 1435.80 },
-            { name: "Sal fina (500 g.)", p2023: 318.53, pHoy: 1355.67 },
-            { name: "Gaseosa cola (1,5 L.)", p2023: 955.46, pHoy: 3807.16 },
-            { name: "Agua sin Gas (1,5 L.)", p2023: 379.88, pHoy: 1899.67 },
-            { name: "Soda sifón (2 L.)", p2023: 551.25, pHoy: 1590.26 },
-            { name: "Cerveza en botella (L.)", p2023: 1100.56, pHoy: 3794.73 },
-            { name: "Cerveza en lata (350 cc.)", p2023: 505.06, pHoy: 1589.57 },
-            { name: "Vino común (L.)", p2023: 1094.44, pHoy: 2409.64 },
-            { name: "Café molido (500 g.)", p2023: 2740.36, pHoy: 12325.65 },
-            { name: "Yerba mate (500 g.)", p2023: 1181.03, pHoy: 2359.58 }
+            { cat: "Panificados y Harinas", items: [
+                { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
+                { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
+                { name: "Galletitas dulces s/relleno (150 g.)", p2023: 420.35, pHoy: 1464.71 },
+                { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
+                { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
+                { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
+                { name: "Fideos Secos Guisero (500 g.)", p2023: 642.99, pHoy: 1471.06 }
+            ]},
+            { cat: "Carnicería", items: [
+                { name: "Asado (Kg.)", p2023: 4116.28, pHoy: 22305.00 },
+                { name: "Carne picada especial (Kg.)", p2023: 3674.89, pHoy: 17076.20 },
+                { name: "Paleta (Kg.)", p2023: 3759.50, pHoy: 19063.86 },
+                { name: "Cuadril (Kg.)", p2023: 4526.12, pHoy: 22569.99 },
+                { name: "Nalga (Kg.)", p2023: 4429.40, pHoy: 22524.60 },
+                { name: "Hígado (Kg.)", p2023: 1097.16, pHoy: 5542.88 },
+                { name: "Hamburguesas (4 u.)", p2023: 1609.24, pHoy: 6702.00 },
+                { name: "Pollo entero (Kg.)", p2023: 1417.83, pHoy: 5279.56 },
+                { name: "Filet de merluza fresco (Kg.)", p2023: 2994.08, pHoy: 12684.06 },
+                { name: "Salchicha tipo viena (6 u.)", p2023: 690.01, pHoy: 2562.66 },
+                { name: "Jamón cocido (Kg.)", p2023: 5763.80, pHoy: 18956.52 },
+                { name: "Salchichón (Kg.)", p2023: 3531.42, pHoy: 11963.98 },
+                { name: "Salame (Kg.)", p2023: 6402.78, pHoy: 23098.17 }
+            ]},
+            { cat: "Lácteos y Almacén", items: [
+                { name: "Aceite de girasol (1,5 L.)", p2023: 1495.50, pHoy: 6541.07 },
+                { name: "Leche fresca sachet (L.)", p2023: 560.48, pHoy: 1811.38 },
+                { name: "Leche en polvo (800 g.)", p2023: 3513.07, pHoy: 12855.28 },
+                { name: "Queso crema (280 g.)", p2023: 1213.22, pHoy: 4015.38 },
+                { name: "Queso Sardo (Kg.)", p2023: 4982.96, pHoy: 21766.92 },
+                { name: "Manteca (150 g.)", p2023: 792.13, pHoy: 3048.66 },
+                { name: "Yogur firme (195 cc.)", p2023: 430.21, pHoy: 1780.65 },
+                { name: "Dulce de leche (450 g.)", p2023: 1039.08, pHoy: 3571.45 },
+                { name: "Huevos de gallina (12 u.)", p2023: 1196.71, pHoy: 3599.42 },
+                { name: "Azúcar (Kg.)", p2023: 1083.62, pHoy: 1435.80 },
+                { name: "Yerba mate (500 g.)", p2023: 1181.03, pHoy: 2359.58 },
+                { name: "Café molido (500 g.)", p2023: 2740.36, pHoy: 12325.65 }
+            ]},
+            { cat: "Frutas y Verduras", items: [
+                { name: "Manzana deliciosa (Kg.)", p2023: 1084.17, pHoy: 4315.55 },
+                { name: "Naranja (Kg.)", p2023: 562.89, pHoy: 2070.54 },
+                { name: "Banana (Kg.)", p2023: 1281.06, pHoy: 3015.44 },
+                { name: "Papa (Kg.)", p2023: 579.67, pHoy: 1232.51 },
+                { name: "Cebolla (Kg.)", p2023: 358.53, pHoy: 1011.09 },
+                { name: "Lechuga (Kg.)", p2023: 725.25, pHoy: 4427.59 },
+                { name: "Tomate redondo (Kg.)", p2023: 1387.50, pHoy: 2419.70 }
+            ]},
+            { cat: "Otros Almacén y Bebidas", items: [
+                { name: "Tomate en conserva (lata)", p2023: 418.04, pHoy: 1301.98 },
+                { name: "Lentejas secas (400 g.)", p2023: 813.91, pHoy: 1727.29 },
+                { name: "Sal fina (500 g.)", p2023: 318.53, pHoy: 1355.67 },
+                { name: "Gaseosa base cola (1,5 L.)", p2023: 955.46, pHoy: 3807.16 },
+                { name: "Agua sin Gas (1,5 L.)", p2023: 379.88, pHoy: 1899.67 },
+                { name: "Soda sifón (2 L.)", p2023: 551.25, pHoy: 1590.26 },
+                { name: "Cerveza en botella (L.)", p2023: 1100.56, pHoy: 3794.73 },
+                { name: "Cerveza en lata (350 cc.)", p2023: 505.06, pHoy: 1589.57 },
+                { name: "Vino común (L.)", p2023: 1094.44, pHoy: 2409.64 }
+            ]}
         ];
 
         const dataAlvear = [
-            { name: "Pechito de Cerdo 1K", p2023: 2549, pHoy: 9490 },
-            { name: "Chorizo Parrillero", p2023: 2790, pHoy: 13490 },
-            { name: "Pollo Las Camelias", p2023: 1299, pHoy: 6199 },
-            { name: "Marucha de ternera", p2023: 3149, pHoy: 18490 },
-            { name: "Nalga de ternera", p2023: 4290, pHoy: 26990 },
-            { name: "Picada ternera", p2023: 2699, pHoy: 12990 },
-            { name: "Manteca tonadita", p2023: 599, pHoy: 3199 },
-            { name: "Queso cremón", p2023: 2790, pHoy: 13999 },
-            { name: "Harina Pureza pizzas", p2023: 495, pHoy: 1990 },
-            { name: "Mayonesa Hellmans", p2023: 423, pHoy: 4999 },
-            { name: "Jabón Skip 500cc", p2023: 2159, pHoy: 11999 },
-            { name: "Ayudín 2L", p2023: 679, pHoy: 3499 },
-            { name: "Toalla femenina x8", p2023: 299, pHoy: 3029 }
+            { cat: "Carnicería", items: [
+                { name: "Pechito de Cerdo (1K)", p2023: 2549, pHoy: 9490 },
+                { name: "Chorizo Parrillero (1K)", p2023: 2790, pHoy: 13490 },
+                { name: "Pollo Las Camelias (1K)", p2023: 1299, pHoy: 6199 },
+                { name: "Marucha de ternera (1K)", p2023: 3149, pHoy: 18490 },
+                { name: "Nalga de ternera (1K)", p2023: 4290, pHoy: 26990 },
+                { name: "Picada de ternera (1K)", p2023: 2699, pHoy: 12990 }
+            ]},
+            { cat: "Lácteos y Almacén", items: [
+                { name: "Manteca Tonadita (200g)", p2023: 599, pHoy: 3199 },
+                { name: "Queso Cremón (1K)", p2023: 2790, pHoy: 13999 },
+                { name: "Harina Pureza Pizzas", p2023: 495, pHoy: 1990 },
+                { name: "Mayonesa Hellmans", p2023: 423, pHoy: 4999 }
+            ]},
+            { cat: "Higiene y Limpieza", items: [
+                { name: "Jabón líquido Skip", p2023: 2159, pHoy: 11999 },
+                { name: "Lavandina Ayudín (2L)", p2023: 679, pHoy: 3499 },
+                { name: "Toallas femeninas (x8)", p2023: 299, pHoy: 3029 }
+            ]}
+        ];
+
+        const dataCoto = [
+            { cat: "Carnicería", items: [
+                { name: "Cuadril de novillito (1K)", p2023: 3099, pHoy: 17699 },
+                { name: "Chuleta de Jamón de cerdo", p2023: 1399, pHoy: 6200 },
+                { name: "Chuleta de Paleta de Cerdo", p2023: 1399.9, pHoy: 4800 },
+                { name: "Pata Muslo con piel", p2023: 999.9, pHoy: 3999 }
+            ]},
+            { cat: "Fiambrería y Quesos", items: [
+                { name: "Mortadela Minicampo (300g)", p2023: 939, pHoy: 3759 },
+                { name: "Fiambre de cerdo (1K)", p2023: 3440, pHoy: 9799 },
+                { name: "Jamón Cocido Lario (1K)", p2023: 4669, pHoy: 21935 },
+                { name: "Salamín picado fino (1K)", p2023: 6475, pHoy: 33999 },
+                { name: "Queso cremoso primera marca", p2023: 2099, pHoy: 10999 },
+                { name: "Queso pategras (1K)", p2023: 3399, pHoy: 19999 },
+                { name: "Queso Reggianito (1K)", p2023: 3999, pHoy: 23999 },
+                { name: "Queso Tybo La Paulina (1K)", p2023: 2899, pHoy: 17699 }
+            ]},
+            { cat: "Lácteos y Almacén", items: [
+                { name: "Leche Tres Niñas (1L)", p2023: 479, pHoy: 1890 },
+                { name: "Manteca 1er Premio (200g)", p2023: 649.9, pHoy: 3400 },
+                { name: "Crema La Serenísima (330ml)", p2023: 719.9, pHoy: 4705 },
+                { name: "Jardinera Tres Legumbres", p2023: 365.9, pHoy: 896.35 },
+                { name: "Tostadas Riera (200g)", p2023: 654.9, pHoy: 1857 },
+                { name: "Salsa Casera Knorr Pomarola", p2023: 228.9, pHoy: 1499 },
+                { name: "Cerveza Heineken sin alcohol", p2023: 424, pHoy: 1500 }
+            ]},
+            { cat: "Limpieza e Higiene", items: [
+                { name: "Skip Bioenzimas (800g)", p2023: 769.99, pHoy: 4420.99 },
+                { name: "Papel Felpita 80mts", p2023: 1299.99, pHoy: 4295.87 }
+            ]}
         ];
 
         const presets = {
@@ -203,61 +209,88 @@
         };
 
         function updateIncome() {
-            const selected = document.getElementById('presetIncome').value;
-            if (selected !== "custom") {
-                document.getElementById('income2023').value = presets[selected].v2023;
-                document.getElementById('incomeHoy').value = presets[selected].vHoy;
-                calculate();
+            const s = document.getElementById('presetIncome').value;
+            if (s !== "custom") {
+                document.getElementById('income2023').value = presets[s].v2023;
+                document.getElementById('incomeHoy').value = presets[s].vHoy;
             }
         }
 
-        function calculate() {
-            const inc2023 = parseFloat(document.getElementById('income2023').value) || 0;
-            const incHoy = parseFloat(document.getElementById('incomeHoy').value) || 0;
-            const source = document.getElementById('priceSource').value;
-            const products = source === 'ipec' ? dataIPEC : dataAlvear;
-            
-            const table = document.getElementById('resultsTable');
-            const summaryDiv = document.getElementById('totalSummary');
-            const totalText = document.getElementById('totalPercentage');
-            
-            table.innerHTML = "";
-            let totalVariation = 0;
+        function renderTable() {
+            const src = document.getElementById('priceSource').value;
+            const data = src === 'ipec' ? dataIPEC : (src === 'alvear' ? dataAlvear : dataCoto);
+            const body = document.getElementById('resultsTable');
+            body.innerHTML = "";
 
-            if (inc2023 > 0 && incHoy > 0) {
-                products.forEach(p => {
-                    const u2023 = inc2023 / p.p2023;
-                    const uHoy = incHoy / p.pHoy;
-                    const diff = ((uHoy / u2023) - 1) * 100;
-                    totalVariation += diff;
-
-                    table.innerHTML += `
-                        <tr class="hover:bg-gray-50 border-b border-gray-100 transition-colors">
-                            <td class="p-4 text-sm font-bold text-gray-800" data-label="Producto">${p.name}</td>
-                            <td class="p-4 text-center text-gray-500 font-mono" data-label="¿Cuánto comprabas?">${u2023.toFixed(1)}</td>
-                            <td class="p-4 text-center text-gray-700 font-mono font-bold" data-label="¿Cuánto comprás hoy?">${uHoy.toFixed(1)}</td>
-                            <td class="p-4 text-center font-black ${diff < 0 ? 'text-red-600' : 'text-green-600'}" data-label="Variación">
-                                ${diff.toFixed(1)}%
+            data.forEach(cat => {
+                body.innerHTML += `<tr class="category-row"><td colspan="5" class="p-2 pl-4">${cat.cat}</td></tr>`;
+                cat.items.forEach((p, i) => {
+                    const id = `p-${p.name.replace(/\s/g, '')}`;
+                    body.innerHTML += `
+                        <tr class="hover:bg-blue-50 transition border-b border-gray-100">
+                            <td class="p-4 text-center checkbox-cell">
+                                <input type="checkbox" class="w-5 h-5 prod-check" data-p2023="${p.p2023}" data-phoy="${p.pHoy}">
                             </td>
+                            <td class="p-4 text-sm font-bold text-gray-800" data-label="Producto">${p.name}</td>
+                            <td class="p-4 text-center font-mono text-gray-400 res-2023" data-label="¿Cuánto comprabas?">-</td>
+                            <td class="p-4 text-center font-mono font-bold text-gray-600 res-hoy" data-label="¿Cuánto comprás hoy?">-</td>
+                            <td class="p-4 text-center font-black text-xl res-diff" data-label="Variación">-</td>
                         </tr>`;
                 });
+            });
+            document.getElementById('totalSummary').classList.add('hidden');
+        }
 
-                const averageLoss = (totalVariation / products.length).toFixed(1);
-                summaryDiv.classList.remove('hidden');
-                totalText.innerText = `${averageLoss}%`;
-            } else {
-                summaryDiv.classList.add('hidden');
+        function calculateImpact() {
+            const inc2023 = parseFloat(document.getElementById('income2023').value) || 0;
+            const incHoy = parseFloat(document.getElementById('incomeHoy').value) || 0;
+            if (!inc2023 || !incHoy) return alert("Cargá los ingresos primero");
+
+            const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
+            let totalVar = 0, count = 0;
+
+            rows.forEach(row => {
+                const check = row.querySelector('.prod-check');
+                const p2023 = parseFloat(check.dataset.p2023);
+                const pHoy = parseFloat(check.dataset.phoy);
+                
+                if (check.checked) {
+                    const u2023 = inc2023 / p2023;
+                    const uHoy = incHoy / pHoy;
+                    const diff = ((uHoy / u2023) - 1) * 100;
+                    
+                    row.querySelector('.res-2023').innerText = u2023.toFixed(1);
+                    row.querySelector('.res-hoy').innerText = uHoy.toFixed(1);
+                    const diffCell = row.querySelector('.res-diff');
+                    diffCell.innerText = `${diff.toFixed(1)}%`;
+                    diffCell.className = `p-4 text-center font-black text-xl res-diff ${diff < 0 ? 'text-red-600' : 'text-green-600'}`;
+                    
+                    totalVar += diff;
+                    count++;
+                } else {
+                    row.querySelectorAll('.res-2023, .res-hoy, .res-diff').forEach(c => c.innerText = "-");
+                }
+            });
+
+            if (count > 0) {
+                document.getElementById('totalSummary').classList.remove('hidden');
+                document.getElementById('totalPercentage').innerText = `${(totalVar / count).toFixed(1)}%`;
             }
+        }
+
+        function selectAll(val) {
+            document.querySelectorAll('.prod-check').forEach(c => c.checked = val);
+            calculateImpact();
         }
 
         function resetAll() {
-            document.getElementById('presetIncome').value = "custom";
-            document.getElementById('priceSource').value = "ipec";
             document.getElementById('income2023').value = "";
             document.getElementById('incomeHoy').value = "";
-            document.getElementById('resultsTable').innerHTML = "";
-            document.getElementById('totalSummary').classList.add('hidden');
+            renderTable();
         }
+
+        // Carga inicial
+        renderTable();
     </script>
 </body>
 </html>
