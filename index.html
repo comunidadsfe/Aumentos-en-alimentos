@@ -26,6 +26,7 @@
         }
         .category-row { background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; }
         .rubro-badge { background-color: #1e3a8a; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 900; font-size: 0.8rem; }
+        .price-subtext { font-size: 0.75rem; color: #9ca3af; font-weight: 500; display: block; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans pb-32">
@@ -104,6 +105,7 @@
     </div>
 
     <script>
+        // --- BASES DE DATOS ---
         const dataIPEC = [
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
@@ -217,19 +219,6 @@
                 { name: "Queso pategras (1K)", p2023: 3399, pHoy: 19999 },
                 { name: "Queso Reggianito (1K)", p2023: 3999, pHoy: 23999 },
                 { name: "Queso Tybo La Paulina (1K)", p2023: 2899, pHoy: 17699 }
-            ]},
-            { cat: "Lácteos y Almacén", items: [
-                { name: "Leche Tres Niñas (1L)", p2023: 479, pHoy: 1890 },
-                { name: "Manteca 1er Premio (200g)", p2023: 649.9, pHoy: 3400 },
-                { name: "Crema La Serenísima (330ml)", p2023: 719.9, pHoy: 4705 },
-                { name: "Jardinera Tres Legumbres", p2023: 365.9, pHoy: 896.35 },
-                { name: "Tostadas Riera (200g)", p2023: 654.9, pHoy: 1857 },
-                { name: "Salsa Casera Knorr Pomarola", p2023: 228.9, pHoy: 1499 },
-                { name: "Cerveza Heineken sin alcohol", p2023: 424, pHoy: 1500 }
-            ]},
-            { cat: "Limpieza e Higiene", items: [
-                { name: "Skip Bioenzimas (800g)", p2023: 769.99, pHoy: 4420.99 },
-                { name: "Papel Felpita 80mts", p2023: 1299.99, pHoy: 4295.87 }
             ]}
         ];
 
@@ -241,6 +230,7 @@
             docente: { v2023: 269574, vHoy: 1037205 }
         };
 
+        // --- LÓGICA ---
         function getRawValue(str) {
             if (!str) return 0;
             let clean = str.toString().replace(/\$/g, '').replace(/\./g, '').replace(',', '.').trim();
@@ -267,15 +257,7 @@
 
         function renderTable() {
             const src = document.getElementById('priceSource').value;
-            let data;
-            if (src === 'alvear') {
-                data = dataAlvear;
-            } else if (src === 'coto') {
-                data = dataCoto;
-            } else {
-                data = dataIPEC;
-            }
-            
+            let data = src === 'alvear' ? dataAlvear : (src === 'coto' ? dataCoto : dataIPEC);
             const body = document.getElementById('resultsTable');
             body.innerHTML = "";
 
@@ -303,8 +285,14 @@
                                     onchange="calculateImpact()">
                             </td>
                             <td class="p-4 font-bold text-gray-800" data-label="Producto">${p.name}</td>
-                            <td class="p-4 text-center font-bold text-gray-400 res-2023" data-label="2023:">-</td>
-                            <td class="p-4 text-center font-bold text-gray-600 res-hoy" data-label="Hoy:">-</td>
+                            <td class="p-4 text-center font-bold text-gray-400" data-label="2023:">
+                                <span class="res-2023">-</span>
+                                <span class="price-subtext">$ ${p.p2023.toLocaleString('es-AR')}</span>
+                            </td>
+                            <td class="p-4 text-center font-bold text-gray-600" data-label="Hoy:">
+                                <span class="res-hoy">-</span>
+                                <span class="price-subtext">$ ${p.pHoy.toLocaleString('es-AR')}</span>
+                            </td>
                             <td class="p-4 text-center font-black text-xl res-diff" data-label="Var %">-</td>
                         </tr>`;
                 });
@@ -321,17 +309,22 @@
             const inc2023 = getRawValue(document.getElementById('income2023').value);
             const incHoy = getRawValue(document.getElementById('incomeHoy').value);
             const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
-            let totalVar = 0, countTotal = 0;
+            
+            let totalCosto2023 = 0;
+            let totalCostoHoy = 0;
+            let countTotal = 0;
+
             const rubroData = {};
 
             rows.forEach(row => {
                 const check = row.querySelector('.prod-check');
                 const catSlug = check.dataset.category;
-                if (!rubroData[catSlug]) rubroData[catSlug] = { sum: 0, count: 0 };
+                const p2023 = parseFloat(check.dataset.p2023);
+                const pHoy = parseFloat(check.dataset.phoy);
+
+                if (!rubroData[catSlug]) rubroData[catSlug] = { costo2023: 0, costoHoy: 0, count: 0 };
 
                 if (check.checked && inc2023 > 0 && incHoy > 0) {
-                    const p2023 = parseFloat(check.dataset.p2023);
-                    const pHoy = parseFloat(check.dataset.phoy);
                     const u2023 = inc2023 / p2023;
                     const uHoy = incHoy / pHoy;
                     const diff = ((uHoy / u2023) - 1) * 100;
@@ -342,29 +335,46 @@
                     dc.innerText = `${diff.toFixed(1)}%`;
                     dc.className = `p-4 text-center font-black text-xl res-diff ${diff < 0 ? 'text-red-600' : 'text-green-600'}`;
                     
-                    totalVar += diff;
+                    // Metodología de Canasta: Sumamos costos unitarios
+                    totalCosto2023 += p2023;
+                    totalCostoHoy += pHoy;
                     countTotal++;
-                    rubroData[catSlug].sum += diff;
+
+                    rubroData[catSlug].costo2023 += p2023;
+                    rubroData[catSlug].costoHoy += pHoy;
                     rubroData[catSlug].count++;
                 } else {
-                    row.querySelectorAll('.res-2023, .res-hoy, .res-diff').forEach(c => c.innerText = "-");
+                    row.querySelector('.res-2023').innerText = "-";
+                    row.querySelector('.res-hoy').innerText = "-";
+                    row.querySelector('.res-diff').innerText = "-";
                 }
             });
 
+            // Badges de Rubro (Usando lógica de canasta)
             for (const slug in rubroData) {
                 const badge = document.getElementById(`badge-${slug}`);
                 if (rubroData[slug].count > 0) {
-                    badge.innerText = `${(rubroData[slug].sum / rubroData[slug].count).toFixed(1)}%`;
+                    const c23 = rubroData[slug].costo2023;
+                    const cHoy = rubroData[slug].costoHoy;
+                    const canastasAntes = inc2023 / c23;
+                    const canastasAhora = incHoy / cHoy;
+                    const varRubro = ((canastasAhora / canastasAntes) - 1) * 100;
+                    badge.innerText = `${varRubro.toFixed(1)}%`;
                     badge.classList.remove('hidden');
                 } else {
                     badge.classList.add('hidden');
                 }
             }
 
+            // Barra Total (Lógica de Canasta Seleccionada)
             const bar = document.getElementById('stickyResultBar');
             if (countTotal > 0) {
+                const canastasTotalesAntes = inc2023 / totalCosto2023;
+                const canastasTotalesAhora = incHoy / totalCostoHoy;
+                const perdidaReal = ((canastasTotalesAhora / canastasTotalesAntes) - 1) * 100;
+                
                 bar.classList.remove('hidden');
-                document.getElementById('totalPercentageBar').innerText = `${(totalVar / countTotal).toFixed(1)}%`;
+                document.getElementById('totalPercentageBar').innerText = `${perdidaReal.toFixed(1)}%`;
             } else {
                 bar.classList.add('hidden');
             }
