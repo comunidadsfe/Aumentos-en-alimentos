@@ -26,7 +26,6 @@
         }
         .category-row { background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; }
         .rubro-badge { background-color: #1e3a8a; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 900; font-size: 0.8rem; }
-        .hidden-inputs { display: none; }
     </style>
 </head>
 <body class="bg-gray-100 font-sans pb-32">
@@ -54,11 +53,11 @@
                     <div id="manualInputsContainer" class="grid grid-cols-2 gap-3">
                         <div class="flex flex-col">
                             <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Noviembre 2023</span>
-                            <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleManualInput(this)">
+                            <input type="text" id="income2023" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="calculateImpact()">
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[9px] font-bold text-gray-400 uppercase mb-1 text-center">Hoy</span>
-                            <input type="text" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="handleManualInput(this)">
+                            <input type="text" id="incomeHoy" placeholder="$ 0" class="w-full p-3 border-2 border-gray-200 rounded-lg text-center font-bold" oninput="calculateImpact()">
                         </div>
                     </div>
                 </div>
@@ -141,38 +140,6 @@
             ]}
         ];
 
-        // Se mantienen los datos de IPEC y Coto de las versiones anteriores
-        const dataIPEC = [
-            { cat: "Panificados y Harinas", items: [
-                { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
-                { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
-                { name: "Galletitas dulces (150 g.)", p2023: 420.35, pHoy: 1464.71 },
-                { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
-                { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
-                { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
-                { name: "Fideos Secos Guisero (500 g.)", p2023: 642.99, pHoy: 1471.06 }
-            ]},
-            { cat: "Carnicería", items: [
-                { name: "Asado (Kg.)", p2023: 4116.28, pHoy: 22305.00 },
-                { name: "Carne picada especial (Kg.)", p2023: 3674.89, pHoy: 17076.20 },
-                { name: "Paleta (Kg.)", p2023: 3759.50, pHoy: 19063.86 },
-                { name: "Cuadril (Kg.)", p2023: 4526.12, pHoy: 22569.99 },
-                { name: "Nalga (Kg.)", p2023: 4429.40, pHoy: 22524.60 },
-                { name: "Hígado (Kg.)", p2023: 1097.16, pHoy: 5542.88 },
-                { name: "Hamburguesas (4 u.)", p2023: 1609.24, pHoy: 6702.00 },
-                { name: "Pollo entero (Kg.)", p2023: 1417.83, pHoy: 5279.56 }
-            ]}
-        ];
-
-        const dataCoto = [
-            { cat: "Carnicería", items: [
-                { name: "Cuadril de novillito (1K)", p2023: 3099, pHoy: 17699 },
-                { name: "Chuleta de Jamón de cerdo", p2023: 1399, pHoy: 6200 },
-                { name: "Chuleta de Paleta de Cerdo", p2023: 1399.9, pHoy: 4800 },
-                { name: "Pata Muslo con piel", p2023: 999.9, pHoy: 3999 }
-            ]}
-        ];
-
         const presets = {
             smvm: { v2023: 156000, vHoy: 363000 },
             jubilacion: { v2023: 160713, vHoy: 463174 },
@@ -187,39 +154,27 @@
             return parseFloat(clean) || 0;
         }
 
-        function formatToCurrency(val) {
-            return new Intl.NumberFormat('es-AR', {
-                style: 'currency',
-                currency: 'ARS',
-                minimumFractionDigits: 0
-            }).format(val);
-        }
-
-        function handleManualInput(input) {
-            calculateImpact();
-        }
-
         function updateIncome() {
             const s = document.getElementById('presetIncome').value;
             const container = document.getElementById('manualInputsContainer');
+            const in2023 = document.getElementById('income2023');
+            const inHoy = document.getElementById('incomeHoy');
+            
             if (s !== "custom") {
-                container.classList.add('hidden-inputs');
-                document.getElementById('income2023').value = formatToCurrency(presets[s].v2023);
-                document.getElementById('incomeHoy').value = formatToCurrency(presets[s].vHoy);
+                container.style.display = 'none'; // Desaparece forzado
+                in2023.value = presets[s].v2023;
+                inHoy.value = presets[s].vHoy;
             } else {
-                container.classList.remove('hidden-inputs');
-                document.getElementById('income2023').value = "";
-                document.getElementById('incomeHoy').value = "";
+                container.style.display = 'grid'; // Reaparece para carga manual
+                in2023.value = "";
+                inHoy.value = "";
             }
             calculateImpact();
         }
 
         function renderTable() {
             const src = document.getElementById('priceSource').value;
-            let data = dataAlvear;
-            if (src === 'ipec') data = dataIPEC;
-            if (src === 'coto') data = dataCoto;
-            
+            let data = dataAlvear; // Por defecto Alvear ahora con 28 productos
             const body = document.getElementById('resultsTable');
             body.innerHTML = "";
 
@@ -247,8 +202,8 @@
                                     onchange="calculateImpact()">
                             </td>
                             <td class="p-4 font-bold text-gray-800" data-label="Producto">${p.name}</td>
-                            <td class="p-4 text-center font-bold text-gray-400 res-2023" data-label="2023:">-</td>
-                            <td class="p-4 text-center font-bold text-gray-600 res-hoy" data-label="Hoy:">-</td>
+                            <td class="p-4 text-center font-bold text-gray-400 res-2023" data-label="Un. 2023">-</td>
+                            <td class="p-4 text-center font-bold text-gray-600 res-hoy" data-label="Un. Hoy">-</td>
                             <td class="p-4 text-center font-black text-xl res-diff" data-label="Var %">-</td>
                         </tr>`;
                 });
