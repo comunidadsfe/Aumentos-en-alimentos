@@ -65,8 +65,8 @@
                 <div class="bg-blue-50 p-5 rounded-xl border border-blue-100 shadow-sm">
                     <label class="block text-xs font-black text-blue-900 uppercase mb-3 italic">2. Fuente de Precios</label>
                     <select id="priceSource" class="w-full p-3 mb-4 bg-white border-2 border-blue-200 rounded-lg font-black text-blue-900" onchange="renderTable()">
-                        <option value="alvear">ALVEAR - 28 artículos</option>
                         <option value="ipec">IPEC - 48 artículos</option>
+                        <option value="alvear">ALVEAR - 28 artículos</option>
                         <option value="coto">COTO - 23 artículos</option>
                     </select>
                     <div class="flex gap-2">
@@ -104,6 +104,67 @@
     </div>
 
     <script>
+        const dataIPEC = [
+            { cat: "Panificados y Harinas", items: [
+                { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
+                { name: "Pan de mesa (390 g.)", p2023: 891.44, pHoy: 3993.77 },
+                { name: "Galletitas dulces (150 g.)", p2023: 420.35, pHoy: 1464.71 },
+                { name: "Galletitas de agua (250 g.)", p2023: 446.46, pHoy: 1415.21 },
+                { name: "Harina de trigo común (Kg.)", p2023: 402.46, pHoy: 951.40 },
+                { name: "Arroz blanco simple (Kg.)", p2023: 1068.42, pHoy: 1858.11 },
+                { name: "Fideos Secos Guisero (500 g.)", p2023: 642.99, pHoy: 1471.06 }
+            ]},
+            { cat: "Carnicería", items: [
+                { name: "Asado (Kg.)", p2023: 4116.28, pHoy: 22305.00 },
+                { name: "Carne picada especial (Kg.)", p2023: 3674.89, pHoy: 17076.20 },
+                { name: "Paleta (Kg.)", p2023: 3759.50, pHoy: 19063.86 },
+                { name: "Cuadril (Kg.)", p2023: 4526.12, pHoy: 22569.99 },
+                { name: "Nalga (Kg.)", p2023: 4429.40, pHoy: 22524.60 },
+                { name: "Hígado (Kg.)", p2023: 1097.16, pHoy: 5542.88 },
+                { name: "Hamburguesas (4 u.)", p2023: 1609.24, pHoy: 6702.00 },
+                { name: "Pollo entero (Kg.)", p2023: 1417.83, pHoy: 5279.56 },
+                { name: "Filet de merluza fresco (Kg.)", p2023: 2994.08, pHoy: 12684.06 },
+                { name: "Salchicha tipo viena (6 u.)", p2023: 690.01, pHoy: 2562.66 },
+                { name: "Jamón cocido (Kg.)", p2023: 5763.80, pHoy: 18956.52 },
+                { name: "Salchichón (Kg.)", p2023: 3531.42, pHoy: 11963.98 },
+                { name: "Salame (Kg.)", p2023: 6402.78, pHoy: 23098.17 }
+            ]},
+            { cat: "Lácteos y Almacén", items: [
+                { name: "Aceite de girasol (1,5 L.)", p2023: 1495.50, pHoy: 6541.07 },
+                { name: "Leche fresca sachet (L.)", p2023: 560.48, pHoy: 1811.38 },
+                { name: "Leche en polvo (800 g.)", p2023: 3513.07, pHoy: 12855.28 },
+                { name: "Queso crema (280 g.)", p2023: 1213.22, pHoy: 4015.38 },
+                { name: "Queso Sardo (Kg.)", p2023: 4982.96, pHoy: 21766.92 },
+                { name: "Manteca (150 g.)", p2023: 792.13, pHoy: 3048.66 },
+                { name: "Yogur firme (195 cc.)", p2023: 430.21, pHoy: 1780.65 },
+                { name: "Dulce de leche (450 g.)", p2023: 1039.08, pHoy: 3571.45 },
+                { name: "Huevos de gallina (12 u.)", p2023: 1196.71, pHoy: 3599.42 },
+                { name: "Azúcar (Kg.)", p2023: 1083.62, pHoy: 1435.80 },
+                { name: "Yerba mate (500 g.)", p2023: 1181.03, pHoy: 2359.58 },
+                { name: "Café molido (500 g.)", p2023: 2740.36, pHoy: 12325.65 }
+            ]},
+            { cat: "Frutas y Verduras", items: [
+                { name: "Manzana deliciosa (Kg.)", p2023: 1084.17, pHoy: 4315.55 },
+                { name: "Naranja (Kg.)", p2023: 562.89, pHoy: 2070.54 },
+                { name: "Banana (Kg.)", p2023: 1281.06, pHoy: 3015.44 },
+                { name: "Papa (Kg.)", p2023: 579.67, pHoy: 1232.51 },
+                { name: "Cebolla (Kg.)", p2023: 358.53, pHoy: 1011.09 },
+                { name: "Lechuga (Kg.)", p2023: 725.25, pHoy: 4427.59 },
+                { name: "Tomate redondo (Kg.)", p2023: 1387.50, pHoy: 2419.70 }
+            ]},
+            { cat: "Otros Almacén y Bebidas", items: [
+                { name: "Tomate en conserva (lata)", p2023: 418.04, pHoy: 1301.98 },
+                { name: "Lentejas secas (400 g.)", p2023: 813.91, pHoy: 1727.29 },
+                { name: "Sal fina (500 g.)", p2023: 318.53, pHoy: 1355.67 },
+                { name: "Gaseosa cola (1,5 L.)", p2023: 955.46, pHoy: 3807.16 },
+                { name: "Agua sin Gas (1,5 L.)", p2023: 379.88, pHoy: 1899.67 },
+                { name: "Soda sifón (2 L.)", p2023: 551.25, pHoy: 1590.26 },
+                { name: "Cerveza en botella (L.)", p2023: 1100.56, pHoy: 3794.73 },
+                { name: "Cerveza en lata (350 cc.)", p2023: 505.06, pHoy: 1589.57 },
+                { name: "Vino común (L.)", p2023: 1094.44, pHoy: 2409.64 }
+            ]}
+        ];
+
         const dataAlvear = [
             { cat: "Carnicería", items: [
                 { name: "Rack de ternera (1kg)", p2023: 3949, pHoy: 30990 },
@@ -140,6 +201,38 @@
             ]}
         ];
 
+        const dataCoto = [
+            { cat: "Carnicería", items: [
+                { name: "Cuadril de novillito (1K)", p2023: 3099, pHoy: 17699 },
+                { name: "Chuleta de Jamón de cerdo", p2023: 1399, pHoy: 6200 },
+                { name: "Chuleta de Paleta de Cerdo", p2023: 1399.9, pHoy: 4800 },
+                { name: "Pata Muslo con piel", p2023: 999.9, pHoy: 3999 }
+            ]},
+            { cat: "Fiambrería y Quesos", items: [
+                { name: "Mortadela Minicampo (300g)", p2023: 939, pHoy: 3759 },
+                { name: "Fiambre de cerdo (1K)", p2023: 3440, pHoy: 9799 },
+                { name: "Jamón Cocido Lario (1K)", p2023: 4669, pHoy: 21935 },
+                { name: "Salamín picado fino (1K)", p2023: 6475, pHoy: 33999 },
+                { name: "Queso cremoso 1era marca", p2023: 2099, pHoy: 10999 },
+                { name: "Queso pategras (1K)", p2023: 3399, pHoy: 19999 },
+                { name: "Queso Reggianito (1K)", p2023: 3999, pHoy: 23999 },
+                { name: "Queso Tybo La Paulina (1K)", p2023: 2899, pHoy: 17699 }
+            ]},
+            { cat: "Lácteos y Almacén", items: [
+                { name: "Leche Tres Niñas (1L)", p2023: 479, pHoy: 1890 },
+                { name: "Manteca 1er Premio (200g)", p2023: 649.9, pHoy: 3400 },
+                { name: "Crema La Serenísima (330ml)", p2023: 719.9, pHoy: 4705 },
+                { name: "Jardinera Tres Legumbres", p2023: 365.9, pHoy: 896.35 },
+                { name: "Tostadas Riera (200g)", p2023: 654.9, pHoy: 1857 },
+                { name: "Salsa Casera Knorr Pomarola", p2023: 228.9, pHoy: 1499 },
+                { name: "Cerveza Heineken sin alcohol", p2023: 424, pHoy: 1500 }
+            ]},
+            { cat: "Limpieza e Higiene", items: [
+                { name: "Skip Bioenzimas (800g)", p2023: 769.99, pHoy: 4420.99 },
+                { name: "Papel Felpita 80mts", p2023: 1299.99, pHoy: 4295.87 }
+            ]}
+        ];
+
         const presets = {
             smvm: { v2023: 156000, vHoy: 363000 },
             jubilacion: { v2023: 160713, vHoy: 463174 },
@@ -161,11 +254,11 @@
             const inHoy = document.getElementById('incomeHoy');
             
             if (s !== "custom") {
-                container.style.display = 'none'; // Desaparece forzado
+                container.style.display = 'none';
                 in2023.value = presets[s].v2023;
                 inHoy.value = presets[s].vHoy;
             } else {
-                container.style.display = 'grid'; // Reaparece para carga manual
+                container.style.display = 'grid';
                 in2023.value = "";
                 inHoy.value = "";
             }
@@ -174,7 +267,10 @@
 
         function renderTable() {
             const src = document.getElementById('priceSource').value;
-            let data = dataAlvear; // Por defecto Alvear ahora con 28 productos
+            let data = dataIPEC; // IPEC por defecto
+            if (src === 'alvear') data = dataAlvear;
+            if (src === 'coto') data = dataCoto;
+            
             const body = document.getElementById('resultsTable');
             body.innerHTML = "";
 
@@ -202,8 +298,8 @@
                                     onchange="calculateImpact()">
                             </td>
                             <td class="p-4 font-bold text-gray-800" data-label="Producto">${p.name}</td>
-                            <td class="p-4 text-center font-bold text-gray-400 res-2023" data-label="Un. 2023">-</td>
-                            <td class="p-4 text-center font-bold text-gray-600 res-hoy" data-label="Un. Hoy">-</td>
+                            <td class="p-4 text-center font-bold text-gray-400 res-2023" data-label="2023:">-</td>
+                            <td class="p-4 text-center font-bold text-gray-600 res-hoy" data-label="Hoy:">-</td>
                             <td class="p-4 text-center font-black text-xl res-diff" data-label="Var %">-</td>
                         </tr>`;
                 });
