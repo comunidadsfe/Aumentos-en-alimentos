@@ -24,18 +24,53 @@
             .card-label { font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; line-height: 1.1; }
         }
         .hidden-checks .check-col { display: none; }
-        .data-hidden { display: none !important; }
         
         #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; font-family: sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 500px; border-radius: 15px; padding: 30px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .active-modal { display: flex; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
 
+    <div id="sourcesModal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <h3 class="font-black text-blue-900 uppercase italic">Fuentes de Información</h3>
+                <button onclick="closeModal()" class="text-slate-400 font-bold text-2xl hover:text-slate-600">&times;</button>
+            </div>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Canasta IPEC</h4>
+                    <ul class="text-sm font-bold text-blue-700 space-y-1">
+                        <li><a href="https://www.santafe.gob.ar/ipec/estadisticas/precios-y-consumo/" target="_blank" class="hover:underline">→ Informes Mensuales IPEC</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Relevamiento ALVEAR</h4>
+                    <ul class="text-sm font-bold text-blue-700 space-y-2">
+                        <li><a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 16 de noviembre 2023</a></li>
+                        <li><a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 23 de noviembre 2023</a></li>
+                        <li><a href="https://drive.google.com/file/d/1pz5CgBiq86pImI1ONlEY220ZEKdV6w1i/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 30 de noviembre 2023</a></li>
+                        <li><a href="https://drive.google.com/file/d/1BiZ1QfAsnGP_xJ0di7mqHfyb8ywmeTZ1/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 07 de diciembre 2023</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Relevamiento COTO</h4>
+                    <ul class="text-sm font-bold text-blue-700 space-y-1">
+                        <li><a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista Noviembre 2023</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="canvas-poster">
-        <div id="poster-header" style="font-size: 20px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase;">PRODUCTO</div>
-        <div id="poster-status" style="font-size: 22px; font-weight: 700; margin-bottom: 10px; opacity: 0.9;">Pérdida de poder adquisitivo</div>
-        <div id="poster-percent" style="font-size: 100px; font-weight: 900; font-style: italic; letter-spacing: -3px; margin: 10px 0;">-00.0%</div>
-        <div style="font-size: 20px; margin-top: 40px; font-weight: 900; border-top: 2px solid rgba(255,255,255,0.3); padding-top: 20px; text-transform: uppercase; letter-spacing: 5px;">Comunidad</div>
+        <div id="poster-header" style="font-size: 18px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase;">NOMBRE DE CANASTA</div>
+        <div id="poster-status" style="font-size: 20px; font-weight: 700; margin-bottom: 5px; opacity: 0.8;">Pérdida de poder adquisitivo</div>
+        <div id="poster-percent" style="font-size: 90px; font-weight: 900; font-style: italic; letter-spacing: -2px;">-00.0%</div>
+        <div style="font-size: 18px; margin-top: 40px; font-weight: 900; border-top: 2px solid rgba(255,255,255,0.3); padding-top: 20px; text-transform: uppercase; letter-spacing: 4px;">Comunidad</div>
     </div>
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
@@ -47,8 +82,8 @@
         <div class="p-4 md:p-10">
             <div class="panel-control mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">
                 <div class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
-                    <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest italic">1. Ingreso de referencia</h2>
-                    <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-6" onchange="handlePresetChange()">
+                    <h2 class="text-xs font-black text-blue-900 uppercase mb-2 tracking-widest italic">1. Ingreso de referencia</h2>
+                    <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-1" onchange="handlePresetChange()">
                         <option value="custom">CARGA MANUAL</option>
                         <option value="smvm">Salario Mínimo (SMVM)</option>
                         <option value="jubilacion">Jubilación Mínima</option>
@@ -56,6 +91,7 @@
                         <option value="comercio">Salario Comercio</option>
                         <option value="docente">Salario Docente</option>
                     </select>
+                    <div id="incomeNote" class="text-[10px] font-bold text-slate-400 uppercase mb-4 h-4 italic tracking-tighter"></div>
                     <div class="grid grid-cols-2 gap-4">
                         <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
                         <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
@@ -63,16 +99,19 @@
                 </div>
 
                 <div class="pt-6 md:pt-0 md:pl-10">
-                    <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest italic">2. Canastas de precios</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Canastas de precios</h2>
+                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center font-black text-xs hover:bg-blue-200 transition" title="Ver fuentes de productos">ⓘ</button>
+                    </div>
                     <select id="priceSource" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="initView()">
                         <option value="ipec">1. IPEC (48 productos)</option>
                         <option value="alvear">2. ALVEAR (27 productos)</option>
                         <option value="coto">3. COTO (23 productos)</option>
                     </select>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200 transition">Armá tu propia canasta</button>
-                        <button onclick="resetAll()" class="py-2 border-2 border-slate-300 text-slate-500 text-[10px] font-black uppercase rounded-lg hover:bg-slate-200 transition">Reiniciar datos</button>
-                        <button onclick="shareTool()" class="md:col-span-2 py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700 flex items-center justify-center gap-2 transition">Compartir por WhatsApp</button>
+                        <button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200">Armá tu propia canasta</button>
+                        <button onclick="resetAll()" class="py-2 border-2 border-slate-300 text-slate-500 text-[10px] font-black uppercase rounded-lg hover:bg-slate-200">Reiniciar datos</button>
+                        <button onclick="shareTool()" class="md:col-span-2 py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700 flex items-center justify-center gap-2">Compartir herramienta</button>
                     </div>
                 </div>
                 
@@ -121,15 +160,22 @@
             calculate();
         }
 
-        function handlePresetChange() { document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; calculate(); }
-        function resetAll() { document.getElementById('presetIncome').value = "custom"; document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; selectionMode = false; mobileKey = null; initView(); }
-        
-        function toggleSelectionMode() { 
-            selectionMode = !selectionMode; 
-            document.getElementById('btnMode').innerText = selectionMode ? "Ver canasta completa" : "Armá tu propia canasta"; 
-            if(selectionMode && !mobileKey) { document.getElementById('productsView').classList.remove('hidden'); }
-            initView(); 
+        function handlePresetChange() { 
+            const key = document.getElementById('presetIncome').value;
+            const noteEl = document.getElementById('incomeNote');
+            document.getElementById('inc2023').value = ""; 
+            document.getElementById('incHoy').value = ""; 
+            if(key === "municipal") noteEl.innerText = "Fuente: Paritarias FESTRAM";
+            else if(key === "docente") noteEl.innerText = "Fuente: Maestro de Grado, sin antigüedad";
+            else if(key === "comercio") noteEl.innerText = "Fuente: Categoría Maestranza A, sin antigüedad";
+            else noteEl.innerText = "";
+            calculate(); 
         }
+
+        function resetAll() { document.getElementById('presetIncome').value = "custom"; document.getElementById('incomeNote').innerText = ""; document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; selectionMode = false; mobileKey = null; initView(); }
+        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver canasta completa" : "Armá tu propia canasta"; if(selectionMode && !mobileKey) { document.getElementById('productsView').classList.remove('hidden'); } initView(); }
+        function openModal() { document.getElementById('sourcesModal').classList.add('active-modal'); }
+        function closeModal() { document.getElementById('sourcesModal').classList.remove('active-modal'); }
 
         function activateMobile(k) {
             const view = document.getElementById('productsView');
@@ -154,16 +200,15 @@
             document.getElementById('poster-status').innerText = statusTxt;
             document.getElementById('poster-percent').innerText = percentTxt;
             poster.style.background = parseFloat(percentTxt) < 0 ? '#dc2626' : '#16a34a';
-            if(percentTxt === "--%") poster.style.background = '#64748b'; // Gris si es nulo
-
+            if(percentTxt === "--%") poster.style.background = '#64748b';
             await new Promise(r => setTimeout(r, 150));
             const canvas = await html2canvas(poster, { useCORS: true, logging: false, scale: 2 });
-            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
-            const file = new File([blob], "PoderAdquisitivo.png", { type: 'image/png' });
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            if (isMobile && navigator.share) {
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                const file = new File([blob], "PoderAdquisitivo.png", { type: 'image/png' });
                 try { await navigator.share({ files: [file], title: 'Mi Poder Adquisitivo' }); } catch (err) {}
-            } else { if(!isMobile) downloadFallback(canvas, headTxt); }
+            } else { downloadFallback(canvas, headTxt); }
         }
         
         function downloadFallback(canvas, t) {
@@ -215,12 +260,12 @@
                                         <div class="card-label italic res-status">Variación</div>
                                         <div class="text-xl font-black res-v">-</div>
                                     </div>
-                                    <button onclick="handlePosterRequest('${id}', '${p.n}')" class="p-2 bg-slate-100 rounded-full transition hover:bg-slate-200"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button>
+                                    <button onclick="handlePosterRequest('${id}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button>
                                 </div>
                             </div>
                         </div>`;
                     tableHtml += `
-                        <tr class="border-b hover:bg-slate-50 transition" data-id="${id}">
+                        <tr class="border-b" data-id="${id}">
                             <td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="syncAndCalc('${id}', this.checked)"></td>
                             <td class="p-4 font-bold text-slate-700">${p.n}</td>
                             <td class="p-4 text-center js-data"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td>
@@ -252,37 +297,29 @@
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = (k === 'ipec') ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
-                
                 const el = document.getElementById(`dash-${k}`);
-                if (i23 >= s23) { // Solo si el ingreso permite comprar la canasta al menos una vez
+                if (i23 >= s23) {
                     const r = (((iH/sh)/(i23/s23))-1)*100;
                     el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%";
                     el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`;
-                } else {
-                    el.innerText = "--%"; el.className = `text-xl font-black text-slate-400`;
-                }
+                } else { el.innerText = "--%"; el.className = `text-xl font-black text-slate-400`; }
             });
 
             const cards = document.querySelectorAll('.product-card');
             const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
             let t23 = 0, tH = 0, count = 0;
-            
             rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check');
                 const mCard = cards[idx];
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
                 const isSelected = cb.checked;
-
                 [r, mCard].forEach(container => {
                     if(!container) return;
                     const dataBox = container.querySelectorAll('.js-data');
                     dataBox.forEach(box => { box.style.display = (selectionMode && !isSelected) ? 'none' : (container.tagName === 'DIV' ? 'grid' : 'table-cell'); });
-                    
                     if (i23 > 0 && (!selectionMode || isSelected)) {
                         const statusLabel = container.querySelector('.res-status');
                         const rv = container.querySelector('.res-v');
-                        
-                        // VALIDACIÓN DE UMBRAL (Ingreso debe permitir comprar al menos 1 unidad en 2023)
                         if (i23 >= p23) {
                             const u23 = i23/p23, uh = iH/ph, v = ((uh/u23)-1)*100;
                             container.querySelector('.res-u23').innerText = u23.toFixed(1);
@@ -295,7 +332,7 @@
                             container.querySelector('.res-uh').innerText = "0.0";
                             rv.innerText = "--%";
                             rv.className = `font-black res-v text-slate-300 text-xl`;
-                            if(statusLabel) statusLabel.innerText = "Ingreso insuficiente para comparar";
+                            if(statusLabel) statusLabel.innerText = "Ingreso insuficiente";
                         }
                     }
                 });
@@ -304,22 +341,18 @@
 
             const bar = document.getElementById('stickyBar');
             if (count > 0 && i23 > 0) {
-                const barLabel = document.getElementById('barLabel');
-                const barStatus = document.getElementById('barStatus');
-                const barPercent = document.getElementById('barPercent');
-                
-                if (i23 >= t23) { // Umbral para la canasta seleccionada
+                if (i23 >= t23) {
                     const total = (((iH/tH)/(i23/t23))-1)*100; 
                     bar.classList.remove('hidden');
-                    barPercent.innerText = (total>0?"+":"")+total.toFixed(1)+"%";
+                    document.getElementById('barPercent').innerText = (total>0?"+":"")+total.toFixed(1)+"%";
                     bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
-                    barLabel.innerText = selectionMode ? "Canasta Elegida" : "Canasta Completa";
-                    barStatus.innerText = total < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
+                    document.getElementById('barLabel').innerText = selectionMode ? "Canasta Elegida" : "Canasta Completa";
+                    document.getElementById('barStatus').innerText = total < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
                 } else {
                     bar.classList.remove('hidden');
-                    barPercent.innerText = "--%";
+                    document.getElementById('barPercent').innerText = "--%";
                     bar.className = `sticky-result-bar bg-slate-500`;
-                    barStatus.innerText = "Ingreso insuficiente para canasta";
+                    document.getElementById('barStatus').innerText = "Ingreso insuficiente para canasta";
                 }
             } else { bar.classList.add('hidden'); }
         }
