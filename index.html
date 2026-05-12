@@ -8,7 +8,7 @@
     <style>
         @media (min-width: 769px) {
             .container-main { max-width: 1200px; margin: 40px auto; }
-            .panel-control { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+            .panel-control { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; }
             .mobile-dashboard { display: none; }
         }
         .bg-loss { background: #dc2626; color: white; }
@@ -25,17 +25,23 @@
             .pc-source-selector { display: none; }
         }
         .hidden-checks .check-col { display: none; }
-        .data-hidden { opacity: 0 !important; visibility: hidden !important; }
-        .data-visible { opacity: 1 !important; visibility: visible !important; transition: opacity 0.2s ease; }
+        /* Ocultamiento de datos en modo selección */
+        .data-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none; }
+        .data-visible { opacity: 1 !important; visibility: visible !important; transition: opacity 0.3s ease; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         
-        <div class="bg-blue-900 p-8 text-white text-center">
+        <div class="bg-blue-900 p-8 text-white text-center relative">
             <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
             <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Comparamos la variación de los precios en supermercados con los ingresos</p>
+            
+            <button onclick="resetAll()" class="hidden md:flex absolute top-8 right-10 items-center gap-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full text-xs font-black uppercase transition border border-white/20">
+                <span>Reiniciar</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
+            </button>
         </div>
 
         <div class="p-4 md:p-10">
@@ -64,13 +70,20 @@
                         <option value="alvear">2. ALVEAR (27 productos)</option>
                         <option value="coto">3. COTO (23 productos)</option>
                     </select>
-                    <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg">
-                        Armá tu propia canasta (Elegir productos)
-                    </button>
+                    <div class="flex gap-2">
+                        <button id="btnMode" onclick="toggleSelectionMode()" class="flex-grow py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200 transition">
+                            Armá tu propia canasta (Elegir productos)
+                        </button>
+                    </div>
                 </div>
 
                 <div class="md:hidden pt-6 space-y-3 mobile-dashboard">
-                    <h2 class="text-[10px] font-black text-slate-400 uppercase mb-2 italic text-center">Tocar para ver detalle por canasta:</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-[10px] font-black text-slate-400 uppercase italic">Canastas completas:</h2>
+                        <button onclick="resetAll()" class="text-[10px] font-black text-blue-900 uppercase underline flex items-center gap-1">
+                            Reiniciar todo
+                        </button>
+                    </div>
                     <div id="block-ipec-mob">
                         <button onclick="activateMobileSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all">
                             <span class="text-[11px] font-black text-slate-600 uppercase italic">1. IPEC (48 prod.)</span>
@@ -128,6 +141,22 @@
             calculate(); 
         }
 
+        function resetAll() {
+            document.getElementById('presetIncome').value = "custom";
+            document.getElementById('inc2023').value = "";
+            document.getElementById('incHoy').value = "";
+            selectionMode = false;
+            activeMobileKey = null;
+            document.getElementById('btnMode').innerText = "Armá tu propia canasta (Elegir productos)";
+            document.getElementById('productsView').className = "hidden-checks hidden";
+            document.getElementById('modeHeader').classList.add('hidden');
+            ['ipec', 'alvear', 'coto'].forEach(k => {
+                document.getElementById(`btn-${k}`).className = "w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center";
+            });
+            renderView();
+            calculate();
+        }
+
         function toggleSelectionMode() {
             selectionMode = !selectionMode;
             const label = selectionMode ? "Ver Canasta Completa" : "Armá tu propia canasta (Elegir productos)";
@@ -173,17 +202,17 @@
             let pcTable = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Antes</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
             
             data.forEach((group, gIdx) => {
-                pcTable += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="g-check" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2">${group.cat}</td></tr>`;
+                pcTable += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="g-check" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2 italic">${group.cat}</td></tr>`;
                 
                 group.items.forEach((p) => {
                     const card = `<div class="product-card md:hidden">
                         <div class="flex justify-between items-start">
-                            <span class="font-bold text-slate-800 leading-tight">${p.n}</span>
+                            <span class="font-bold text-slate-800">${p.n}</span>
                             <div class="check-col ml-4"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-8 h-8" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></div>
                         </div>
                         <div class="card-grid">
-                            <div class="data-block"><div class="card-label italic">Antes</div><div class="card-val res-u23-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
-                            <div class="data-block"><div class="card-label italic">Hoy</div><div class="card-val res-uh-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
+                            <div class="data-block"><div class="card-label">Antes</div><div class="card-val res-u23-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
+                            <div class="data-block"><div class="card-label">Hoy</div><div class="card-val res-uh-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
                             <div class="col-span-2 pt-2 border-t mt-1 text-center data-block"><div class="card-label italic">Variación</div><div class="text-xl font-black res-v-mob">-</div></div>
                         </div></div>`;
                     container.innerHTML += card;
@@ -207,61 +236,55 @@
             let i23 = getVal('inc2023'); let iH = getVal('incHoy');
             if (sKey !== 'custom' && i23 === 0) { i23 = presets[sKey].v23; iH = presets[sKey].vh; }
 
-            // Actualizar Dashboards móviles (Impacto General)
+            // Dashboards móviles
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
                 const r = (((iH/sh)/(i23/s23))-1)*100;
                 const el = document.getElementById(`dash-${k}`);
-                if (i23 > 0) {
-                    el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%";
-                    el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`;
-                }
+                if (i23 > 0) { el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; }
+                else { el.innerText = "--%"; el.className = "text-xl font-black text-slate-400"; }
             });
 
-            // Lógica de actualización de tarjetas y filas
-            const pcRows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
-            const mobCards = document.querySelectorAll('.product-card');
+            const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
+            const cards = document.querySelectorAll('.product-card');
             
             let t23 = 0, tH = 0, count = 0;
 
-            // Recorremos PC y Móvil en simultáneo (tienen el mismo orden)
-            pcRows.forEach((r, idx) => {
+            rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check'); 
-                const mCard = mobCards[idx];
-                const mCb = mCard.querySelector('.p-check');
-                
+                const mCard = cards[idx];
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
-                
-                // Sincronizar checkboxes (si tildas uno, se tilda el otro)
-                // Usamos el que disparó el evento o el estado actual
-                const isChecked = selectionMode ? (cb.checked || mCb.checked) : true;
-                
+                const isSelected = cb.checked;
+
                 if (i23 > 0) {
                     const u23 = i23 / p23, uh = iH / ph, v = ((uh/u23)-1)*100;
-                    const vS = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
+                    const vStr = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
                     
-                    // Actualizar datos visuales
                     r.querySelector('.res-u23').innerText = u23.toFixed(1);
                     r.querySelector('.res-uh').innerText = uh.toFixed(1);
-                    r.querySelector('.res-v').innerText = vS; 
+                    r.querySelector('.res-v').innerText = vStr; 
                     r.querySelector('.res-v').className = `font-black text-xl res-v ${col}`;
                     
-                    mCard.querySelector('.res-u23-mob').innerText = u23.toFixed(1);
-                    mCard.querySelector('.res-uh-mob').innerText = uh.toFixed(1);
-                    mCard.querySelector('.res-v-mob').innerText = vS;
-                    mCard.querySelector('.res-v-mob').className = `text-xl font-black res-v-mob ${col}`;
+                    if(mCard) {
+                        mCard.querySelector('.res-u23-mob').innerText = u23.toFixed(1);
+                        mCard.querySelector('.res-uh-mob').innerText = uh.toFixed(1);
+                        mCard.querySelector('.res-v-mob').innerText = vStr;
+                        mCard.querySelector('.res-v-mob').className = `text-xl font-black res-v-mob ${col}`;
+                    }
 
-                    // Aplicar visibilidad (si no está tildado en modo selección, ocultamos los datos)
-                    const showData = !selectionMode || isChecked;
-                    const blocks = [...r.querySelectorAll('.data-block'), ...mCard.querySelectorAll('.data-block')];
+                    // CONTROL DE VISIBILIDAD CRÍTICO
+                    const showData = !selectionMode || isSelected;
+                    const blocks = [...r.querySelectorAll('.data-block'), ...(mCard ? mCard.querySelectorAll('.data-block') : [])];
                     blocks.forEach(b => b.className = showData ? "data-block data-visible" : "data-block data-hidden");
 
-                    if (isChecked) { t23 += p23; tH += ph; count++; }
+                    if (isSelected) { t23 += p23; tH += ph; count++; }
+                } else {
+                    const blocks = [...r.querySelectorAll('.data-block'), ...(mCard ? mCard.querySelectorAll('.data-block') : [])];
+                    blocks.forEach(b => b.className = "data-block data-hidden");
                 }
             });
 
-            // Barra inferior Sticky
             const bar = document.getElementById('stickyBar');
             if (count > 0 && i23 > 0) {
                 const total = (((iH/tH)/(i23/t23))-1)*100;
@@ -273,8 +296,7 @@
         }
 
         function toggleGroup(gIdx, val) { 
-            const checks = document.querySelectorAll(`.p-check[data-g="${gIdx}"]`);
-            checks.forEach(c => c.checked = val);
+            document.querySelectorAll(`.p-check[data-g="${gIdx}"]`).forEach(c => c.checked = val); 
             calculate(); 
         }
         
