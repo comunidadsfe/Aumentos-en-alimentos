@@ -109,26 +109,27 @@
         let selectionMode = false;
         let mobileKey = null;
 
-        // NUEVA FUNCIÓN: Limpia el input y devuelve el número real para el cálculo
         function getVal(id) { 
             let s = document.getElementById(id).value; 
-            // Eliminamos puntos, símbolos y espacios, dejando solo números
             let cleanStr = s.replace(/\./g, '').replace(/[^\d]/g, '');
             return parseFloat(cleanStr) || 0; 
         }
 
-        // NUEVA FUNCIÓN: Formatea el input con puntos de miles mientras se escribe
         function formatAndCalc(input) {
-            let val = input.value.replace(/\D/g, ""); // Solo números
-            if (val !== "") {
-                input.value = new Intl.NumberFormat('es-AR').format(val);
-            }
+            let val = input.value.replace(/\D/g, ""); 
+            if (val !== "") { input.value = new Intl.NumberFormat('es-AR').format(val); }
             calculate();
         }
 
         function handlePresetChange() { document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; calculate(); }
         function resetAll() { document.getElementById('presetIncome').value = "custom"; document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; selectionMode = false; mobileKey = null; initView(); }
-        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver canasta completa" : "Armá tu propia canasta"; if(selectionMode && !mobileKey) { document.getElementById('productsView').classList.remove('hidden'); } initView(); }
+        
+        function toggleSelectionMode() { 
+            selectionMode = !selectionMode; 
+            document.getElementById('btnMode').innerText = selectionMode ? "Ver canasta completa" : "Armá tu propia canasta"; 
+            if(selectionMode && !mobileKey) { document.getElementById('productsView').classList.remove('hidden'); }
+            initView(); 
+        }
 
         function activateMobile(k) {
             const view = document.getElementById('productsView');
@@ -153,6 +154,8 @@
             document.getElementById('poster-status').innerText = statusTxt;
             document.getElementById('poster-percent').innerText = percentTxt;
             poster.style.background = parseFloat(percentTxt) < 0 ? '#dc2626' : '#16a34a';
+            if(percentTxt === "--%") poster.style.background = '#64748b'; // Gris si es nulo
+
             await new Promise(r => setTimeout(r, 150));
             const canvas = await html2canvas(poster, { useCORS: true, logging: false, scale: 2 });
             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
@@ -249,32 +252,51 @@
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = (k === 'ipec') ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
-                const r = (((iH/sh)/(i23/s23))-1)*100;
+                
                 const el = document.getElementById(`dash-${k}`);
-                if (i23 > 0) { el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; }
+                if (i23 >= s23) { // Solo si el ingreso permite comprar la canasta al menos una vez
+                    const r = (((iH/sh)/(i23/s23))-1)*100;
+                    el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%";
+                    el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`;
+                } else {
+                    el.innerText = "--%"; el.className = `text-xl font-black text-slate-400`;
+                }
             });
 
             const cards = document.querySelectorAll('.product-card');
             const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
             let t23 = 0, tH = 0, count = 0;
+            
             rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check');
                 const mCard = cards[idx];
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
                 const isSelected = cb.checked;
+
                 [r, mCard].forEach(container => {
                     if(!container) return;
                     const dataBox = container.querySelectorAll('.js-data');
                     dataBox.forEach(box => { box.style.display = (selectionMode && !isSelected) ? 'none' : (container.tagName === 'DIV' ? 'grid' : 'table-cell'); });
+                    
                     if (i23 > 0 && (!selectionMode || isSelected)) {
-                        const u23 = i23/p23, uh = iH/ph, v = ((uh/u23)-1)*100;
-                        container.querySelector('.res-u23').innerText = u23.toFixed(1);
-                        container.querySelector('.res-uh').innerText = uh.toFixed(1);
-                        const rv = container.querySelector('.res-v');
-                        rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
-                        rv.className = `font-black res-v ${v < 0 ? 'text-red-600' : 'text-green-600'} text-xl`;
                         const statusLabel = container.querySelector('.res-status');
-                        if(statusLabel) statusLabel.innerText = v < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
+                        const rv = container.querySelector('.res-v');
+                        
+                        // VALIDACIÓN DE UMBRAL (Ingreso debe permitir comprar al menos 1 unidad en 2023)
+                        if (i23 >= p23) {
+                            const u23 = i23/p23, uh = iH/ph, v = ((uh/u23)-1)*100;
+                            container.querySelector('.res-u23').innerText = u23.toFixed(1);
+                            container.querySelector('.res-uh').innerText = uh.toFixed(1);
+                            rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
+                            rv.className = `font-black res-v ${v < 0 ? 'text-red-600' : 'text-green-600'} text-xl`;
+                            if(statusLabel) statusLabel.innerText = v < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
+                        } else {
+                            container.querySelector('.res-u23').innerText = "0.0";
+                            container.querySelector('.res-uh').innerText = "0.0";
+                            rv.innerText = "--%";
+                            rv.className = `font-black res-v text-slate-300 text-xl`;
+                            if(statusLabel) statusLabel.innerText = "Ingreso insuficiente para comparar";
+                        }
                     }
                 });
                 if (isSelected) { t23 += p23; tH += ph; count++; }
@@ -282,11 +304,23 @@
 
             const bar = document.getElementById('stickyBar');
             if (count > 0 && i23 > 0) {
-                const total = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
-                document.getElementById('barPercent').innerText = (total>0?"+":"")+total.toFixed(1)+"%";
-                bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
-                document.getElementById('barLabel').innerText = selectionMode ? "Canasta Elegida" : "Canasta Completa";
-                document.getElementById('barStatus').innerText = total < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
+                const barLabel = document.getElementById('barLabel');
+                const barStatus = document.getElementById('barStatus');
+                const barPercent = document.getElementById('barPercent');
+                
+                if (i23 >= t23) { // Umbral para la canasta seleccionada
+                    const total = (((iH/tH)/(i23/t23))-1)*100; 
+                    bar.classList.remove('hidden');
+                    barPercent.innerText = (total>0?"+":"")+total.toFixed(1)+"%";
+                    bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
+                    barLabel.innerText = selectionMode ? "Canasta Elegida" : "Canasta Completa";
+                    barStatus.innerText = total < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
+                } else {
+                    bar.classList.remove('hidden');
+                    barPercent.innerText = "--%";
+                    bar.className = `sticky-result-bar bg-slate-500`;
+                    barStatus.innerText = "Ingreso insuficiente para canasta";
+                }
             } else { bar.classList.add('hidden'); }
         }
 
