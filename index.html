@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Poder Adquisitivo</title>
+    <title>Calculadora de Poder Adquisitivo - Comunidad</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @media (min-width: 769px) {
@@ -13,9 +13,11 @@
         .bg-loss { background: #dc2626; color: white; }
         .bg-gain { background: #16a34a; color: white; }
         .sticky-result-bar { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); }
-        .category-row { background-color: #f8fafc; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #1e3a8a; letter-spacing: 0.05em; }
-        .hidden-mobile { display: none; }
-        @media (max-width: 768px) { .hidden-mobile { display: none !important; } .show-mobile { display: block !important; } }
+        .category-row { background-color: #f8fafc; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #1e3a8a; letter-spacing: 0.05em; border-y: 1px solid #e2e8f0; }
+        .price-subtext { font-size: 0.7rem; color: #94a3b8; display: block; font-weight: 500; }
+        
+        /* Efecto de apertura para móvil */
+        #productSectionMobile { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
@@ -24,15 +26,15 @@
         
         <div class="bg-blue-900 p-8 text-white text-center">
             <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium">Comparamos la variación de los precios en supermercados con los ingresos</p>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight">Comparamos la variación de los precios en supermercados con los ingresos</p>
         </div>
 
         <div class="p-4 md:p-10">
             <div class="panel-control mb-10 p-6 bg-slate-50 rounded-xl border border-slate-200">
                 
                 <div class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
-                    <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest">1. Ingreso de referencia</h2>
-                    <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-6" onchange="handleIncomeChange()">
+                    <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest italic">1. Ingreso de referencia</h2>
+                    <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-6" onchange="handlePresetChange()">
                         <option value="custom">CARGA MANUAL</option>
                         <option value="smvm">Salario Mínimo (SMVM)</option>
                         <option value="jubilacion">Jubilación Mínima</option>
@@ -53,13 +55,13 @@
                 </div>
 
                 <div class="pt-6 md:pt-0 md:pl-10">
-                    <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest">2. Canasta de precios</h2>
+                    <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest italic">2. Canastas de precios</h2>
                     
                     <div class="hidden md:block">
-                        <select id="priceSource" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="renderTable()">
-                            <option value="ipec">IPEC (48 productos)</option>
-                            <option value="alvear">ALVEAR (27 productos)</option>
-                            <option value="coto">COTO (23 productos)</option>
+                        <select id="priceSourcePC" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="renderTable()">
+                            <option value="ipec">1. IPEC (48 productos)</option>
+                            <option value="alvear">2. ALVEAR (27 productos)</option>
+                            <option value="coto">3. COTO (23 productos)</option>
                         </select>
                         <div class="flex gap-4">
                             <button onclick="toggleAll(true)" class="text-[10px] font-bold text-blue-900 uppercase underline">Seleccionar todos</button>
@@ -67,31 +69,40 @@
                         </div>
                     </div>
 
-                    <div class="md:hidden space-y-3">
-                        <button onclick="mobileSwitch('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-blue-900 rounded-xl text-left flex justify-between items-center">
-                            <span class="text-xs font-black text-blue-900 uppercase">IPEC (48 art.)</span>
-                            <span id="res-ipec" class="text-xl font-black text-red-600">--%</span>
-                        </button>
-                        <button onclick="mobileSwitch('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center">
-                            <span class="text-xs font-black text-slate-600 uppercase">ALVEAR (27 art.)</span>
-                            <span id="res-alvear" class="text-xl font-black text-red-600">--%</span>
-                        </button>
-                        <button onclick="mobileSwitch('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center">
-                            <span class="text-xs font-black text-slate-600 uppercase">COTO (23 art.)</span>
-                            <span id="res-coto" class="text-xl font-black text-red-600">--%</span>
-                        </button>
+                    <div class="md:hidden space-y-4" id="mobileAccordion">
+                        <div class="source-block" id="block-ipec">
+                            <button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all">
+                                <span class="text-xs font-black text-slate-600 uppercase">1. IPEC</span>
+                                <span id="dash-ipec" class="text-xl font-black text-red-600">--%</span>
+                            </button>
+                            <div id="container-ipec" class="mt-2"></div>
+                        </div>
+                        <div class="source-block" id="block-alvear">
+                            <button onclick="activateSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all">
+                                <span class="text-xs font-black text-slate-600 uppercase">2. ALVEAR</span>
+                                <span id="dash-alvear" class="text-xl font-black text-red-600">--%</span>
+                            </button>
+                            <div id="container-alvear" class="mt-2"></div>
+                        </div>
+                        <div class="source-block" id="block-coto">
+                            <button onclick="activateSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all">
+                                <span class="text-xs font-black text-slate-600 uppercase">3. COTO</span>
+                                <span id="dash-coto" class="text-xl font-black text-red-600">--%</span>
+                            </button>
+                            <div id="container-coto" class="mt-2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="tableContainer" class="border rounded-xl overflow-hidden">
+            <div id="desktopTableContainer" class="hidden md:block border rounded-xl overflow-hidden">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-800 text-white uppercase text-[10px] tracking-widest">
                         <tr>
                             <th class="p-4 w-16 text-center">Elegir</th>
-                            <th class="p-4 text-left">Producto</th>
-                            <th class="p-4 text-center">En 2023 comprabas</th>
-                            <th class="p-4 text-center">Hoy comprás</th>
+                            <th class="p-4 text-left">Producto / Rubro</th>
+                            <th class="p-4 text-center">Comprabas (2023)</th>
+                            <th class="p-4 text-center">Comprás (Hoy)</th>
                             <th class="p-4 text-center">Variación</th>
                         </tr>
                     </thead>
@@ -107,7 +118,6 @@
     </div>
 
     <script>
-        // DATA COMPLETA CARGADA SEGÚN LISTAS ORIGINALES
         const dataIPEC = [
             {cat:"Almacén", items:[{n:"Pan francés mignón (Kg.)",p23:913.97,ph:3066.99},{n:"Pan de mesa (390 g.)",p23:891.44,ph:3993.77},{n:"Galletitas dulces (150 g.)",p23:420.35,ph:1464.71},{n:"Galletitas de agua (250 g.)",p23:446.46,ph:1415.21},{n:"Harina de trigo común (Kg.)",p23:402.46,ph:951.40},{n:"Arroz blanco simple (Kg.)",p23:1068.42,ph:1858.11},{n:"Fideos Secos Guisero (500 g.)",p23:642.99,ph:1471.06},{n:"Aceite de girasol (1,5 L.)",p23:1495.50,ph:6541.07},{n:"Azúcar (Kg.)",p23:1083.62,ph:1435.80},{n:"Yerba mate (500 g.)",p23:1181.03,ph:2359.58},{n:"Café molido (500 g.)",p23:2740.36,ph:12325.65},{n:"Dulce de leche (450 g.)",p23:1039.08,ph:3571.45},{n:"Tomate en conserva (lata)",p23:418.04,ph:1301.98},{n:"Lentejas secas (400 g.)",p23:813.91,ph:1727.29},{n:"Sal fina (500 g.)",p23:318.53,ph:1355.67}]},
             {cat:"Carnicería", items:[{n:"Asado (Kg.)",p23:4116.28,ph:22305.00},{n:"Carne picada especial (Kg.)",p23:3674.89,ph:17076.20},{n:"Paleta (Kg.)",p23:3759.50,ph:19063.86},{n:"Cuadril (Kg.)",p23:4526.12,ph:22569.99},{n:"Nalga (Kg.)",p23:4429.40,ph:22524.60},{n:"Hígado (Kg.)",p23:1097.16,ph:5542.88},{n:"Hamburguesas (4 u.)",p23:1609.24,ph:6702.00},{n:"Pollo entero (Kg.)",p23:1417.83,ph:5279.56},{n:"Filet de merluza fresco (Kg.)",p23:2994.08,ph:12684.06},{n:"Salchicha tipo viena (6 u.)",p23:690.01,ph:2562.66},{n:"Jamón cocido (Kg.)",p23:5763.80,ph:18956.52},{n:"Salchichón (Kg.)",p23:3531.42,ph:11963.98},{n:"Salame (Kg.)",p23:6402.78,ph:23098.17}]},
@@ -117,16 +127,16 @@
         ];
 
         const dataAlvear = [
-            {cat:"Limpieza y Perfumería", items:[{n:"Toalla femenina nosotros x8",p23:299,ph:3029},{n:"Limpiador Cif cremoso",p23:559,ph:3990},{n:"Lavavajilla Cif",p23:455,ph:2639},{n:"Jabón líquido Skip 500cc",p23:2159,ph:11999},{n:"Ayudín lavandina 2L",p23:679,ph:3499},{n:"Papel Higiénico Felpita",p23:198,ph:949},{n:"Rollo cocina Felpita",p23:934,ph:2599}]},
-            {cat:"Carnicería", items:[{n:"Rack de ternera",p23:3949,ph:30990},{n:"Corte Malvinas ternera",p23:3999,ph:25490},{n:"Nalga de ternera",p23:4290,ph:26990},{n:"Marucha de ternera",p23:3149,ph:18490},{n:"Tomahawk ternera",p23:3780,ph:21490},{n:"Cabeza de lomo ternera",p23:3890,ph:19990},{n:"Chorizo Parrillero",p23:2790,ph:13490},{name:"Picada ternera",p23:2699,ph:12990},{n:"Pollo Las Camelias",p23:1299,ph:6199},{n:"Pechito de Cerdo 1K",p23:2549,ph:9490},{n:"Filet de pollo",p23:2780,ph:9990},{n:"Pata muslo con piel",p23:1499,ph:4849}]},
-            {cat:"Almacén y Lácteos", items:[{n:"Yogur descremado Tregar",p23:389,ph:2659},{n:"Crema de leche La Paulina",p23:535,ph:2899},{n:"Manteca tonadita",p23:599,ph:3199},{n:"Queso cremoso cremón",p23:2790,ph:13999},{n:"Harina Pureza para pizzas",p23:495,ph:1990},{n:"Giacomo cappelletini",p23:1529,ph:5799},{n:"Mate cocido Unión",p23:944,ph:2599},{n:"Mayonesa Hellmans liviana",p23:423,ph:4999}]}
+            {cat:"Limpieza", items:[{n:"Toalla femenina x8",p23:299,ph:3029},{n:"Limpiador Cif cremoso",p23:559,ph:3990},{n:"Lavavajilla Cif",p23:455,ph:2639},{n:"Skip 500cc",p23:2159,ph:11999},{n:"Ayudín 2L",p23:679,ph:3499},{n:"Papel Felpita",p23:198,ph:949},{n:"Rollo cocina",p23:934,ph:2599}]},
+            {cat:"Carnicería", items:[{n:"Rack de ternera",p23:3949,ph:30990},{n:"Corte Malvinas",p23:3999,ph:25490},{n:"Nalga de ternera",p23:4290,ph:26990},{n:"Marucha",p23:3149,ph:18490},{n:"Tomahawk",p23:3780,ph:21490},{n:"Cabeza de lomo",p23:3890,ph:19990},{n:"Chorizo Parrillero",p23:2790,ph:13490},{n:"Picada ternera",p23:2699,ph:12990},{n:"Pollo Las Camelias",p23:1299,ph:6199},{n:"Pechito de Cerdo",p23:2549,ph:9490},{n:"Filet de pollo",p23:2780,ph:9990},{n:"Pata muslo c/piel",p23:1499,ph:4849}]},
+            {cat:"Almacén", items:[{n:"Yogur Tregar",p23:389,ph:2659},{n:"Crema La Paulina",p23:535,ph:2899},{n:"Manteca tonadita",p23:599,ph:3199},{n:"Queso Cremón",p23:2790,ph:13999},{n:"Harina Pureza",p23:495,ph:1990},{n:"Giacomo cappelletini",p23:1529,ph:5799},{n:"Mate cocido Unión",p23:944,ph:2599},{n:"Mayonesa Hellmans",p23:423,ph:4999}]}
         ];
 
         const dataCoto = [
-            {cat:"Carnicería", items:[{n:"Cuadril de novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón de cerdo",p23:1399,ph:6200},{n:"Chuleta de Paleta de Cerdo",p23:1399.9,ph:4800},{n:"Pata Muslo con piel",p23:999.9,ph:3999},{n:"Fiambre cerdo Campo kg",p23:3440,ph:9799},{n:"Jamón Cocido Lario kg",p23:4669,ph:21935},{n:"Salamín picado fino La Chacra",p23:6475,ph:33999}]},
-            {cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso primera marca",p23:2099,ph:10999},{n:"Leche Entera Las Tres Niñas",p23:479,ph:1890},{n:"Manteca primer premio 200g",p23:649.9,ph:3400},{n:"Crema La Serenísima 330 ml",p23:719.9,ph:4705},{n:"Queso provoleta parrillero",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito Primera Marca",p23:3999,ph:23999},{n:"Queso Tybo La Paulina",p23:2899,ph:17699}]},
-            {cat:"Almacén", items:[{n:"Jardinera Tres Legumbres",p23:365.9,ph:896.35},{n:"Tostadas Dulces Riera 200g",p23:654.9,ph:1857},{n:"Salsa pizza Knorr 340g",p23:172.9,ph:1499},{n:"Salsa pomarola Knorr 340g",p23:228.9,ph:1499},{n:"Cerveza s/alcohol Heineken",p23:424,ph:1500}]},
-            {cat:"Limpieza", items:[{n:"Skip Bioenzimas 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita 80 mts",p23:1299.99,ph:4295.87}]}
+            {cat:"Carnicería", items:[{n:"Cuadril novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón",p23:1399,ph:6200},{n:"Chuleta de Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},
+            {cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Tres Niñas",p23:479,ph:1890},{n:"Manteca 1er Premio",p23:649.9,ph:3400},{n:"Crema Serenísima",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo",p23:2899,ph:17699}]},
+            {cat:"Almacén", items:[{n:"Jardinera 3 Leg",p23:365.9,ph:896.35},{n:"Tostadas Riera",p23:654.9,ph:1857},{n:"Salsa pizza Knorr",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},
+            {cat:"Limpieza", items:[{n:"Skip Bio 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita 80m",p23:1299.99,ph:4295.87}]}
         ];
 
         const presets = {
@@ -139,36 +149,42 @@
 
         function getVal(id) {
             let s = document.getElementById(id).value;
-            return parseFloat(s.replace(/\$/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+            return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0;
         }
 
-        function handleIncomeChange() {
+        function handlePresetChange() {
             document.getElementById('inc2023').value = "";
             document.getElementById('incHoy').value = "";
             calculate();
         }
 
-        function renderTable() {
-            const srcKey = document.getElementById('priceSource').value;
+        function activateSource(k) {
+            // Actualizar botones en móvil
+            ['ipec', 'alvear', 'coto'].forEach(key => {
+                const btn = document.getElementById(`btn-${key}`);
+                const cont = document.getElementById(`container-${key}`);
+                if (key === k) {
+                    btn.className = "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl text-left flex justify-between items-center transition-all";
+                    cont.appendChild(document.getElementById('desktopTableContainer'));
+                    document.getElementById('desktopTableContainer').classList.remove('hidden');
+                    document.getElementById('priceSourcePC').value = k;
+                    renderTable(false); // Empezamos con todo desmarcado
+                } else {
+                    btn.className = "w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all";
+                }
+            });
+        }
+
+        function renderTable(markAll = false) {
+            const srcKey = document.getElementById('priceSourcePC').value;
             const data = srcKey === 'ipec' ? dataIPEC : (srcKey === 'alvear' ? dataAlvear : dataCoto);
             const body = document.getElementById('mainTableBody');
             body.innerHTML = "";
 
             data.forEach((group, gIdx) => {
-                body.innerHTML += `
-                    <tr class="category-row">
-                        <td class="p-2 text-center"><input type="checkbox" checked class="w-4 h-4 g-check" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></td>
-                        <td colspan="4" class="p-2">${group.cat}</td>
-                    </tr>`;
+                body.innerHTML += `<tr class="category-row"><td class="p-2 text-center"><input type="checkbox" ${markAll ? 'checked' : ''} class="w-4 h-4 g-check" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2">${group.cat}</td></tr>`;
                 group.items.forEach(p => {
-                    body.innerHTML += `
-                        <tr class="border-b hover:bg-slate-50 transition">
-                            <td class="p-3 text-center"><input type="checkbox" checked class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td>
-                            <td class="p-3 font-bold text-slate-700">${p.n}</td>
-                            <td class="p-3 text-center res-23 font-medium text-slate-500">-</td>
-                            <td class="p-3 text-center res-h font-medium text-slate-500">-</td>
-                            <td class="p-3 text-center res-v font-black text-lg">-</td>
-                        </tr>`;
+                    body.innerHTML += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-4 text-center"><input type="checkbox" ${markAll ? 'checked' : ''} class="p-check w-6 h-6" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td><td class="p-4 font-bold text-slate-700" data-label="Producto">${p.n}</td><td class="p-4 text-center res-23" data-label="Antes"><span class="font-bold text-slate-500">-</span><span class="price-subtext">$ ${p.p23.toLocaleString('es-AR')}</span></td><td class="p-4 text-center res-h" data-label="Hoy"><span class="font-bold text-slate-500">-</span><span class="price-subtext">$ ${p.ph.toLocaleString('es-AR')}</span></td><td class="p-4 text-center res-v font-black text-xl" data-label="Variación">-</td></tr>`;
                 });
             });
             calculate();
@@ -180,42 +196,42 @@
             let iH = getVal('incHoy');
             if (sKey !== 'custom' && i23 === 0) { i23 = presets[sKey].v23; iH = presets[sKey].vh; }
 
-            // Actualizar Dashboards móviles
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0;
                 d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
                 const r = (((iH/sh)/(i23/s23))-1)*100;
-                const el = document.getElementById(`res-${k}`);
+                const el = document.getElementById(`dash-${k}`);
                 if (i23 > 0) {
                     el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%";
                     el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`;
                 }
             });
 
-            // Actualizar Tabla Principal
             const rows = document.querySelectorAll('#mainTableBody tr:not(.category-row)');
-            let sumP23 = 0, sumPH = 0, count = 0;
+            let t23 = 0, tH = 0, count = 0;
 
             rows.forEach(r => {
                 const cb = r.querySelector('.p-check');
+                const rv = r.querySelector('.res-v');
                 if (cb.checked && i23 > 0) {
-                    const p23 = parseFloat(cb.dataset.p23);
-                    const ph = parseFloat(cb.dataset.ph);
-                    const u23 = i23 / p23; const uh = iH / ph;
-                    const v = ((uh/u23)-1)*100;
-                    r.querySelector('.res-23').innerText = u23.toFixed(1) + " un.";
-                    r.querySelector('.res-h').innerText = uh.toFixed(1) + " un.";
-                    const rv = r.querySelector('.res-v');
+                    const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
+                    const u23 = i23 / p23, uh = iH / ph, v = ((uh/u23)-1)*100;
+                    r.querySelector('.res-23').firstChild.innerText = u23.toFixed(1);
+                    r.querySelector('.res-h').firstChild.innerText = uh.toFixed(1);
                     rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
-                    rv.className = `p-3 text-center font-black text-lg ${v < 0 ? 'text-red-600' : 'text-green-600'}`;
-                    sumP23 += p23; sumPH += ph; count++;
+                    rv.className = `p-4 text-center font-black text-xl res-v ${v < 0 ? 'text-red-600' : 'text-green-600'}`;
+                    t23 += p23; tH += ph; count++;
+                } else {
+                    r.querySelector('.res-23').firstChild.innerText = "-";
+                    r.querySelector('.res-h').firstChild.innerText = "-";
+                    rv.innerText = "-"; rv.className = "p-4 text-center res-v";
                 }
             });
 
             const bar = document.getElementById('stickyBar');
             if (count > 0 && i23 > 0) {
-                const total = (((iH/sumPH)/(i23/sumP23))-1)*100;
+                const total = (((iH/tH)/(i23/t23))-1)*100;
                 bar.classList.remove('hidden');
                 document.getElementById('barPercent').innerText = (total>0?"+":"")+total.toFixed(1)+"%";
                 bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
@@ -233,16 +249,7 @@
             calculate();
         }
 
-        function mobileSwitch(k) {
-            document.getElementById('priceSource').value = k;
-            ['ipec', 'alvear', 'coto'].forEach(key => {
-                const btn = document.getElementById(`btn-${key}`);
-                btn.className = `w-full p-4 bg-white border-2 rounded-xl text-left flex justify-between items-center ${key === k ? 'border-blue-900' : 'border-slate-200'}`;
-            });
-            renderTable();
-        }
-
-        renderTable();
+        renderTable(false); // Iniciar PC con todo desmarcado
     </script>
 </body>
 </html>
