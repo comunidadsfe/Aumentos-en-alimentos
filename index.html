@@ -26,7 +26,6 @@
         .hidden-checks .check-col { display: none; }
         .data-hidden { display: none !important; }
         
-        /* ESTILO PLACA COMPARTIR */
         #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; font-family: sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     </style>
 </head>
@@ -41,7 +40,7 @@
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase">¿CUÁNTO PERDIMOS?</h1>
+            <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
             <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Variación del poder adquisitivo según tus ingresos</p>
         </div>
 
@@ -145,22 +144,23 @@
             document.getElementById('poster-percent').innerText = percentTxt;
             poster.style.background = parseFloat(percentTxt) < 0 ? '#dc2626' : '#16a34a';
 
-            // Pequeño delay para asegurar renderizado
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise(r => setTimeout(r, 150));
 
             const canvas = await html2canvas(poster, { useCORS: true, logging: false, scale: 2 });
             const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png', 1.0));
             const file = new File([blob], "PoderAdquisitivo.png", { type: 'image/png' });
 
-            // Intento de compartir nativo
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+            if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                 try {
                     await navigator.share({ files: [file], title: 'Mi Poder Adquisitivo' });
                 } catch (err) {
-                    downloadFallback(canvas, headTxt);
+                    console.log("Error al compartir nativamente");
                 }
             } else {
-                downloadFallback(canvas, headTxt);
+                // En PC mantenemos descarga. En móvil solo si falla lo nativo.
+                if(!isMobile) downloadFallback(canvas, headTxt);
             }
         }
         
