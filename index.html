@@ -14,7 +14,7 @@
         .bg-loss { background: #dc2626; color: white; }
         .bg-gain { background: #16a34a; color: white; }
         .sticky-result-bar { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); }
-        .category-row { background-color: #f8fafc; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #1e3a8a; letter-spacing: 0.05em; border-y: 1px solid #e2e8f0; }
+        .category-row { background-color: #f8fafc; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #1e3a8a; border-y: 1px solid #e2e8f0; }
         
         @media (max-width: 768px) {
             .desktop-table { display: none; }
@@ -22,26 +22,21 @@
             .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 10px; }
             .card-val { font-size: 1.1rem; font-weight: 800; color: #334155; }
             .card-label { font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
-            .pc-source-selector { display: none; }
         }
         .hidden-checks .check-col { display: none; }
-        
-        /* Visibilidad forzada por JS */
-        .js-data-container { transition: opacity 0.2s ease; }
+        .data-hidden { display: none !important; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
-        
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Comparamos la variación de los precios en supermercados con los ingresos</p>
+            <h1 class="text-3xl font-black italic uppercase">¿CUÁNTO PERDIMOS?</h1>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Comparamos la variación de los precios con los ingresos</p>
         </div>
 
         <div class="p-4 md:p-10">
             <div class="panel-control mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">
-                
                 <div class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
                     <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest italic">1. Ingreso de referencia</h2>
                     <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-6" onchange="handlePresetChange()">
@@ -53,45 +48,36 @@
                         <option value="docente">Salario Docente</option>
                     </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
-                        <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
+                        <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="updateValues()">
+                        <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="updateValues()">
                     </div>
                 </div>
 
                 <div class="pt-6 md:pt-0 md:pl-10 pc-source-selector">
                     <h2 class="text-xs font-black text-blue-900 uppercase mb-4 tracking-widest italic">2. Canastas de precios</h2>
-                    <select id="priceSource" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="renderView()">
+                    <select id="priceSource" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="initView()">
                         <option value="ipec">1. IPEC (48 productos)</option>
                         <option value="alvear">2. ALVEAR (27 productos)</option>
                         <option value="coto">3. COTO (23 productos)</option>
                     </select>
                     <div class="flex flex-col gap-2">
-                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg">
+                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200 transition">
                             Armá tu propia canasta (Elegir productos)
                         </button>
-                        <button onclick="resetAll()" class="w-full py-2 border-2 border-slate-200 text-slate-400 text-[10px] font-black uppercase rounded-lg hover:bg-slate-100">
+                        <button onclick="resetAll()" class="w-full py-2 border-2 border-slate-200 text-slate-400 text-[10px] font-black uppercase rounded-lg">
                             Reiniciar datos
                         </button>
                     </div>
                 </div>
 
-                <div class="md:hidden pt-6 space-y-3 mobile-dashboard">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="text-[10px] font-black text-slate-400 uppercase italic">Tocar para ver detalle:</h2>
-                        <button onclick="resetAll()" class="text-[10px] font-black text-blue-900 uppercase underline">Reiniciar</button>
-                    </div>
-                    <div id="block-ipec-mob"><button onclick="activateMobileSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all"><span class="text-[11px] font-black text-slate-600 uppercase italic">1. IPEC (48 prod.)</span><span id="dash-ipec" class="text-xl font-black">--%</span></button></div>
-                    <div id="block-alvear-mob"><button onclick="activateMobileSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all"><span class="text-[11px] font-black text-slate-600 uppercase italic">2. ALVEAR (27 prod.)</span><span id="dash-alvear" class="text-xl font-black">--%</span></button></div>
-                    <div id="block-coto-mob"><button onclick="activateMobileSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center transition-all"><span class="text-[11px] font-black text-slate-600 uppercase italic">3. COTO (23 prod.)</span><span id="dash-coto" class="text-xl font-black">--%</span></button></div>
+                <div class="md:hidden pt-6 space-y-3">
+                    <div id="block-ipec-mob"><button onclick="activateMobile('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase">1. IPEC</span><span id="dash-ipec" class="text-xl font-black">--%</span></button></div>
+                    <div id="block-alvear-mob"><button onclick="activateMobile('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase">2. ALVEAR</span><span id="dash-alvear" class="text-xl font-black">--%</span></button></div>
+                    <div id="block-coto-mob"><button onclick="activateMobile('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase">3. COTO</span><span id="dash-coto" class="text-xl font-black">--%</span></button></div>
                 </div>
             </div>
 
-            <div id="productsView" class="hidden-checks">
-                <div id="modeHeader" class="md:hidden mb-6 hidden text-center">
-                    <button id="btnModeMob" onclick="toggleSelectionMode()" class="px-6 py-3 bg-blue-900 text-white text-[11px] font-black uppercase rounded-lg shadow-lg">
-                        Armá tu propia canasta
-                    </button>
-                </div>
+            <div id="productsView">
                 <div id="dynamicContent"></div>
             </div>
         </div>
@@ -104,106 +90,70 @@
 
     <script>
         const dataIPEC = [{cat:"Almacén", items:[{n:"Pan francés mignón (Kg.)",p23:913.97,ph:3066.99},{n:"Pan de mesa (390 g.)",p23:891.44,ph:3993.77},{n:"Galletitas dulces (150 g.)",p23:420.35,ph:1464.71},{n:"Galletitas de agua (250 g.)",p23:446.46,ph:1415.21},{n:"Harina de trigo común (Kg.)",p23:402.46,ph:951.40},{n:"Arroz blanco simple (Kg.)",p23:1068.42,ph:1858.11},{n:"Fideos Secos Guisero (500 g.)",p23:642.99,ph:1471.06},{n:"Aceite de girasol (1,5 L.)",p23:1495.50,ph:6541.07},{n:"Azúcar (Kg.)",p23:1083.62,ph:1435.80},{n:"Yerba mate (500 g.)",p23:1181.03,ph:2359.58},{n:"Café molido (500 g.)",p23:2740.36,ph:12325.65},{n:"Dulce de leche (450 g.)",p23:1039.08,ph:3571.45},{n:"Tomate en conserva (lata)",p23:418.04,ph:1301.98},{n:"Lentejas secas (400 g.)",p23:813.91,ph:1727.29},{n:"Sal fina (500 g.)",p23:318.53,ph:1355.67}]},{cat:"Carnicería", items:[{n:"Asado (Kg.)",p23:4116.28,ph:22305.00},{n:"Carne picada especial (Kg.)",p23:3674.89,ph:17076.20},{n:"Paleta (Kg.)",p23:3759.50,ph:19063.86},{n:"Cuadril (Kg.)",p23:4526.12,ph:22569.99},{n:"Nalga (Kg.)",p23:4429.40,ph:22524.60},{n:"Hígado (Kg.)",p23:1097.16,ph:5542.88},{n:"Hamburguesas (4 u.)",p23:1609.24,ph:6702.00},{n:"Pollo entero (Kg.)",p23:1417.83,ph:5279.56},{n:"Filet de merluza fresco (Kg.)",p23:2994.08,ph:12684.06},{n:"Salchicha tipo viena (6 u.)",p23:690.01,ph:2562.66},{n:"Jamón cocido (Kg.)",p23:5763.80,ph:18956.52},{n:"Salchichón (Kg.)",p23:3531.42,ph:11963.98},{n:"Salame (Kg.)",p23:6402.78,ph:23098.17}]},{cat:"Lácteos y Huevos", items:[{n:"Leche fresca sachet (L.)",p23:560.48,ph:1811.38},{n:"Leche en polvo (800 g.)",p23:3513.07,ph:12855.28},{n:"Queso crema (280 g.)",p23:1213.22,ph:4015.38},{n:"Queso Sardo (Kg.)",p23:4982.96,ph:21766.92},{n:"Manteca (150 g.)",p23:792.13,ph:3048.66},{n:"Yogur firme (195 cc.)",p23:430.21,ph:1780.65},{n:"Huevos de gallina (12 u.)",p23:1196.71,ph:3599.42}]},{cat:"Verdulería", items:[{n:"Manzana deliciosa (Kg.)",p23:1084.17,ph:4315.55},{n:"Naranja (Kg.)",p23:562.89,ph:2070.54},{n:"Banana (Kg.)",p23:1281.06,ph:3015.44},{n:"Papa (Kg.)",p23:579.67,ph:1232.51},{n:"Cebolla (Kg.)",p23:358.53,ph:1011.09},{n:"Lechuga (Kg.)",p23:725.25,ph:4427.59},{n:"Tomate redondo (Kg.)",p23:1387.50,ph:2419.70}]},{cat:"Bebidas", items:[{n:"Gaseosa cola (1,5 L.)",p23:955.46,ph:3807.16},{n:"Agua sin Gas (1,5 L.)",p23:379.88,ph:1899.67},{n:"Soda sifón (2 L.)",p23:551.25,ph:1590.26},{n:"Cerveza en botella (L.)",p23:1100.56,ph:3794.73},{n:"Cerveza en lata (350 cc.)",p23:505.06,ph:1589.57},{n:"Vino común (L.)",p23:1094.44,ph:2409.64}]}];
-        const dataAlvear = [{cat:"Limpieza", items:[{n:"Toalla femenina x8",p23:299,ph:3029},{n:"Limpiador Cif cremoso",p23:559,ph:3990},{n:"Lavavajilla Cif",p23:455,ph:2639},{n:"Skip 500cc",p23:2159,ph:11999},{n:"Ayudín 2L",p23:679,ph:3499},{n:"Papel Higiénico Felpita",p23:198,ph:949},{n:"Rollo cocina",p23:934,ph:2599}]},{cat:"Carnicería", items:[{n:"Rack de ternera",p23:3949,ph:30990},{n:"Corte Malvinas",p23:3999,ph:25490},{n:"Nalga de ternera",p23:4290,ph:26990},{n:"Marucha",p23:3149,ph:18490},{n:"Tomahawk",p23:3780,ph:21490},{n:"Cabeza de lomo",p23:3890,ph:19990},{n:"Chorizo Parrillero",p23:2790,ph:13490},{n:"Picada ternera",p23:2699,ph:12990},{n:"Pollo Las Camelias",p23:1299,ph:6199},{n:"Pechito de Cerdo",p23:2549,ph:9490},{n:"Filet de pollo",p23:2780,ph:9990},{n:"Pata muslo c/piel",p23:1499,ph:4849}]},{cat:"Almacén", items:[{n:"Yogur Tregar",p23:389,ph:2659},{n:"Crema La Paulina",p23:535,ph:2899},{n:"Manteca tonadita",p23:599,ph:3199},{n:"Queso Cremón",p23:2790,ph:13999},{n:"Harina Pureza",p23:495,ph:1990},{n:"Giacomo cappelletini",p23:1529,ph:5799},{n:"Mate cocido Unión",p23:944,ph:2599},{n:"Mayonesa Hellmans",p23:423,ph:4999}]}];
-        const dataCoto = [{cat:"Carnicería", items:[{n:"Cuadril novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón",p23:1399,ph:6200},{n:"Chuleta de Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},{cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Entera Las Tres Niñas",p23:479,ph:1890},{n:"Manteca 1er Premio",p23:649.9,ph:3400},{n:"Crema Serenísima",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo La Paulina",p23:2899,ph:17699}]},{cat:"Almacén", items:[{n:"Jardinera 3 Leg",p23:365.9,ph:896.35},{n:"Tostadas Riera",p23:654.9,ph:1857},{n:"Salsa pizza Knorr",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},{cat:"Limpieza", items:[{n:"Skip Bio 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita 80m",p23:1299.99,ph:4295.87}]}];
+        const dataAlvear = [{cat:"Limpieza", items:[{n:"Toalla femenina x8",p23:299,ph:3029},{n:"Limpiador Cif cremoso",p23:559,ph:3990},{n:"Lavavajilla Cif",p23:455,ph:2639},{n:"Skip 500cc",p23:2159,ph:11999},{n:"Ayudín 2L",p23:679,ph:3499},{n:"Papel Felpita",p23:198,ph:949},{n:"Rollo cocina",p23:934,ph:2599}]},{cat:"Carnicería", items:[{n:"Rack de ternera",p23:3949,ph:30990},{n:"Corte Malvinas",p23:3999,ph:25490},{n:"Nalga de ternera",p23:4290,ph:26990},{n:"Marucha",p23:3149,ph:18490},{n:"Tomahawk",p23:3780,ph:21490},{n:"Cabeza de lomo",p23:3890,ph:19990},{n:"Chorizo Parrillero",p23:2790,ph:13490},{n:"Picada ternera",p23:2699,ph:12990},{n:"Pollo Las Camelias",p23:1299,ph:6199},{n:"Pechito de Cerdo",p23:2549,ph:9490},{n:"Filet de pollo",p23:2780,ph:9990},{n:"Pata muslo c/piel",p23:1499,ph:4849}]},{cat:"Almacén", items:[{n:"Yogur Tregar",p23:389,ph:2659},{n:"Crema La Paulina",p23:535,ph:2899},{n:"Manteca tonadita",p23:599,ph:3199},{n:"Queso Cremón",p23:2790,ph:13999},{n:"Harina Pureza",p23:495,ph:1990},{n:"Giacomo cappelletini",p23:1529,ph:5799},{n:"Mate cocido Unión",p23:944,ph:2599},{n:"Mayonesa Hellmans",p23:423,ph:4999}]}];
+        const dataCoto = [{cat:"Carnicería", items:[{n:"Cuadril novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón",p23:1399,ph:6200},{n:"Chuleta de Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},{cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Tres Niñas",p23:479,ph:1890},{n:"Manteca 1er Premio",p23:649.9,ph:3400},{n:"Crema Serenísima",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo",p23:2899,ph:17699}]},{cat:"Almacén", items:[{n:"Jardinera 3 Leg",p23:365.9,ph:896.35},{n:"Tostadas Riera",p23:654.9,ph:1857},{n:"Salsa pizza Knorr",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},{cat:"Limpieza", items:[{n:"Skip Bio 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita 80m",p23:1299.99,ph:4295.87}]}];
         
         const presets = { smvm:{v23:156000,vh:363000}, jubilacion:{v23:160713,vh:463174}, municipal:{v23:246008,vh:1065000}, comercio:{v23:332959,vh:1095562}, docente:{v23:269522,vh:1037205} };
         let selectionMode = false;
-        let activeMobileKey = null;
+        let mobileKey = null;
 
-        function getVal(id) { 
-            let s = document.getElementById(id).value;
-            return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; 
-        }
-        
-        function handlePresetChange() { 
-            document.getElementById('inc2023').value = ""; 
-            document.getElementById('incHoy').value = ""; 
-            calculate(); 
-        }
+        function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; }
+        function handlePresetChange() { document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; calculate(); }
+        function resetAll() { document.getElementById('presetIncome').value = "custom"; document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; selectionMode = false; mobileKey = null; initView(); }
 
-        function resetAll() {
-            document.getElementById('presetIncome').value = "custom";
-            document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = "";
-            selectionMode = false; activeMobileKey = null;
-            document.getElementById('btnMode').innerText = "Armá tu propia canasta (Elegir productos)";
-            document.getElementById('productsView').className = "hidden-checks hidden";
-            document.getElementById('modeHeader').classList.add('hidden');
-            ['ipec', 'alvear', 'coto'].forEach(k => { document.getElementById(`btn-${k}`).className = "w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center"; });
-            calculate();
-        }
+        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Canasta completa" : "Armá tu propia canasta (Elegir productos)"; initView(); }
 
-        function toggleSelectionMode() {
-            selectionMode = !selectionMode;
-            const label = selectionMode ? "Ver Canasta Completa" : "Armá tu propia canasta (Elegir productos)";
-            document.getElementById('btnMode').innerText = label;
-            if(document.getElementById('btnModeMob')) document.getElementById('btnModeMob').innerText = label;
-            renderView();
-        }
-
-        function activateMobileSource(k) {
-            const productsView = document.getElementById('productsView');
+        function activateMobile(k) {
+            const view = document.getElementById('productsView');
             const block = document.getElementById(`block-${k}-mob`);
-            if (activeMobileKey === k) {
-                productsView.classList.add('hidden');
-                document.getElementById('modeHeader').classList.add('hidden');
-                document.getElementById(`btn-${k}`).className = "w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center";
-                activeMobileKey = null;
-                return;
-            }
-            activeMobileKey = k;
+            if (mobileKey === k) { view.classList.add('hidden'); mobileKey = null; return; }
+            mobileKey = k;
             document.getElementById('priceSource').value = k;
             ['ipec', 'alvear', 'coto'].forEach(key => {
                 const btn = document.getElementById(`btn-${key}`);
-                if(key === k) {
-                    btn.className = "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl text-left flex justify-between items-center shadow-md";
-                    block.appendChild(productsView);
-                    productsView.classList.remove('hidden');
-                    document.getElementById('modeHeader').classList.remove('hidden');
-                } else {
-                    btn.className = "w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center";
-                }
+                btn.className = (key === k) ? "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl flex justify-between items-center shadow-md" : "w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center";
             });
-            renderView();
-            document.getElementById(`btn-${k}`).scrollIntoView({ behavior: 'smooth' });
+            block.appendChild(view); view.classList.remove('hidden'); initView();
+            btn.scrollIntoView({ behavior: 'smooth' });
         }
 
-        function renderView() {
+        function initView() {
             const src = document.getElementById('priceSource').value;
-            const data = src === 'ipec' ? dataIPEC : (src === 'alvear' ? dataAlvear : dataCoto);
-            const container = document.getElementById('dynamicContent');
-            container.innerHTML = "";
+            const data = (src === 'ipec') ? dataIPEC : (src === 'alvear' ? dataAlvear : dataCoto);
+            const content = document.getElementById('dynamicContent');
+            content.innerHTML = "";
 
-            let pcTable = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col italic">Elegir</th><th class="p-4 text-left italic uppercase">Producto</th><th class="p-4 text-center italic uppercase">Antes</th><th class="p-4 text-center italic uppercase">Hoy</th><th class="p-4 text-center italic uppercase">Variación</th></tr></thead><tbody id="pcTableBody">`;
+            let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Antes</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
             
             data.forEach((group, gIdx) => {
-                pcTable += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="g-check" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2 italic">${group.cat}</td></tr>`;
-                
+                tableHtml += `<tr class="category-row"><td class="p-2 text-center"><input type="checkbox" ${selectionMode ? '' : 'checked'} onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2">${group.cat}</td></tr>`;
                 group.items.forEach((p, pIdx) => {
-                    const uniqueId = `item-${gIdx}-${pIdx}`;
-                    const card = `<div class="product-card md:hidden" id="card-${uniqueId}">
-                        <div class="flex justify-between items-start">
-                            <span class="font-bold text-slate-800 leading-tight">${p.n}</span>
-                            <div class="check-col ml-4"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-8 h-8" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></div>
-                        </div>
-                        <div class="card-grid js-data-container" style="display: ${selectionMode ? 'none' : 'grid'}">
-                            <div><div class="card-label">Antes</div><div class="card-val res-u23-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
-                            <div><div class="card-label">Hoy</div><div class="card-val res-uh-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
-                            <div class="col-span-2 pt-2 border-t mt-1 text-center"><div class="card-label italic">Variación</div><div class="text-xl font-black res-v-mob">-</div></div>
-                        </div></div>`;
-                    container.innerHTML += card;
-
-                    pcTable += `<tr class="border-b hover:bg-slate-50 transition" id="row-${uniqueId}">
-                        <td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td>
-                        <td class="p-4 font-bold text-slate-700">${p.n}</td>
-                        <td class="p-4 text-center js-data-container" style="display: ${selectionMode ? 'none' : 'table-cell'}"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td>
-                        <td class="p-4 text-center js-data-container" style="display: ${selectionMode ? 'none' : 'table-cell'}"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td>
-                        <td class="p-4 text-center js-data-container" style="display: ${selectionMode ? 'none' : 'table-cell'}"><span class="font-black text-xl res-v">-</span></td>
-                    </tr>`;
+                    const id = `cb-${gIdx}-${pIdx}`;
+                    const show = selectionMode ? 'data-hidden' : '';
+                    content.innerHTML += `
+                        <div class="product-card md:hidden" id="card-${id}">
+                            <div class="flex justify-between items-start">
+                                <span class="font-bold text-slate-800 leading-tight">${p.n}</span>
+                                <input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-8 h-8" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()">
+                            </div>
+                            <div class="card-grid ${show} js-data">
+                                <div><div class="card-label italic text-blue-900">Antes</div><div class="card-val res-u23">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
+                                <div><div class="card-label italic text-blue-900">Hoy</div><div class="card-val res-uh">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
+                                <div class="col-span-2 pt-2 border-t mt-1 text-center"><div class="card-label italic">Variación</div><div class="text-xl font-black res-v">-</div></div>
+                            </div>
+                        </div>`;
+                    tableHtml += `
+                        <tr class="border-b hover:bg-slate-50 transition" id="row-${id}">
+                            <td class="p-4 text-center"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td>
+                            <td class="p-4 font-bold text-slate-700">${p.n}</td>
+                            <td class="p-4 text-center ${show} js-data"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td>
+                            <td class="p-4 text-center ${show} js-data"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td>
+                            <td class="p-4 text-center ${show} js-data"><span class="font-black text-xl res-v">-</span></td>
+                        </tr>`;
                 });
             });
-            pcTable += `</tbody></table>`;
-            container.innerHTML += pcTable;
+            tableHtml += `</tbody></table>`;
+            content.innerHTML += tableHtml;
             calculate();
         }
 
@@ -212,62 +162,40 @@
             let i23 = getVal('inc2023'); let iH = getVal('incHoy');
             if (sKey !== 'custom' && i23 === 0) { i23 = presets[sKey].v23; iH = presets[sKey].vh; }
 
-            // Dashboards móviles
+            // Actualizar Dashboards
             ['ipec', 'alvear', 'coto'].forEach(k => {
-                const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
+                const d = (k === 'ipec') ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
                 const r = (((iH/sh)/(i23/s23))-1)*100;
                 const el = document.getElementById(`dash-${k}`);
                 if (i23 > 0) { el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; }
-                else { el.innerText = "--%"; el.className = "text-xl font-black text-slate-400"; }
             });
 
-            // Motor de Cálculo y Visibilidad
-            const pcTableBody = document.getElementById('pcTableBody');
-            if(!pcTableBody) return;
-
-            const rows = pcTableBody.querySelectorAll('tr:not(.category-row)');
             const cards = document.querySelectorAll('.product-card');
+            const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
             let t23 = 0, tH = 0, count = 0;
 
             rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check');
                 const mCard = cards[idx];
-                const mCb = mCard ? mCard.querySelector('.p-check') : null;
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
-                
                 const isSelected = cb.checked;
-                const showData = !selectionMode || isSelected;
+                const containers = [r, mCard];
 
-                // Actualizar Visibilidad PC (Columnas de datos)
-                const pcCells = r.querySelectorAll('.js-data-container');
-                pcCells.forEach(cell => {
-                    cell.style.display = showData ? 'table-cell' : 'none';
-                });
-
-                // Actualizar Visibilidad Móvil (Grid de datos)
-                if(mCard) {
-                    const mGrid = mCard.querySelector('.js-data-container');
-                    mGrid.style.display = showData ? 'grid' : 'none';
-                }
-
-                if (i23 > 0 && showData) {
-                    const u23 = i23 / p23, uh = iH / ph, v = ((uh/u23)-1)*100;
-                    const vS = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
+                containers.forEach(cont => {
+                    if(!cont) return;
+                    const dataBox = cont.querySelectorAll('.js-data');
+                    dataBox.forEach(box => { box.classList.toggle('data-hidden', selectionMode && !isSelected); });
                     
-                    r.querySelector('.res-u23').innerText = u23.toFixed(1);
-                    r.querySelector('.res-uh').innerText = uh.toFixed(1);
-                    r.querySelector('.res-v').innerText = vS; 
-                    r.querySelector('.res-v').className = `font-black text-xl res-v ${col}`;
-                    
-                    if(mCard) {
-                        mCard.querySelector('.res-u23-mob').innerText = u23.toFixed(1);
-                        mCard.querySelector('.res-uh-mob').innerText = uh.toFixed(1);
-                        mCard.querySelector('.res-v-mob').innerText = vS;
-                        mCard.querySelector('.res-v-mob').className = `text-xl font-black res-v-mob ${col}`;
+                    if (i23 > 0 && (!selectionMode || isSelected)) {
+                        const u23 = i23/p23, uh = iH/ph, v = ((uh/u23)-1)*100;
+                        cont.querySelector('.res-u23').innerText = u23.toFixed(1);
+                        cont.querySelector('.res-uh').innerText = uh.toFixed(1);
+                        const rv = cont.querySelector('.res-v');
+                        rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
+                        rv.className = `font-black res-v ${v < 0 ? 'text-red-600' : 'text-green-600'} ${cont.tagName === 'DIV' ? 'text-xl' : 'text-xl'}`;
                     }
-                }
-
+                });
                 if (isSelected) { t23 += p23; tH += ph; count++; }
             });
 
@@ -280,14 +208,8 @@
             } else { bar.classList.add('hidden'); }
         }
 
-        function toggleGroup(gIdx, val) { 
-            const pcTableBody = document.getElementById('pcTableBody');
-            const checks = pcTableBody.querySelectorAll(`.p-check[data-g="${gIdx}"]`);
-            checks.forEach(c => { c.checked = val; });
-            calculate(); 
-        }
-        
-        renderView();
+        function toggleGroup(gIdx, val) { document.querySelectorAll(`.p-check[data-g="${gIdx}"]`).forEach(c => c.checked = val); calculate(); }
+        initView();
     </script>
 </body>
 </html>
