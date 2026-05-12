@@ -24,15 +24,10 @@
             .card-label { font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
             .pc-source-selector { display: none; }
         }
-
-        /* --- CORRECCIÓN DE VISIBILIDAD PC --- */
         .hidden-checks .check-col { display: none; }
         
-        /* En modo selección, ocultamos los datos por defecto */
-        .selection-mode-active .data-to-hide { display: none !important; }
-        
-        /* Solo mostramos los datos si el elemento padre tiene la clase 'item-selected' */
-        .item-selected .data-to-hide { display: block !important; opacity: 1; transition: opacity 0.3s ease; }
+        /* Visibilidad forzada por JS */
+        .js-data-container { transition: opacity 0.2s ease; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
@@ -71,10 +66,10 @@
                         <option value="coto">3. COTO (23 productos)</option>
                     </select>
                     <div class="flex flex-col gap-2">
-                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200 transition">
+                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg">
                             Armá tu propia canasta (Elegir productos)
                         </button>
-                        <button onclick="resetAll()" class="w-full py-2 border-2 border-slate-200 text-slate-400 text-[10px] font-black uppercase rounded-lg hover:bg-slate-100 transition">
+                        <button onclick="resetAll()" class="w-full py-2 border-2 border-slate-200 text-slate-400 text-[10px] font-black uppercase rounded-lg hover:bg-slate-100">
                             Reiniciar datos
                         </button>
                     </div>
@@ -116,9 +111,16 @@
         let selectionMode = false;
         let activeMobileKey = null;
 
-        function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; }
+        function getVal(id) { 
+            let s = document.getElementById(id).value;
+            return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; 
+        }
         
-        function handlePresetChange() { document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; calculate(); }
+        function handlePresetChange() { 
+            document.getElementById('inc2023').value = ""; 
+            document.getElementById('incHoy').value = ""; 
+            calculate(); 
+        }
 
         function resetAll() {
             document.getElementById('presetIncome').value = "custom";
@@ -136,8 +138,6 @@
             const label = selectionMode ? "Ver Canasta Completa" : "Armá tu propia canasta (Elegir productos)";
             document.getElementById('btnMode').innerText = label;
             if(document.getElementById('btnModeMob')) document.getElementById('btnModeMob').innerText = label;
-            const view = document.getElementById('productsView');
-            view.className = selectionMode ? "selection-mode-active" : "hidden-checks";
             renderView();
         }
 
@@ -174,30 +174,31 @@
             const container = document.getElementById('dynamicContent');
             container.innerHTML = "";
 
-            let pcTable = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col italic">Elegir</th><th class="p-4 text-left italic uppercase">Producto</th><th class="p-4 text-center italic uppercase">Antes</th><th class="p-4 text-center italic uppercase">Hoy</th><th class="p-4 text-center italic uppercase">Variación</th></tr></thead><tbody>`;
+            let pcTable = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col italic">Elegir</th><th class="p-4 text-left italic uppercase">Producto</th><th class="p-4 text-center italic uppercase">Antes</th><th class="p-4 text-center italic uppercase">Hoy</th><th class="p-4 text-center italic uppercase">Variación</th></tr></thead><tbody id="pcTableBody">`;
             
             data.forEach((group, gIdx) => {
                 pcTable += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="g-check" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2 italic">${group.cat}</td></tr>`;
                 
-                group.items.forEach((p) => {
-                    const card = `<div class="product-card md:hidden" id="card-${p.n.replace(/\s+/g, '')}">
+                group.items.forEach((p, pIdx) => {
+                    const uniqueId = `item-${gIdx}-${pIdx}`;
+                    const card = `<div class="product-card md:hidden" id="card-${uniqueId}">
                         <div class="flex justify-between items-start">
                             <span class="font-bold text-slate-800 leading-tight">${p.n}</span>
                             <div class="check-col ml-4"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-8 h-8" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></div>
                         </div>
-                        <div class="card-grid">
-                            <div class="data-to-hide"><div class="card-label">Antes</div><div class="card-val res-u23-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
-                            <div class="data-to-hide"><div class="card-label">Hoy</div><div class="card-val res-uh-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
-                            <div class="col-span-2 pt-2 border-t mt-1 text-center data-to-hide"><div class="card-label italic">Variación</div><div class="text-xl font-black res-v-mob">-</div></div>
+                        <div class="card-grid js-data-container" style="display: ${selectionMode ? 'none' : 'grid'}">
+                            <div><div class="card-label">Antes</div><div class="card-val res-u23-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
+                            <div><div class="card-label">Hoy</div><div class="card-val res-uh-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
+                            <div class="col-span-2 pt-2 border-t mt-1 text-center"><div class="card-label italic">Variación</div><div class="text-xl font-black res-v-mob">-</div></div>
                         </div></div>`;
                     container.innerHTML += card;
 
-                    pcTable += `<tr class="border-b hover:bg-slate-50 transition" id="row-${p.n.replace(/\s+/g, '')}">
+                    pcTable += `<tr class="border-b hover:bg-slate-50 transition" id="row-${uniqueId}">
                         <td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td>
                         <td class="p-4 font-bold text-slate-700">${p.n}</td>
-                        <td class="p-4 text-center"><div class="data-to-hide"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></div></td>
-                        <td class="p-4 text-center"><div class="data-to-hide"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></div></td>
-                        <td class="p-4 text-center"><div class="data-to-hide font-black text-xl res-v">-</div></td>
+                        <td class="p-4 text-center js-data-container" style="display: ${selectionMode ? 'none' : 'table-cell'}"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td>
+                        <td class="p-4 text-center js-data-container" style="display: ${selectionMode ? 'none' : 'table-cell'}"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td>
+                        <td class="p-4 text-center js-data-container" style="display: ${selectionMode ? 'none' : 'table-cell'}"><span class="font-black text-xl res-v">-</span></td>
                     </tr>`;
                 });
             });
@@ -221,17 +222,36 @@
                 else { el.innerText = "--%"; el.className = "text-xl font-black text-slate-400"; }
             });
 
-            const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
+            // Motor de Cálculo y Visibilidad
+            const pcTableBody = document.getElementById('pcTableBody');
+            if(!pcTableBody) return;
+
+            const rows = pcTableBody.querySelectorAll('tr:not(.category-row)');
             const cards = document.querySelectorAll('.product-card');
             let t23 = 0, tH = 0, count = 0;
 
             rows.forEach((r, idx) => {
-                const cb = r.querySelector('.p-check'); 
+                const cb = r.querySelector('.p-check');
                 const mCard = cards[idx];
+                const mCb = mCard ? mCard.querySelector('.p-check') : null;
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
+                
                 const isSelected = cb.checked;
+                const showData = !selectionMode || isSelected;
 
-                if (i23 > 0) {
+                // Actualizar Visibilidad PC (Columnas de datos)
+                const pcCells = r.querySelectorAll('.js-data-container');
+                pcCells.forEach(cell => {
+                    cell.style.display = showData ? 'table-cell' : 'none';
+                });
+
+                // Actualizar Visibilidad Móvil (Grid de datos)
+                if(mCard) {
+                    const mGrid = mCard.querySelector('.js-data-container');
+                    mGrid.style.display = showData ? 'grid' : 'none';
+                }
+
+                if (i23 > 0 && showData) {
                     const u23 = i23 / p23, uh = iH / ph, v = ((uh/u23)-1)*100;
                     const vS = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
                     
@@ -246,18 +266,9 @@
                         mCard.querySelector('.res-v-mob').innerText = vS;
                         mCard.querySelector('.res-v-mob').className = `text-xl font-black res-v-mob ${col}`;
                     }
-
-                    // --- CONTROL DE VISIBILIDAD REFORZADO ---
-                    if (!selectionMode || isSelected) {
-                        r.classList.add('item-selected');
-                        if(mCard) mCard.classList.add('item-selected');
-                    } else {
-                        r.classList.remove('item-selected');
-                        if(mCard) mCard.classList.remove('item-selected');
-                    }
-
-                    if (isSelected) { t23 += p23; tH += ph; count++; }
                 }
+
+                if (isSelected) { t23 += p23; tH += ph; count++; }
             });
 
             const bar = document.getElementById('stickyBar');
@@ -270,9 +281,12 @@
         }
 
         function toggleGroup(gIdx, val) { 
-            document.querySelectorAll(`.p-check[data-g="${gIdx}"]`).forEach(c => { c.checked = val; }); 
+            const pcTableBody = document.getElementById('pcTableBody');
+            const checks = pcTableBody.querySelectorAll(`.p-check[data-g="${gIdx}"]`);
+            checks.forEach(c => { c.checked = val; });
             calculate(); 
         }
+        
         renderView();
     </script>
 </body>
