@@ -109,8 +109,7 @@
     </div>
 
     <script>
-        // ... (Aquí van los objetos dataIPEC, dataAlvear y dataCoto que ya tenemos)
-        // [INSERTE AQUÍ LAS LISTAS DE PRODUCTOS DE LA VERSIÓN ANTERIOR]
+        // Los mismos datos de productos anteriores se mantienen igual
         const dataIPEC = [
             { cat: "Panificados y Harinas", items: [
                 { name: "Pan francés mignón (Kg.)", p2023: 913.97, pHoy: 3066.99 },
@@ -242,12 +241,13 @@
             ]}
         ];
 
+        // ACTUALIZACIÓN DE INGRESOS SOLICITADA
         const presets = {
             smvm: { v2023: "156.000", vHoy: "363.000" },
             jubilacion: { v2023: "160.713", vHoy: "463.174" },
-            municipal: { v2023: "223.797", vHoy: "1.065.000" },
+            municipal: { v2023: "246.008", vHoy: "1.065.000" }, // Actualizado
             comercio: { v2023: "332.959,88", vHoy: "1.095.562,81" },
-            docente: { v2023: "269.574", vHoy: "1.037.205" }
+            docente: { v2023: "269.522", vHoy: "1.037.205" } // Actualizado
         };
 
         function getRawValue(str) {
@@ -326,14 +326,11 @@
             const incHoy = getRawValue(document.getElementById('incomeHoy').value);
             const rows = document.querySelectorAll('#resultsTable tr:not(.category-row)');
             let tC23 = 0, tCHoy = 0, countTotal = 0;
-            const rubroData = {};
 
             rows.forEach(row => {
                 const check = row.querySelector('.prod-check');
-                const catSlug = check.dataset.category;
                 const p23 = parseFloat(check.dataset.p2023);
                 const pHoy = parseFloat(check.dataset.phoy);
-                if (!rubroData[catSlug]) rubroData[catSlug] = { c23: 0, cHoy: 0, count: 0 };
                 if (check.checked && inc2023 > 0 && incHoy > 0) {
                     const u23 = inc2023 / p23;
                     const uH = incHoy / pHoy;
@@ -344,7 +341,6 @@
                     dc.innerText = (diff > 0 ? "+" : "") + diff.toFixed(1) + "%";
                     dc.className = `p-4 text-center font-black text-xl res-diff ${diff < 0 ? 'text-red-600' : 'text-green-600'}`;
                     tC23 += p23; tCHoy += pHoy; countTotal++;
-                    rubroData[catSlug].c23 += p23; rubroData[catSlug].cHoy += pHoy; rubroData[catSlug].count++;
                 } else {
                     row.querySelector('.res-2023').innerText = "-";
                     row.querySelector('.res-hoy').innerText = "-";
