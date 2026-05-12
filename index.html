@@ -32,8 +32,8 @@
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight">Análisis comparativo de ingresos vs precios</p>
+            <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Comparamos la variación de los precios en supermercados con los ingresos</p>
         </div>
 
         <div class="p-4 md:p-10">
@@ -50,8 +50,8 @@
                         <option value="docente">Salario Docente</option>
                     </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
-                        <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
+                        <input type="text" id="inc2023" placeholder="$ pesos (2023)" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
+                        <input type="text" id="incHoy" placeholder="$ pesos (Hoy)" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
                     </div>
                 </div>
 
@@ -69,21 +69,18 @@
 
                 <div class="md:hidden pt-6 space-y-3 mobile-dashboard">
                     <h2 class="text-[10px] font-black text-slate-400 uppercase mb-2">Canastas completas:</h2>
-                    
                     <div id="block-ipec-mob">
                         <button onclick="activateMobileSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center">
                             <span class="text-[11px] font-black text-slate-600 uppercase">1. IPEC (48 prod.)</span>
                             <span id="dash-ipec" class="text-xl font-black text-red-600">--%</span>
                         </button>
                     </div>
-
                     <div id="block-alvear-mob">
                         <button onclick="activateMobileSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center">
                             <span class="text-[11px] font-black text-slate-600 uppercase">2. ALVEAR (27 prod.)</span>
                             <span id="dash-alvear" class="text-xl font-black text-red-600">--%</span>
                         </button>
                     </div>
-
                     <div id="block-coto-mob">
                         <button onclick="activateMobileSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center">
                             <span class="text-[11px] font-black text-slate-600 uppercase">3. COTO (23 prod.)</span>
@@ -94,8 +91,8 @@
             </div>
 
             <div id="productsView" class="hidden-checks">
-                <div id="modeHeader" class="md:hidden mb-6 hidden">
-                    <button id="btnModeMob" onclick="toggleSelectionMode()" class="w-full py-3 bg-blue-900 text-white text-[11px] font-black uppercase rounded-lg shadow-lg">
+                <div id="modeHeader" class="md:hidden mb-6 hidden text-center">
+                    <button id="btnModeMob" onclick="toggleSelectionMode()" class="px-6 py-3 bg-blue-900 text-white text-[11px] font-black uppercase rounded-lg shadow-lg">
                         Armá tu propia canasta
                     </button>
                 </div>
@@ -112,51 +109,47 @@
     <script>
         const dataIPEC = [{cat:"Almacén", items:[{n:"Pan francés mignón (Kg.)",p23:913.97,ph:3066.99},{n:"Pan de mesa (390 g.)",p23:891.44,ph:3993.77},{n:"Galletitas dulces (150 g.)",p23:420.35,ph:1464.71},{n:"Galletitas de agua (250 g.)",p23:446.46,ph:1415.21},{n:"Harina de trigo común (Kg.)",p23:402.46,ph:951.40},{n:"Arroz blanco simple (Kg.)",p23:1068.42,ph:1858.11},{n:"Fideos Secos Guisero (500 g.)",p23:642.99,ph:1471.06},{n:"Aceite de girasol (1,5 L.)",p23:1495.50,ph:6541.07},{n:"Azúcar (Kg.)",p23:1083.62,ph:1435.80},{n:"Yerba mate (500 g.)",p23:1181.03,ph:2359.58},{n:"Café molido (500 g.)",p23:2740.36,ph:12325.65},{n:"Dulce de leche (450 g.)",p23:1039.08,ph:3571.45},{n:"Tomate en conserva (lata)",p23:418.04,ph:1301.98},{n:"Lentejas secas (400 g.)",p23:813.91,ph:1727.29},{n:"Sal fina (500 g.)",p23:318.53,ph:1355.67}]},{cat:"Carnicería", items:[{n:"Asado (Kg.)",p23:4116.28,ph:22305.00},{n:"Carne picada especial (Kg.)",p23:3674.89,ph:17076.20},{n:"Paleta (Kg.)",p23:3759.50,ph:19063.86},{n:"Cuadril (Kg.)",p23:4526.12,ph:22569.99},{n:"Nalga (Kg.)",p23:4429.40,ph:22524.60},{n:"Hígado (Kg.)",p23:1097.16,ph:5542.88},{n:"Hamburguesas (4 u.)",p23:1609.24,ph:6702.00},{n:"Pollo entero (Kg.)",p23:1417.83,ph:5279.56},{n:"Filet de merluza fresco (Kg.)",p23:2994.08,ph:12684.06},{n:"Salchicha tipo viena (6 u.)",p23:690.01,ph:2562.66},{n:"Jamón cocido (Kg.)",p23:5763.80,ph:18956.52},{n:"Salchichón (Kg.)",p23:3531.42,ph:11963.98},{n:"Salame (Kg.)",p23:6402.78,ph:23098.17}]},{cat:"Lácteos y Huevos", items:[{n:"Leche fresca sachet (L.)",p23:560.48,ph:1811.38},{n:"Leche en polvo (800 g.)",p23:3513.07,ph:12855.28},{n:"Queso crema (280 g.)",p23:1213.22,ph:4015.38},{n:"Queso Sardo (Kg.)",p23:4982.96,ph:21766.92},{n:"Manteca (150 g.)",p23:792.13,ph:3048.66},{n:"Yogur firme (195 cc.)",p23:430.21,ph:1780.65},{n:"Huevos de gallina (12 u.)",p23:1196.71,ph:3599.42}]},{cat:"Verdulería", items:[{n:"Manzana deliciosa (Kg.)",p23:1084.17,ph:4315.55},{n:"Naranja (Kg.)",p23:562.89,ph:2070.54},{n:"Banana (Kg.)",p23:1281.06,ph:3015.44},{n:"Papa (Kg.)",p23:579.67,ph:1232.51},{n:"Cebolla (Kg.)",p23:358.53,ph:1011.09},{n:"Lechuga (Kg.)",p23:725.25,ph:4427.59},{n:"Tomate redondo (Kg.)",p23:1387.50,ph:2419.70}]},{cat:"Bebidas", items:[{n:"Gaseosa cola (1,5 L.)",p23:955.46,ph:3807.16},{n:"Agua sin Gas (1,5 L.)",p23:379.88,ph:1899.67},{n:"Soda sifón (2 L.)",p23:551.25,ph:1590.26},{n:"Cerveza en botella (L.)",p23:1100.56,ph:3794.73},{n:"Cerveza en lata (350 cc.)",p23:505.06,ph:1589.57},{n:"Vino común (L.)",p23:1094.44,ph:2409.64}]}];
         const dataAlvear = [{cat:"Limpieza", items:[{n:"Toalla femenina x8",p23:299,ph:3029},{n:"Limpiador Cif cremoso",p23:559,ph:3990},{n:"Lavavajilla Cif",p23:455,ph:2639},{n:"Skip 500cc",p23:2159,ph:11999},{n:"Ayudín 2L",p23:679,ph:3499},{n:"Papel Higiénico Felpita",p23:198,ph:949},{n:"Rollo cocina",p23:934,ph:2599}]},{cat:"Carnicería", items:[{n:"Rack de ternera",p23:3949,ph:30990},{n:"Corte Malvinas",p23:3999,ph:25490},{n:"Nalga de ternera",p23:4290,ph:26990},{n:"Marucha",p23:3149,ph:18490},{n:"Tomahawk",p23:3780,ph:21490},{n:"Cabeza de lomo",p23:3890,ph:19990},{n:"Chorizo Parrillero",p23:2790,ph:13490},{n:"Picada ternera",p23:2699,ph:12990},{n:"Pollo Las Camelias",p23:1299,ph:6199},{n:"Pechito de Cerdo",p23:2549,ph:9490},{n:"Filet de pollo",p23:2780,ph:9990},{n:"Pata muslo c/piel",p23:1499,ph:4849}]},{cat:"Almacén", items:[{n:"Yogur Tregar",p23:389,ph:2659},{n:"Crema La Paulina",p23:535,ph:2899},{n:"Manteca tonadita",p23:599,ph:3199},{n:"Queso Cremón",p23:2790,ph:13999},{n:"Harina Pureza",p23:495,ph:1990},{n:"Giacomo cappelletini",p23:1529,ph:5799},{n:"Mate cocido Unión",p23:944,ph:2599},{n:"Mayonesa Hellmans",p23:423,ph:4999}]}];
-        const dataCoto = [{cat:"Carnicería", items:[{n:"Cuadril novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón",p23:1399,ph:6200},{n:"Chuleta de Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},{cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Tres Niñas",p23:479,ph:1890},{n:"Manteca 1er Premio",p23:649.9,ph:3400},{n:"Crema Serenísima",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo",p23:2899,ph:17699}]},{cat:"Almacén", items:[{n:"Jardinera 3 Leg",p23:365.9,ph:896.35},{n:"Tostadas Riera",p23:654.9,ph:1857},{n:"Salsa pizza Knorr",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},{cat:"Limpieza", items:[{n:"Skip Bio 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita 80m",p23:1299.99,ph:4295.87}]}];
+        const dataCoto = [{cat:"Carnicería", items:[{n:"Cuadril novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón",p23:1399,ph:6200},{n:"Chuleta de Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},{cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Entera Las Tres Niñas",p23:479,ph:1890},{n:"Manteca 1er Premio",p23:649.9,ph:3400},{n:"Crema Serenísima",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo",p23:2899,ph:17699}]},{cat:"Almacén", items:[{n:"Jardinera 3 Leg",p23:365.9,ph:896.35},{n:"Tostadas Riera",p23:654.9,ph:1857},{n:"Salsa pizza Knorr",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},{cat:"Limpieza", items:[{n:"Skip Bio 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita 80m",p23:1299.99,ph:4295.87}]}];
         
         const presets = { smvm:{v23:156000,vh:363000}, jubilacion:{v23:160713,vh:463174}, municipal:{v23:246008,vh:1065000}, comercio:{v23:332959,vh:1095562}, docente:{v23:269522,vh:1037205} };
         let selectionMode = false;
-        let activeSource = 'ipec';
 
-        function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; }
+        function getVal(id) { 
+            let s = document.getElementById(id).value;
+            return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; 
+        }
         
         function handlePresetChange() { 
-            const sKey = document.getElementById('presetIncome').value;
-            if(sKey !== 'custom') {
-                document.getElementById('inc2023').value = presets[sKey].v23.toLocaleString('es-AR');
-                document.getElementById('incHoy').value = presets[sKey].vh.toLocaleString('es-AR');
-            }
+            document.getElementById('inc2023').value = ""; 
+            document.getElementById('incHoy').value = ""; 
             calculate(); 
         }
 
         function toggleSelectionMode() {
             selectionMode = !selectionMode;
-            const btnT = selectionMode ? "Ver Canasta Completa" : "Armá tu propia canasta (Elegir productos)";
-            document.getElementById('btnMode').innerText = btnT;
-            if(document.getElementById('btnModeMob')) document.getElementById('btnModeMob').innerText = btnT;
+            const label = selectionMode ? "Ver Canasta Completa" : "Armá tu propia canasta (Elegir productos)";
+            document.getElementById('btnMode').innerText = label;
+            if(document.getElementById('btnModeMob')) document.getElementById('btnModeMob').innerText = label;
             document.getElementById('productsView').className = selectionMode ? "" : "hidden-checks";
             renderView();
         }
 
         function activateMobileSource(k) {
-            activeSource = k;
             document.getElementById('priceSource').value = k;
-            
-            // UI Update
             ['ipec', 'alvear', 'coto'].forEach(key => {
                 const btn = document.getElementById(`btn-${key}`);
+                const block = document.getElementById(`block-${key}-mob`);
                 if(key === k) {
-                    btn.className = "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl text-left flex justify-between items-center";
+                    btn.className = "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl text-left flex justify-between items-center shadow-md";
+                    block.appendChild(document.getElementById('productsView'));
+                    document.getElementById('productsView').classList.remove('hidden');
+                    document.getElementById('modeHeader').classList.remove('hidden');
                 } else {
                     btn.className = "w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center";
                 }
             });
-
-            document.getElementById('modeHeader').classList.remove('hidden');
             renderView();
-            
-            // Scroll suave
-            document.getElementById('productsView').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('modeHeader').scrollIntoView({ behavior: 'smooth' });
         }
 
         function renderView() {
@@ -165,47 +158,44 @@
             const container = document.getElementById('dynamicContent');
             container.innerHTML = "";
 
-            let pcHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Antes</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
+            let pcTable = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Antes</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
             
             data.forEach((group, gIdx) => {
-                pcHtml += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="g-check" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2">${group.cat}</td></tr>`;
+                pcTable += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="g-check" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2">${group.cat}</td></tr>`;
                 
-                group.items.forEach(p => {
-                    const cardHtml = `
-                    <div class="product-card md:hidden">
+                group.items.forEach((p, pIdx) => {
+                    const card = `<div class="product-card md:hidden">
                         <div class="flex justify-between items-start">
-                            <span class="font-bold text-slate-800 leading-tight">${p.n}</span>
+                            <span class="font-bold text-slate-800">${p.n}</span>
                             <div class="check-col ml-4"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-6 h-6" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></div>
                         </div>
                         <div class="card-grid">
                             <div><div class="card-label">Antes</div><div class="card-val res-u23-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
                             <div><div class="card-label">Hoy</div><div class="card-val res-uh-mob">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
-                            <div class="col-span-2 pt-2 border-t mt-1 text-center"><div class="card-label">Variación</div><div class="text-xl font-black res-v-mob">-</div></div>
-                        </div>
-                    </div>`;
-                    container.innerHTML += cardHtml;
+                            <div class="col-span-2 pt-2 border-t mt-1 text-center"><div class="card-label italic">Variación</div><div class="text-xl font-black res-v-mob">-</div></div>
+                        </div></div>`;
+                    container.innerHTML += card;
 
-                    pcHtml += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td><td class="p-4 text-center"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td><td class="p-4 text-center font-black text-xl res-v">-</td></tr>`;
+                    pcTable += `<tr class="border-b hover:bg-slate-50 transition"><td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td><td class="p-4 text-center"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td><td class="p-4 text-center font-black text-xl res-v">-</td></tr>`;
                 });
             });
-            pcHtml += `</tbody></table>`;
-            container.innerHTML += pcHtml;
+            pcTable += `</tbody></table>`;
+            container.innerHTML += pcTable;
             calculate();
         }
 
         function calculate() {
+            const sKey = document.getElementById('presetIncome').value;
             let i23 = getVal('inc2023'); let iH = getVal('incHoy');
+            if (sKey !== 'custom' && i23 === 0) { i23 = presets[sKey].v23; iH = presets[sKey].vh; }
 
-            // Actualizar Dashboards
+            // Dashboards
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
                 const r = (((iH/sh)/(i23/s23))-1)*100;
                 const el = document.getElementById(`dash-${k}`);
-                if (i23 > 0) { 
-                    el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; 
-                    el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`;
-                }
+                if (i23 > 0) { el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; }
             });
 
             const cards = document.querySelectorAll('.product-card');
@@ -219,17 +209,17 @@
                 
                 if (i23 > 0) {
                     const u23 = i23 / p23, uh = iH / ph, v = ((uh/u23)-1)*100;
-                    const vS = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
+                    const vStr = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
                     
                     r.querySelector('.res-u23').innerText = u23.toFixed(1);
                     r.querySelector('.res-uh').innerText = uh.toFixed(1);
-                    r.querySelector('.res-v').innerText = vS; 
+                    r.querySelector('.res-v').innerText = vStr; 
                     r.querySelector('.res-v').className = `p-4 text-center font-black text-xl res-v ${col}`;
                     
                     if(mobCard) {
                         mobCard.querySelector('.res-u23-mob').innerText = u23.toFixed(1);
                         mobCard.querySelector('.res-uh-mob').innerText = uh.toFixed(1);
-                        mobCard.querySelector('.res-v-mob').innerText = vS;
+                        mobCard.querySelector('.res-v-mob').innerText = vStr;
                         mobCard.querySelector('.res-v-mob').className = `text-xl font-black res-v-mob ${col}`;
                     }
                     if (cb.checked) { t23 += p23; tH += ph; count++; }
