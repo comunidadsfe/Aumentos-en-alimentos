@@ -134,14 +134,14 @@
             let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Antes</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
             
             data.forEach((group, gIdx) => {
-                tableHtml += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2 italic">${group.cat}</td></tr>`;
+                tableHtml += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2">${group.cat}</td></tr>`;
                 group.items.forEach((p, pIdx) => {
                     const id = `it-${gIdx}-${pIdx}`;
                     content.innerHTML += `
-                        <div class="product-card md:hidden" data-idx="${id}">
+                        <div class="product-card md:hidden" data-id="${id}">
                             <div class="flex justify-between items-start">
                                 <span class="font-bold text-slate-800 leading-tight">${p.n}</span>
-                                <div class="check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-8 h-8" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></div>
+                                <div class="check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-8 h-8" data-p23="${p.p23}" data-ph="${p.ph}" onchange="syncAndCalc('${id}', this.checked)"></div>
                             </div>
                             <div class="card-grid js-data">
                                 <div><div class="card-label italic text-blue-900">Antes</div><div class="card-val res-u23">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
@@ -150,8 +150,8 @@
                             </div>
                         </div>`;
                     tableHtml += `
-                        <tr class="border-b hover:bg-slate-50 transition" data-idx="${id}">
-                            <td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td>
+                        <tr class="border-b hover:bg-slate-50 transition" data-id="${id}">
+                            <td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="syncAndCalc('${id}', this.checked)"></td>
                             <td class="p-4 font-bold text-slate-700">${p.n}</td>
                             <td class="p-4 text-center js-data"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td>
                             <td class="p-4 text-center js-data"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td>
@@ -161,6 +161,13 @@
             });
             tableHtml += `</tbody></table>`;
             content.innerHTML += tableHtml;
+            calculate();
+        }
+
+        // FUNCIÓN CLAVE: Sincroniza PC/Móvil solo al hacer clic, no en bucle
+        function syncAndCalc(id, state) {
+            const targets = document.querySelectorAll(`[data-id="${id}"] .p-check`);
+            targets.forEach(t => t.checked = state);
             calculate();
         }
 
@@ -178,15 +185,6 @@
                 if (i23 > 0) { el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; }
             });
 
-            // Sincronizar tildes entre PC y Móvil
-            const allChecks = document.querySelectorAll('.p-check');
-            const states = {};
-            allChecks.forEach(c => {
-                const idx = c.closest('[data-idx]').dataset.idx;
-                if (states[idx] === undefined) states[idx] = c.checked;
-                else if (c.checked !== states[idx]) states[idx] = c.checked; // Si alguno cambió, manda ese
-            });
-
             const cards = document.querySelectorAll('.product-card');
             const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
             let t23 = 0, tH = 0, count = 0;
@@ -194,15 +192,8 @@
             rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check');
                 const mCard = cards[idx];
-                const mCb = mCard.querySelector('.p-check');
-                const idxId = r.dataset.idx;
-
-                // Forzar sincronía sin bucle infinito
-                const isSelected = cb.checked || mCb.checked; 
-                cb.checked = isSelected;
-                mCb.checked = isSelected;
-
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
+                const isSelected = cb.checked;
 
                 [r, mCard].forEach(container => {
                     if(!container) return;
@@ -232,7 +223,13 @@
             } else { bar.classList.add('hidden'); }
         }
 
-        function toggleGroup(gIdx, val) { document.querySelectorAll(`.p-check[data-g="${gIdx}"]`).forEach(c => c.checked = val); calculate(); }
+        function toggleGroup(gIdx, val) { 
+            const checks = document.querySelectorAll(`.p-check[data-g="${gIdx}"]`);
+            checks.forEach(c => {
+                const id = c.closest('[data-id]').dataset.id;
+                syncAndCalc(id, val);
+            });
+        }
         initView();
     </script>
 </body>
