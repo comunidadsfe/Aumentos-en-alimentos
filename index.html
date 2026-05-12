@@ -25,14 +25,14 @@
             .pc-source-selector { display: none; }
         }
 
-        /* --- LÓGICA DE VISIBILIDAD REFORZADA --- */
+        /* --- CORRECCIÓN DE VISIBILIDAD PC --- */
         .hidden-checks .check-col { display: none; }
         
-        /* Cuando el modo selección está activo, ocultamos los datos por defecto */
-        .selection-mode-active .data-to-hide { opacity: 0; visibility: hidden; }
+        /* En modo selección, ocultamos los datos por defecto */
+        .selection-mode-active .data-to-hide { display: none !important; }
         
-        /* Solo si la fila o card tiene la clase 'item-selected', mostramos los datos */
-        .item-selected .data-to-hide { opacity: 1 !important; visibility: visible !important; transition: opacity 0.2s ease; }
+        /* Solo mostramos los datos si el elemento padre tiene la clase 'item-selected' */
+        .item-selected .data-to-hide { display: block !important; opacity: 1; transition: opacity 0.3s ease; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
@@ -58,8 +58,8 @@
                         <option value="docente">Salario Docente</option>
                     </select>
                     <div class="grid grid-cols-2 gap-4">
-                        <input type="text" id="inc2023" placeholder="$ pesos (2023)" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
-                        <input type="text" id="incHoy" placeholder="$ pesos (Hoy)" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
+                        <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
+                        <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="calculate()">
                     </div>
                 </div>
 
@@ -71,7 +71,7 @@
                         <option value="coto">3. COTO (23 productos)</option>
                     </select>
                     <div class="flex flex-col gap-2">
-                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg">
+                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200 transition">
                             Armá tu propia canasta (Elegir productos)
                         </button>
                         <button onclick="resetAll()" class="w-full py-2 border-2 border-slate-200 text-slate-400 text-[10px] font-black uppercase rounded-lg hover:bg-slate-100 transition">
@@ -116,24 +116,17 @@
         let selectionMode = false;
         let activeMobileKey = null;
 
-        function getVal(id) { 
-            let s = document.getElementById(id).value;
-            return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; 
-        }
+        function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; }
         
-        function handlePresetChange() { 
-            document.getElementById('inc2023').value = ""; 
-            document.getElementById('incHoy').value = ""; 
-            calculate(); 
-        }
+        function handlePresetChange() { document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; calculate(); }
 
         function resetAll() {
             document.getElementById('presetIncome').value = "custom";
             document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = "";
             selectionMode = false; activeMobileKey = null;
             document.getElementById('btnMode').innerText = "Armá tu propia canasta (Elegir productos)";
-            document.getElementById('productsView').classList.add('hidden');
-            document.getElementById('productsView').classList.remove('selection-mode-active');
+            document.getElementById('productsView').className = "hidden-checks hidden";
+            document.getElementById('modeHeader').classList.add('hidden');
             ['ipec', 'alvear', 'coto'].forEach(k => { document.getElementById(`btn-${k}`).className = "w-full p-4 bg-white border-2 border-slate-200 rounded-xl text-left flex justify-between items-center"; });
             calculate();
         }
@@ -143,7 +136,6 @@
             const label = selectionMode ? "Ver Canasta Completa" : "Armá tu propia canasta (Elegir productos)";
             document.getElementById('btnMode').innerText = label;
             if(document.getElementById('btnModeMob')) document.getElementById('btnModeMob').innerText = label;
-            
             const view = document.getElementById('productsView');
             view.className = selectionMode ? "selection-mode-active" : "hidden-checks";
             renderView();
@@ -182,7 +174,7 @@
             const container = document.getElementById('dynamicContent');
             container.innerHTML = "";
 
-            let pcTable = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Antes</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
+            let pcTable = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col italic">Elegir</th><th class="p-4 text-left italic uppercase">Producto</th><th class="p-4 text-center italic uppercase">Antes</th><th class="p-4 text-center italic uppercase">Hoy</th><th class="p-4 text-center italic uppercase">Variación</th></tr></thead><tbody>`;
             
             data.forEach((group, gIdx) => {
                 pcTable += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="g-check" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2 italic">${group.cat}</td></tr>`;
@@ -231,49 +223,46 @@
 
             const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
             const cards = document.querySelectorAll('.product-card');
-            
             let t23 = 0, tH = 0, count = 0;
 
             rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check'); 
                 const mCard = cards[idx];
-                const mCb = mCard.querySelector('.p-check');
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
-                
-                // Si tildas en móvil se tilda en PC y viceversa
-                const isSelected = selectionMode ? (cb.checked || mCb.checked) : true;
-                if(selectionMode) { cb.checked = isSelected; mCb.checked = isSelected; }
+                const isSelected = cb.checked;
 
                 if (i23 > 0) {
                     const u23 = i23 / p23, uh = iH / ph, v = ((uh/u23)-1)*100;
-                    const vStr = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
+                    const vS = (v>0?"+":"")+v.toFixed(1)+"%", col = v < 0 ? 'text-red-600' : 'text-green-600';
                     
                     r.querySelector('.res-u23').innerText = u23.toFixed(1);
                     r.querySelector('.res-uh').innerText = uh.toFixed(1);
-                    r.querySelector('.res-v').innerText = vStr; 
+                    r.querySelector('.res-v').innerText = vS; 
                     r.querySelector('.res-v').className = `font-black text-xl res-v ${col}`;
                     
-                    mCard.querySelector('.res-u23-mob').innerText = u23.toFixed(1);
-                    mCard.querySelector('.res-uh-mob').innerText = uh.toFixed(1);
-                    mCard.querySelector('.res-v-mob').innerText = vStr;
-                    mCard.querySelector('.res-v-mob').className = `text-xl font-black res-v-mob ${col}`;
+                    if(mCard) {
+                        mCard.querySelector('.res-u23-mob').innerText = u23.toFixed(1);
+                        mCard.querySelector('.res-uh-mob').innerText = uh.toFixed(1);
+                        mCard.querySelector('.res-v-mob').innerText = vS;
+                        mCard.querySelector('.res-v-mob').className = `text-xl font-black res-v-mob ${col}`;
+                    }
 
-                    // --- LÓGICA DE VISIBILIDAD DINÁMICA ---
-                    if (isSelected) {
+                    // --- CONTROL DE VISIBILIDAD REFORZADO ---
+                    if (!selectionMode || isSelected) {
                         r.classList.add('item-selected');
-                        mCard.classList.add('item-selected');
-                        t23 += p23; tH += ph; count++;
+                        if(mCard) mCard.classList.add('item-selected');
                     } else {
                         r.classList.remove('item-selected');
-                        mCard.classList.remove('item-selected');
+                        if(mCard) mCard.classList.remove('item-selected');
                     }
+
+                    if (isSelected) { t23 += p23; tH += ph; count++; }
                 }
             });
 
             const bar = document.getElementById('stickyBar');
             if (count > 0 && i23 > 0) {
-                const total = (((iH/tH)/(i23/t23))-1)*100;
-                bar.classList.remove('hidden');
+                const total = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
                 document.getElementById('barPercent').innerText = (total>0?"+":"")+total.toFixed(1)+"%";
                 bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
                 document.getElementById('barLabel').innerText = selectionMode ? "Variación Personalizada" : "Canasta Completa";
@@ -281,10 +270,9 @@
         }
 
         function toggleGroup(gIdx, val) { 
-            document.querySelectorAll(`.p-check[data-g="${gIdx}"]`).forEach(c => c.checked = val); 
+            document.querySelectorAll(`.p-check[data-g="${gIdx}"]`).forEach(c => { c.checked = val; }); 
             calculate(); 
         }
-        
         renderView();
     </script>
 </body>
