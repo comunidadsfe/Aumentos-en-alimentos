@@ -61,10 +61,10 @@
                         <option value="coto">3. COTO (23 productos)</option>
                     </select>
                     <div class="flex flex-col gap-2">
-                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg">
+                        <button id="btnMode" onclick="toggleSelectionMode()" class="w-full py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200 transition">
                             Armá tu propia canasta (Elegir productos)
                         </button>
-                        <button onclick="resetAll()" class="w-full py-2 border-2 border-slate-200 text-slate-400 text-[10px] font-black uppercase rounded-lg">
+                        <button onclick="resetAll()" class="w-full py-2 border-2 border-slate-200 text-slate-400 text-[10px] font-black uppercase rounded-lg hover:bg-slate-100 transition">
                             Reiniciar datos
                         </button>
                     </div>
@@ -97,7 +97,7 @@
         ];
         const dataCoto = [
             {cat:"Carnicería", items:[{n:"Cuadril novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón",p23:1399,ph:6200},{n:"Chuleta de Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},
-            {cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Tres Niñas",p23:479,ph:1890},{n:"Manteca 1er Premio",p23:649.9,ph:3400},{n:"Crema Serenísima",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo",p23:2899,ph:17699}]},
+            {cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Entera Las Tres Niñas",p23:479,ph:1890},{n:"Manteca 1er Premio",p23:649.9,ph:3400},{n:"Crema Serenísima",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras kg",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo La Paulina",p23:2899,ph:17699}]},
             {cat:"Almacén", items:[{n:"Jardinera 3 Leg",p23:365.9,ph:896.35},{n:"Tostadas Riera",p23:654.9,ph:1857},{n:"Salsa pizza Knorr",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},
             {cat:"Limpieza", items:[{n:"Skip Bio 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita 80m",p23:1299.99,ph:4295.87}]}
         ];
@@ -109,7 +109,6 @@
         function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\$|pesos/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0; }
         function handlePresetChange() { document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; calculate(); }
         function resetAll() { document.getElementById('presetIncome').value = "custom"; document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; selectionMode = false; mobileKey = null; initView(); }
-
         function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Canasta completa" : "Armá tu propia canasta (Elegir productos)"; initView(); }
 
         function activateMobile(k) {
@@ -135,10 +134,11 @@
             let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Antes</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
             
             data.forEach((group, gIdx) => {
-                tableHtml += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2">${group.cat}</td></tr>`;
+                tableHtml += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} onchange="toggleGroup(${gIdx}, this.checked)"></td><td colspan="4" class="p-2 italic">${group.cat}</td></tr>`;
                 group.items.forEach((p, pIdx) => {
+                    const id = `it-${gIdx}-${pIdx}`;
                     content.innerHTML += `
-                        <div class="product-card md:hidden">
+                        <div class="product-card md:hidden" data-idx="${id}">
                             <div class="flex justify-between items-start">
                                 <span class="font-bold text-slate-800 leading-tight">${p.n}</span>
                                 <div class="check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-8 h-8" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></div>
@@ -150,7 +150,7 @@
                             </div>
                         </div>`;
                     tableHtml += `
-                        <tr class="border-b hover:bg-slate-50 transition">
+                        <tr class="border-b hover:bg-slate-50 transition" data-idx="${id}">
                             <td class="p-4 text-center check-col"><input type="checkbox" ${selectionMode ? '' : 'checked'} class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" onchange="calculate()"></td>
                             <td class="p-4 font-bold text-slate-700">${p.n}</td>
                             <td class="p-4 text-center js-data"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td>
@@ -178,6 +178,15 @@
                 if (i23 > 0) { el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; }
             });
 
+            // Sincronizar tildes entre PC y Móvil
+            const allChecks = document.querySelectorAll('.p-check');
+            const states = {};
+            allChecks.forEach(c => {
+                const idx = c.closest('[data-idx]').dataset.idx;
+                if (states[idx] === undefined) states[idx] = c.checked;
+                else if (c.checked !== states[idx]) states[idx] = c.checked; // Si alguno cambió, manda ese
+            });
+
             const cards = document.querySelectorAll('.product-card');
             const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
             let t23 = 0, tH = 0, count = 0;
@@ -185,15 +194,15 @@
             rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check');
                 const mCard = cards[idx];
-                const mCb = mCard ? mCard.querySelector('.p-check') : null;
+                const mCb = mCard.querySelector('.p-check');
+                const idxId = r.dataset.idx;
+
+                // Forzar sincronía sin bucle infinito
+                const isSelected = cb.checked || mCb.checked; 
+                cb.checked = isSelected;
+                mCb.checked = isSelected;
+
                 const p23 = parseFloat(cb.dataset.p23), ph = parseFloat(cb.dataset.ph);
-                
-                // Unificamos el estado: si uno está tildado, el otro también (PC <=> Móvil)
-                const isSelected = selectionMode ? (cb.checked || (mCb && mCb.checked)) : true;
-                if(selectionMode) { 
-                    cb.checked = isSelected; 
-                    if(mCb) mCb.checked = isSelected;
-                }
 
                 [r, mCard].forEach(container => {
                     if(!container) return;
