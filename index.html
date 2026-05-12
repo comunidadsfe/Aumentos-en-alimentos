@@ -44,7 +44,7 @@
                 <div>
                     <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Canasta IPEC</h4>
                     <ul class="text-sm font-bold text-blue-700 space-y-1">
-                        <li><a href="https://www.santafe.gob.ar/ipec/estadisticas/precios-y-consumo/" target="_blank" class="hover:underline">→ Informes Mensuales IPEC</a></li>
+                        <li><a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="hover:underline">→ Instituto Provincial de Estadística y Censos (IPEC)</a></li>
                     </ul>
                 </div>
                 <div>
@@ -91,7 +91,9 @@
                         <option value="comercio">Salario Comercio</option>
                         <option value="docente">Salario Docente</option>
                     </select>
-                    <div id="incomeNote" class="text-[10px] font-bold text-slate-400 uppercase mb-4 h-4 italic tracking-tighter"></div>
+                    
+                    <div id="incomeNote" class="text-[11px] font-semibold text-blue-800 uppercase mb-4 h-4 italic tracking-tight"></div>
+
                     <div class="grid grid-cols-2 gap-4">
                         <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
                         <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
@@ -101,7 +103,7 @@
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Canastas de precios</h2>
-                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 rounded-full w-6 h-6 flex items-center justify-center font-black text-xs hover:bg-blue-200 transition" title="Ver fuentes de productos">ⓘ</button>
+                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200 transition">Ver fuentes</button>
                     </div>
                     <select id="priceSource" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="initView()">
                         <option value="ipec">1. IPEC (48 productos)</option>
