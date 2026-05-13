@@ -36,12 +36,10 @@
                 <button onclick="closeModal()" class="text-2xl font-bold">&times;</button>
             </div>
             <div class="space-y-4 text-sm font-bold text-blue-700">
-                <a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="block hover:underline">→ IPEC Santa Fe</a>
-                <a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view" target="_blank" class="block hover:underline">→ Alvear 16/11/2023</a>
-                <a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view" target="_blank" class="block hover:underline">→ Alvear 23/11/2023</a>
-                <a href="https://drive.google.com/file/d/1pz5CgBiq86pImI1ONlEY220ZEKdV6w1i/view" target="_blank" class="block hover:underline">→ Alvear 30/11/2023</a>
-                <a href="https://drive.google.com/file/d/1BiZ1QfAsnGP_xJ0di7mqHfyb8ywmeTZ1/view" target="_blank" class="block hover:underline">→ Alvear 07/12/2023</a>
-                <a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view" target="_blank" class="block hover:underline">→ Coto Noviembre 2023</a>
+                <a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="block">→ IPEC Santa Fe</a>
+                <a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view" target="_blank" class="block">→ Alvear 16/11/23</a>
+                <a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view" target="_blank" class="block">→ Alvear 23/11/23</a>
+                <a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view" target="_blank" class="block">→ Coto Noviembre 2023</a>
             </div>
         </div>
     </div>
@@ -86,7 +84,7 @@
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Elegir Productos</h2>
-                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200 transition">Fuentes</button>
+                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200">Fuentes</button>
                     </div>
                     <div class="space-y-3" id="mainSources">
                         <div id="container-ipec"><button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md"><span class="text-[11px] font-black text-slate-600 uppercase italic text-left leading-tight">Canasta IPEC<br><small class="opacity-60">48 productos</small></span><span id="dash-ipec" class="text-xl font-black text-slate-400">--%</span></button></div>
@@ -121,14 +119,9 @@
         function closeModal() { document.getElementById('sourcesModal').classList.add('hidden'); }
         function toggleAccordion(idx) { document.getElementById(`acc-${idx}`).classList.toggle('open'); }
         function changeTab(idx) { activeTabIdx = idx; initView(); }
-        function resetAll() { location.reload(); }
-
-        function toggleSelectionMode() { 
-            selectionMode = !selectionMode; 
-            document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección";
-            selections = {}; // Al cambiar, limpiamos selecciones para que nazcan en blanco si es manual
-            initView();
-        }
+        function resetAll() { selections = {}; activeSourceKey = null; selectionMode = false; location.reload(); }
+        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; selections = {}; initView(); }
+        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
 
         function activateSource(k) {
             const v = document.getElementById('productsView');
@@ -137,15 +130,14 @@
             ['ipec', 'alvear', 'coto'].forEach(s => document.getElementById(`btn-${s}`).className = (activeSourceKey === s) ? "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl flex justify-between items-center shadow-md" : "w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center");
             v.classList.remove('hidden');
             if(window.innerWidth <= 768) document.getElementById(`container-${k}`).appendChild(v);
-            activeTabIdx = 0; 
-            initView();
+            activeTabIdx = 0; initView();
         }
 
         function calculate() {
             const i23 = getVal('inc2023') || (presets[document.getElementById('presetIncome').value]?.v23 || 0);
             const iH = getVal('incHoy') || (presets[document.getElementById('presetIncome').value]?.vh || 0);
 
-            // Variación General de Canastas (Botones)
+            // Variación General de Canastas (Botones superiores)
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
@@ -161,19 +153,21 @@
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
             let t23 = 0, tH = 0, count = 0;
 
+            // Motor de Cálculo Global
             data.forEach((group, gIdx) => {
                 let gr23 = 0, grH = 0, grCount = 0;
                 group.items.forEach((p, pIdx) => {
-                    const id = `${activeSourceKey}-${gIdx}-${pIdx}`;
-                    const isSelected = selections[id] === true || (!selectionMode && selections[id] === undefined);
+                    const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
+                    const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
                     
-                    if(isSelected) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
+                    if(isChecked) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
 
-                    document.querySelectorAll(`[data-pid="${id}"]`).forEach(c => {
+                    // Actualizar UI del producto si existe en el DOM
+                    document.querySelectorAll(`[data-pid="${pid}"]`).forEach(c => {
                         const rv = c.querySelector('.res-v');
                         const r23 = c.querySelector('.res-u23');
                         const rh = c.querySelector('.res-uh');
-                        if (i23 > 0 && isSelected) {
+                        if (i23 > 0 && isChecked) {
                             const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
                             rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
                             rv.className = `font-black text-xl ${v < 0 ? 'text-red-600' : 'text-green-600'}`;
@@ -185,7 +179,8 @@
                         }
                     });
                 });
-                
+
+                // Actualizar Badges de Rubro (Pestañas y Acordeones)
                 const gV = gr23 > 0 ? (((iH/grH)/(i23/gr23))-1)*100 : 0;
                 document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => {
                     b.innerText = (i23 > 0 && grCount > 0) ? (gV > 0 ? "+" : "") + gV.toFixed(1) + "%" : "--%";
@@ -193,6 +188,7 @@
                 });
             });
 
+            // Sticky Bar
             const bar = document.getElementById('stickyBar');
             if (count > 0 && i23 > 0) {
                 const tot = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
@@ -223,7 +219,6 @@
             let mobileHtml = "";
 
             data.forEach((g, gIdx) => {
-                // Header Móvil
                 mobileHtml += `<div class="category-block md:hidden">
                     <div class="category-header">
                         <div class="flex items-center gap-3">
@@ -254,10 +249,12 @@
 
         function isGroupChecked(gIdx) {
             const d = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
-            return d[gIdx].items.every(p => {
-                const pid = `${activeSourceKey}-${gIdx}-${d[gIdx].items.indexOf(p)}`;
-                return selections[pid] === true || (!selectionMode && selections[pid] === undefined);
+            let allSel = true;
+            d[gIdx].items.forEach((p, i) => {
+                const pid = `${activeSourceKey}-${gIdx}-${i}`;
+                if(selections[pid] === false || (selectionMode && selections[pid] === undefined)) allSel = false;
             });
+            return allSel;
         }
 
         function syncCheck(pid, state) { selections[pid] = state; calculate(); }
@@ -288,7 +285,6 @@
             else { h=document.getElementById('barLabel').innerText; p=document.getElementById('barPercent').innerText; }
             createPoster(h,p,"Variación");
         }
-        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
     </script>
 </body>
 </html>
