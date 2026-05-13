@@ -48,7 +48,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Relevamiento ALVEAR</h4>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Productos ALVEAR</h4>
                     <ul class="text-sm font-bold text-blue-700 space-y-2">
                         <li><a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 16 de noviembre 2023</a></li>
                         <li><a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 23 de noviembre 2023</a></li>
@@ -57,7 +57,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Relevamiento COTO</h4>
+                    <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Productos COTO</h4>
                     <ul class="text-sm font-bold text-blue-700 space-y-1">
                         <li><a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista Noviembre 2023</a></li>
                     </ul>
@@ -91,9 +91,7 @@
                         <option value="comercio">Salario Comercio</option>
                         <option value="docente">Salario Docente</option>
                     </select>
-                    
                     <div id="incomeNote" class="text-[11px] font-semibold text-blue-800 uppercase mb-4 h-4 italic tracking-tight"></div>
-
                     <div class="grid grid-cols-2 gap-4">
                         <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
                         <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
@@ -102,25 +100,25 @@
 
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Canastas de precios</h2>
+                        <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Listado de precios</h2>
                         <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200 transition">Ver fuentes</button>
                     </div>
                     <select id="priceSource" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="initView()">
-                        <option value="ipec">1. IPEC (48 productos)</option>
-                        <option value="alvear">2. ALVEAR (43 productos)</option>
-                        <option value="coto">3. COTO (23 productos)</option>
+                        <option value="ipec">1. Canasta IPEC (48 productos)</option>
+                        <option value="alvear">2. Productos ALVEAR (43 productos)</option>
+                        <option value="coto">3. Productos COTO (23 productos)</option>
                     </select>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                        <button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200">Armá tu propia canasta</button>
+                        <button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200">Armá tu propia selección</button>
                         <button onclick="resetAll()" class="py-2 border-2 border-slate-300 text-slate-500 text-[10px] font-black uppercase rounded-lg hover:bg-slate-200">Reiniciar datos</button>
                         <button onclick="shareTool()" class="md:col-span-2 py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700 flex items-center justify-center gap-2">Compartir herramienta</button>
                     </div>
                 </div>
                 
                 <div class="md:hidden pt-6 space-y-3">
-                    <div id="block-ipec-mob"><button onclick="activateMobile('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">1. IPEC</span><span id="dash-ipec" class="text-xl font-black">--%</span></button></div>
-                    <div id="block-alvear-mob"><button onclick="activateMobile('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">2. ALVEAR</span><span id="dash-alvear" class="text-xl font-black">--%</span></button></div>
-                    <div id="block-coto-mob"><button onclick="activateMobile('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">3. COTO</span><span id="dash-coto" class="text-xl font-black">--%</span></button></div>
+                    <div id="block-ipec-mob"><button onclick="activateMobile('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">CANASTA IPEC</span><span id="dash-ipec" class="text-xl font-black">--%</span></button></div>
+                    <div id="block-alvear-mob"><button onclick="activateMobile('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">PRODUCTOS ALVEAR</span><span id="dash-alvear" class="text-xl font-black">--%</span></button></div>
+                    <div id="block-coto-mob"><button onclick="activateMobile('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">PRODUCTOS COTO</span><span id="dash-coto" class="text-xl font-black">--%</span></button></div>
                 </div>
             </div>
 
@@ -144,74 +142,7 @@
     <script>
         const dataIPEC = [{cat:"Almacén", items:[{n:"Pan francés mignón (Kg.)",p23:913.97,ph:3066.99},{n:"Pan de mesa (390 g.)",p23:891.44,ph:3993.77},{n:"Galletitas dulces (150 g.)",p23:420.35,ph:1464.71},{n:"Galletitas de agua (250 g.)",p23:446.46,ph:1415.21},{n:"Harina de trigo común (Kg.)",p23:402.46,ph:951.40},{n:"Arroz blanco simple (Kg.)",p23:1068.42,ph:1858.11},{n:"Fideos Secos Guisero (500 g.)",p23:642.99,ph:1471.06},{n:"Aceite de girasol (1,5 L.)",p23:1495.50,ph:6541.07},{n:"Azúcar (Kg.)",p23:1083.62,ph:1435.80},{n:"Yerba mate (500 g.)",p23:1181.03,ph:2359.58},{n:"Café molido (500 g.)",p23:2740.36,ph:12325.65},{n:"Dulce de leche (450 g.)",p23:1039.08,ph:3571.45},{n:"Tomate en conserva (lata)",p23:418.04,ph:1301.98},{n:"Lentejas secas (400 g.)",p23:813.91,ph:1727.29},{n:"Sal fina (500 g.)",p23:318.53,ph:1355.67}]},{cat:"Carnicería", items:[{n:"Asado (Kg.)",p23:4116.28,ph:22305.00},{n:"Carne picada especial (Kg.)",p23:3674.89,ph:17076.20},{n:"Paleta (Kg.)",p23:3759.50,ph:19063.86},{n:"Cuadril (Kg.)",p23:4526.12,ph:22569.99},{n:"Nalga (Kg.)",p23:4429.40,ph:22524.60},{n:"Hígado (Kg.)",p23:1097.16,ph:5542.88},{n:"Hamburguesas (4 u.)",p23:1609.24,ph:6702.00},{n:"Pollo entero (Kg.)",p23:1417.83,ph:5279.56},{n:"Filet de merluza fresco (Kg.)",p23:2994.08,ph:12684.06},{n:"Salchicha tipo viena (6 u.)",p23:690.01,ph:2562.66},{n:"Jamón cocido (Kg.)",p23:5763.80,ph:18956.52},{n:"Salchichón (Kg.)",p23:3531.42,ph:11963.98},{n:"Salame (Kg.)",p23:6402.78,ph:23098.17}]},{cat:"Lácteos y Huevos", items:[{n:"Leche fresca sachet (L.)",p23:560.48,ph:1811.38},{n:"Leche en polvo (800 g.)",p23:3513.07,ph:12855.28},{n:"Queso crema (280 g.)",p23:1213.22,ph:4015.38},{n:"Queso Sardo (Kg.)",p23:4982.96,ph:21766.92},{n:"Manteca (150 g.)",p23:792.13,ph:3048.66},{n:"Yogur firme (195 cc.)",p23:430.21,ph:1780.65},{n:"Huevos de gallina (12 u.)",p23:1196.71,ph:3599.42}]},{cat:"Verdulería", items:[{n:"Manzana deliciosa (Kg.)",p23:1084.17,ph:4315.55},{n:"Naranja (Kg.)",p23:562.89,ph:2070.54},{n:"Banana (Kg.)",p23:1281.06,ph:3015.44},{n:"Papa (Kg.)",p23:579.67,ph:1232.51},{n:"Cebolla (Kg.)",p23:358.53,ph:1011.09},{n:"Lechuga (Kg.)",p23:725.25,ph:4427.59},{n:"Tomate redondo (Kg.)",p23:1387.50,ph:2419.70}]},{cat:"Bebidas", items:[{n:"Gaseosa cola (1,5 L.)",p23:955.46,ph:3807.16},{n:"Agua sin Gas (1,5 L.)",p23:379.88,ph:1899.67},{n:"Soda sifón (2 L.)",p23:551.25,ph:1590.26},{n:"Cerveza en botella (L.)",p23:1100.56,ph:3794.73},{n:"Cerveza en lata (350 cc.)",p23:505.06,ph:1589.57},{n:"Vino común (L.)",p23:1094.44,ph:2409.64}]}];
         
-        const dataAlvear = [
-            {
-                cat: "Carnicería", 
-                items: [
-                    {n: "Rack de ternera", p23: 3949, ph: 30990},
-                    {n: "Corte Malvinas ternera", p23: 3890, ph: 25490},
-                    {n: "Nalga de ternera", p23: 4290, ph: 26990},
-                    {n: "Marucha de ternera", p23: 3149, ph: 18490},
-                    {n: "Tomahawk ternera", p23: 4190, ph: 21490},
-                    {n: "Cabeza de lomo ternera", p23: 3890, ph: 19990},
-                    {n: "Chorizo Parrillero", p23: 2670, ph: 13490},
-                    {n: "Picada ternera", p23: 2699, ph: 12990},
-                    {n: "Pollo Las Camelias", p23: 1299, ph: 6199},
-                    {n: "Pechito de Cerdo 1K", p23: 2549, ph: 9490},
-                    {n: "Filet de pollo", p23: 2780, ph: 9990},
-                    {n: "Pata muslo con piel", p23: 1499, ph: 4849},
-                    {n: "Corte Malvinas Cerdo kg", p23: 3999.99, ph: 16590},
-                    {n: "Milanesa de ternera kg", p23: 3999, ph: 23490},
-                    {n: "Costeleta de cerdo kg", p23: 2549.99, ph: 6990},
-                    {n: "Hamburguesa Parrillera kg", p23: 2790, ph: 10990},
-                    {n: "Bondiola de cerdo", p23: 4650, ph: 13990},
-                    {n: "Marucha de cerdo", p23: 2490, ph: 7990},
-                    {n: "Tapa de Asado ternera kg", p23: 4490, ph: 18490}
-                ]
-            },
-            {
-                cat: "Almacén", 
-                items: [
-                    {n: "Yogur descremado Tregar", p23: 389, ph: 2659},
-                    {n: "Crema de leche La Paulina", p23: 899.99, ph: 2899},
-                    {n: "Manteca tonadita", p23: 599.99, ph: 3199},
-                    {n: "Queso cremoso cremón", p23: 2790, ph: 13999},
-                    {n: "Harina Pureza para pizzas", p23: 494.99, ph: 1990},
-                    {n: "Giacomo cappelletini", p23: 1529, ph: 5799},
-                    {n: "Mate cocido Unión", p23: 944, ph: 2599},
-                    {n: "Mayonesa Hellmans liviana", p23: 424.99, ph: 4999},
-                    {n: "Queso untable La Paulina", p23: 619.99, ph: 2699},
-                    {n: "Queso Pategras La Paulina kg", p23: 4639.9, ph: 27999},
-                    {n: "Yerba Mate Primicia", p23: 1799.9, ph: 13499},
-                    {n: "Salchicha 66 x6u", p23: 454.99, ph: 1699},
-                    {n: "Arroz María Largo 1kg", p23: 1199.99, ph: 1899}
-                ]
-            },
-            {
-                cat: "Limpieza y Perfumería", 
-                items: [
-                    {n: "Toalla femenina Nosotras x8", p23: 299, ph: 3029},
-                    {n: "Limpiador Cif cremoso", p23: 559.99, ph: 3990},
-                    {n: "Lavavajilla Cif", p23: 455.99, ph: 2639},
-                    {n: "Jabón líquido Skip 500cc", p23: 2159, ph: 11999},
-                    {n: "Ayudín lavandina 2L", p23: 679.99, ph: 3499},
-                    {n: "Papel Higiénico Felpita", p23: 198, ph: 949},
-                    {n: "Rollo cocina Felpita", p23: 934, ph: 2599},
-                    {n: "Protector Nosotras 20u", p23: 374.99, ph: 1719},
-                    {n: "Antitranspirante Rexona 150cc", p23: 899.9, ph: 15599},
-                    {n: "Shampoo Sedal 340cc", p23: 722.49, ph: 4999},
-                    {n: "Toalla Húmeda Q-Soft 40u", p23: 1199.99, ph: 4699}
-                ]
-            },
-            {
-                cat: "Bebidas",
-                items: [
-                    {n: "Agua saborizada Levité 1.5", p23: 419.99, ph: 2999},
-                    {n: "Agua Mineral Nestle 1.5", p23: 199.99, ph: 1799},
-                    {n: "Gaseosa Pepsi 1.5", p23: 539.99, ph: 1999}
-                ]
-            }
-        ];
+        const dataAlvear = [{cat:"Carnicería", items:[{n:"Rack de ternera",p23:3949,ph:30990},{n:"Corte Malvinas ternera",p23:3890,ph:25490},{n:"Nalga de ternera",p23:4290,ph:26990},{n:"Marucha de ternera",p23:3149,ph:18490},{n:"Tomahawk ternera",p23:4190,ph:21490},{n:"Cabeza de lomo ternera",p23:3890,ph:19990},{n:"Chorizo Parrillero",p23:2670,ph:13490},{n:"Picada ternera",p23:2699,ph:12990},{n:"Pollo Las Camelias",p23:1299,ph:6199},{n:"Pechito de Cerdo 1K",p23:2549,ph:9490},{n:"Filet de pollo",p23:2780,ph:9990},{n:"Pata muslo con piel",p23:1499,ph:4849},{n:"Corte Malvinas Cerdo kg",p23:3999.99,ph:16590},{n:"Milanesa de ternera kg",p23:3999,ph:23490},{n:"Costeleta de cerdo kg",p23:2549.99,ph:6990},{n:"Hamburguesa Parrillera kg",p23:2790,ph:10990},{n:"Bondiola de cerdo",p23:4650,ph:13990},{n:"Marucha de cerdo",p23:2490,ph:7990},{n:"Tapa de Asado ternera kg",p23:4490,ph:18490}]},{cat:"Almacén", items:[{n:"Yogur descremado Tregar",p23:389,ph:2659},{n:"Crema de leche La Paulina",p23:899.99,ph:2899},{n:"Manteca tonadita",p23:599.99,ph:3199},{n:"Queso cremoso cremón",p23:2790,ph:13999},{n:"Harina Pureza para pizzas",p23:494.99,ph:1990},{n:"Giacomo cappelletini",p23:1529,ph:5799},{n:"Mate cocido Unión",p23:944,ph:2599},{n:"Mayonesa Hellmans liviana",p23:424.99,ph:4999},{n:"Queso untable La Paulina",p23:619.99,ph:2699},{n:"Queso Pategras La Paulina kg",p23:4639.9,ph:27999},{n:"Yerba Mate Primicia",p23:1799.9,ph:13499},{n:"Salchicha 66 x6u",p23:454.99,ph:1699},{n:"Arroz María Largo 1kg",p23:1199.99,ph:1899}]},{cat:"Limpieza y Perfumería", items:[{n:"Toalla femenina Nosotras x8",p23:299,ph:3029},{n:"Limpiador Cif cremoso",p23:559.99,ph:3990},{n:"Lavavajilla Cif",p23:455.99,ph:2639},{n:"Jabón líquido Skip 500cc",p23:2159,ph:11999},{n:"Ayudín lavandina 2L",p23:679.99,ph:3499},{n:"Papel Higiénico Felpita",p23:198,ph:949},{n:"Rollo cocina Felpita",p23:934,ph:2599},{n:"Protector Nosotras 20u",p23:374.99,ph:1719},{n:"Antitranspirante Rexona 150cc",p23:899.9,ph:15599},{n:"Shampoo Sedal 340cc",p23:722.49,ph:4999},{n:"Toalla Húmeda Q-Soft 40u",p23:1199.99,ph:4699}]},{cat:"Bebidas", items:[{n:"Agua saborizada Levité 1.5",p23:419.99,ph:2999},{n:"Agua Mineral Nestle 1.5",p23:199.99,ph:1799},{n:"Gaseosa Pepsi 1.5",p23:539.99,ph:1999}]}];
 
         const dataCoto = [{cat:"Carnicería", items:[{n:"Cuadril novillito 1K",p23:3099,ph:17699},{n:"Chuleta de Jamón",p23:1399,ph:6200},{n:"Chuleta de Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},{cat:"Fiambrería y Lácteos", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Entera",p23:479,ph:1890},{n:"Manteca",p23:649.9,ph:3400},{n:"Crema",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo",p23:2899,ph:17699}]},{cat:"Almacén", items:[{n:"Jardinera",p23:365.9,ph:896.35},{n:"Tostadas",p23:654.9,ph:1857},{n:"Salsa pizza",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},{cat:"Limpieza", items:[{n:"Skip 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita",p23:1299.99,ph:4295.87}]}];
         const presets = { smvm:{v23:156000,vh:363000}, jubilacion:{v23:160713,vh:463174}, municipal:{v23:246008,vh:1065000}, comercio:{v23:332959,vh:1095562}, docente:{v23:269522,vh:1037205} };
@@ -244,14 +175,14 @@
         }
 
         function resetAll() { document.getElementById('presetIncome').value = "custom"; document.getElementById('incomeNote').innerText = ""; document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; selectionMode = false; mobileKey = null; initView(); }
-        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver canasta completa" : "Armá tu propia canasta"; if(selectionMode && !mobileKey) { document.getElementById('productsView').classList.remove('hidden'); } initView(); }
+        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; if(selectionMode && !mobileKey) { document.getElementById('productsView').classList.remove('hidden'); } initView(); }
         function openModal() { document.getElementById('sourcesModal').classList.add('active-modal'); }
         function closeModal() { document.getElementById('sourcesModal').classList.remove('active-modal'); }
 
         function activateMobile(k) {
             const view = document.getElementById('productsView');
             const block = document.getElementById(`block-${k}-mob`);
-            if (mobileKey === k) { view.classList.add('hidden'); mobileKey = null; return; }
+            if (mobileKey === k) { view.classList.add('hidden'); mobileKey = null; calculate(); return; }
             mobileKey = k;
             document.getElementById('priceSource').value = k;
             ['ipec', 'alvear', 'coto'].forEach(key => {
@@ -291,13 +222,15 @@
 
         function handlePosterRequest(id = null, name = "") {
             let h, p, s;
+            const src = document.getElementById('priceSource').value;
+            const srcName = src === 'ipec' ? "CANASTA IPEC" : (src === 'alvear' ? "PRODUCTOS ALVEAR" : "PRODUCTOS COTO");
+            
             if(id) {
                 h = name.toUpperCase();
                 p = document.querySelector(`[data-id="${id}"] .res-v`).innerText;
                 s = document.querySelector(`[data-id="${id}"] .res-status`).innerText;
             } else {
-                const src = document.getElementById('priceSource').value.toUpperCase();
-                h = selectionMode ? "CANASTA ELEGIDA" : `CANASTA COMPLETA ${src}`;
+                h = selectionMode ? "SELECCIÓN ELEGIDA" : srcName;
                 p = document.getElementById('barPercent').innerText;
                 s = document.getElementById('barStatus').innerText;
             }
@@ -331,7 +264,7 @@
                                         <div class="card-label italic res-status">Variación</div>
                                         <div class="text-xl font-black res-v">-</div>
                                     </div>
-                                    <button onclick="handlePosterRequest('${id}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button>
+                                    <button onclick="handlePosterRequest('${id}', '${p.n}')" class="p-2 bg-slate-100 rounded-full transition hover:bg-slate-200"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button>
                                 </div>
                             </div>
                         </div>`;
@@ -379,6 +312,7 @@
             const cards = document.querySelectorAll('.product-card');
             const rows = document.querySelectorAll('.desktop-table tbody tr:not(.category-row)');
             let t23 = 0, tH = 0, count = 0;
+            
             rows.forEach((r, idx) => {
                 const cb = r.querySelector('.p-check');
                 const mCard = cards[idx];
@@ -412,13 +346,17 @@
             });
 
             const bar = document.getElementById('stickyBar');
-            if (count > 0 && i23 > 0) {
+            const src = document.getElementById('priceSource').value;
+            const srcTitle = src === 'ipec' ? "Canasta Completa" : (src === 'alvear' ? "Productos Alvear" : "Productos Coto");
+
+            // Lógica de visualización del cartel: solo si hay una canasta activa (mobileKey) o no estamos en móvil
+            if (count > 0 && i23 > 0 && (mobileKey || window.innerWidth > 768)) {
                 if (i23 >= t23) {
                     const total = (((iH/tH)/(i23/t23))-1)*100; 
                     bar.classList.remove('hidden');
                     document.getElementById('barPercent').innerText = (total>0?"+":"")+total.toFixed(1)+"%";
                     bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
-                    document.getElementById('barLabel').innerText = selectionMode ? "Canasta Elegida" : "Canasta Completa";
+                    document.getElementById('barLabel').innerText = selectionMode ? "Selección Elegida" : srcTitle;
                     document.getElementById('barStatus').innerText = total < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
                 } else {
                     bar.classList.remove('hidden');
