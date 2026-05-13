@@ -10,11 +10,9 @@
         @media (min-width: 769px) {
             .container-main { max-width: 1200px; margin: 40px auto; }
             .panel-control { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-            /* Estilos para Pestañas PC */
             .tabs-container { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; }
             .tab-btn { padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; transition: all 0.2s; border: 2px solid transparent; display: flex; align-items: center; gap: 8px; background: #f8fafc; color: #64748b; }
             .tab-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
-            .tab-btn:hover:not(.active) { background: #e2e8f0; }
             .tab-v-badge { font-size: 0.75rem; font-weight: 900; opacity: 0.9; }
         }
 
@@ -26,7 +24,6 @@
         .category-block { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
         .category-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .category-title { font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #1e3a8a; }
-        .category-variation { font-weight: 900; font-size: 0.9rem; }
         .product-list-container { display: none; background: white; padding: 10px; border-top: 1px solid #e2e8f0; }
         .product-list-container.open { display: block; }
 
@@ -36,9 +33,7 @@
             .product-card:last-child { border-bottom: none; }
         }
         .hidden-checks .check-col { display: none; }
-        
-        #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; font-family: sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        
+        #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: white; width: 100%; max-width: 500px; border-radius: 15px; padding: 30px; }
         .active-modal { display: flex; }
@@ -50,28 +45,28 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-6 border-b pb-4">
                 <h3 class="font-black text-blue-900 uppercase italic">Fuentes de Información</h3>
-                <button onclick="closeModal()" class="text-slate-400 font-bold text-2xl hover:text-slate-600">&times;</button>
+                <button onclick="closeModal()" class="text-slate-400 font-bold text-2xl">&times;</button>
             </div>
             <div class="space-y-6">
                 <div>
                     <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Canasta IPEC</h4>
                     <ul class="text-sm font-bold text-blue-700 space-y-1">
-                        <li><a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="hover:underline">→ Instituto Provincial de Estadística y Censos (IPEC)</a></li>
+                        <li><a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="hover:underline">→ IPEC Santa Fe</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Productos ALVEAR</h4>
                     <ul class="text-sm font-bold text-blue-700 space-y-2">
-                        <li><a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 16 de noviembre 2023</a></li>
-                        <li><a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 23 de noviembre 2023</a></li>
-                        <li><a href="https://drive.google.com/file/d/1pz5CgBiq86pImI1ONlEY220ZEKdV6w1i/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 30 de noviembre 2023</a></li>
-                        <li><a href="https://drive.google.com/file/d/1BiZ1QfAsnGP_xJ0di7mqHfyb8ywmeTZ1/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista 07 de diciembre 2023</a></li>
+                        <li><a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view?usp=drive_link" target="_blank" class="hover:underline">→ 16/11/23</a></li>
+                        <li><a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view?usp=drive_link" target="_blank" class="hover:underline">→ 23/11/23</a></li>
+                        <li><a href="https://drive.google.com/file/d/1pz5CgBiq86pImI1ONlEY220ZEKdV6w1i/view?usp=drive_link" target="_blank" class="hover:underline">→ 30/11/23</a></li>
+                        <li><a href="https://drive.google.com/file/d/1BiZ1QfAsnGP_xJ0di7mqHfyb8ywmeTZ1/view?usp=drive_link" target="_blank" class="hover:underline">→ 07/12/23</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Productos COTO</h4>
                     <ul class="text-sm font-bold text-blue-700 space-y-1">
-                        <li><a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view?usp=drive_link" target="_blank" class="hover:underline">→ Revista Noviembre 2023</a></li>
+                        <li><a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view?usp=drive_link" target="_blank" class="hover:underline">→ Noviembre 2023</a></li>
                     </ul>
                 </div>
             </div>
@@ -79,16 +74,16 @@
     </div>
 
     <div id="canvas-poster">
-        <div id="poster-header" style="font-size: 18px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; text-transform: uppercase;">NOMBRE</div>
+        <div id="poster-header" style="font-size: 18px; font-weight: 900; text-transform: uppercase;">NOMBRE</div>
         <div id="poster-status" style="font-size: 20px; font-weight: 700; margin-bottom: 5px; opacity: 0.8;">Pérdida de poder adquisitivo</div>
-        <div id="poster-percent" style="font-size: 90px; font-weight: 900; font-style: italic; letter-spacing: -2px;">-00.0%</div>
-        <div style="font-size: 18px; margin-top: 40px; font-weight: 900; border-top: 2px solid rgba(255,255,255,0.3); padding-top: 20px; text-transform: uppercase; letter-spacing: 4px;">Comunidad</div>
+        <div id="poster-percent" style="font-size: 90px; font-weight: 900; font-style: italic;">-00.0%</div>
+        <div style="font-size: 18px; margin-top: 40px; font-weight: 900; border-top: 2px solid rgba(255,255,255,0.3); padding-top: 20px; text-transform: uppercase;">Comunidad</div>
     </div>
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Variación del poder adquisitivo según tus ingresos</p>
+            <h1 class="text-3xl font-black italic uppercase">¿CUÁNTO PERDIMOS?</h1>
+            <p class="text-sm mt-2 opacity-90 font-medium italic">Variación del poder adquisitivo según tus ingresos</p>
         </div>
 
         <div class="p-4 md:p-10">
@@ -103,7 +98,7 @@
                         <option value="comercio">Salario Comercio</option>
                         <option value="docente">Salario Docente</option>
                     </select>
-                    <div id="incomeNote" class="text-[11px] font-semibold text-blue-800 uppercase mb-4 h-4 italic tracking-tight"></div>
+                    <div id="incomeNote" class="text-[11px] font-semibold text-blue-800 uppercase mb-4 h-4 italic"></div>
                     <div class="grid grid-cols-2 gap-4">
                         <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
                         <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
@@ -112,24 +107,29 @@
 
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Listado de precios</h2>
-                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200 transition">Ver fuentes</button>
+                        <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Elegir Productos</h2>
+                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200">Ver fuentes</button>
                     </div>
-                    <select id="priceSource" class="w-full p-3 bg-white border-2 border-blue-900 rounded-lg font-black text-blue-900 mb-4" onchange="initView()">
-                        <option value="ipec">1. Canasta IPEC (48 productos)</option>
-                        <option value="alvear">2. Productos ALVEAR (43 productos)</option>
-                        <option value="coto">3. Productos COTO (23 productos)</option>
-                    </select>
+                    
+                    <div class="space-y-2 mb-4">
+                        <button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md">
+                            <span class="text-[11px] font-black text-slate-600 uppercase italic">Canasta IPEC</span>
+                            <span id="dash-ipec" class="text-xl font-black text-slate-400">--%</span>
+                        </button>
+                        <button onclick="activateSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md">
+                            <span class="text-[11px] font-black text-slate-600 uppercase italic">Productos ALVEAR</span>
+                            <span id="dash-alvear" class="text-xl font-black text-slate-400">--%</span>
+                        </button>
+                        <button onclick="activateSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md">
+                            <span class="text-[11px] font-black text-slate-600 uppercase italic">Productos COTO</span>
+                            <span id="dash-coto" class="text-xl font-black text-slate-400">--%</span>
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                         <button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200">Armá tu propia selección</button>
-                        <button onclick="resetAll()" class="py-2 border-2 border-slate-300 text-slate-500 text-[10px] font-black uppercase rounded-lg hover:bg-slate-200">Reiniciar datos</button>
+                        <button onclick="shareTool()" class="py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700 flex items-center justify-center gap-2">WhatsApp</button>
                     </div>
-                </div>
-                
-                <div class="md:hidden pt-6 space-y-3">
-                    <div id="block-ipec-mob"><button onclick="activateMobile('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">CANASTA IPEC</span><span id="dash-ipec" class="text-xl font-black">--%</span></button></div>
-                    <div id="block-alvear-mob"><button onclick="activateMobile('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">PRODUCTOS ALVEAR</span><span id="dash-alvear" class="text-xl font-black">--%</span></button></div>
-                    <div id="block-coto-mob"><button onclick="activateMobile('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center"><span class="text-[11px] font-black text-slate-600 uppercase italic">PRODUCTOS COTO</span><span id="dash-coto" class="text-xl font-black">--%</span></button></div>
                 </div>
             </div>
 
@@ -159,224 +159,136 @@
         const presets = { smvm:{v23:156000,vh:363000}, jubilacion:{v23:160713,vh:463174}, municipal:{v23:246008,vh:1065000}, comercio:{v23:332959,vh:1095562}, docente:{v23:269522,vh:1037205} };
         
         let selectionMode = false;
-        let mobileKey = null;
-        let activeTabIdx = 0; // Pestaña activa en PC
+        let activeSourceKey = null;
+        let activeTabIdx = 0;
+        let globalSelection = {}; // Persistencia de checks por producto ID
 
         function getVal(id) { let s = document.getElementById(id).value; let cleanStr = s.replace(/\./g, '').replace(/[^\d]/g, ''); return parseFloat(cleanStr) || 0; }
         function formatAndCalc(input) { let val = input.value.replace(/\D/g, ""); if (val !== "") { input.value = new Intl.NumberFormat('es-AR').format(val); } calculate(); }
         function handlePresetChange() { const key = document.getElementById('presetIncome').value; const noteEl = document.getElementById('incomeNote'); document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; if(key === "municipal") noteEl.innerText = "Fuente: Paritarias FESTRAM"; else if(key === "docente") noteEl.innerText = "Fuente: Maestro de Grado, sin antigüedad"; else if(key === "comercio") noteEl.innerText = "Fuente: Categoría Maestranza A, sin antigüedad"; else noteEl.innerText = ""; calculate(); }
-        function resetAll() { document.getElementById('presetIncome').value = "custom"; document.getElementById('incomeNote').innerText = ""; document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; selectionMode = false; mobileKey = null; activeTabIdx = 0; initView(); }
-        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; if(selectionMode && !mobileKey) { document.getElementById('productsView').classList.remove('hidden'); } initView(); }
-        function openModal() { document.getElementById('sourcesModal').classList.add('active-modal'); }
-        function closeModal() { document.getElementById('sourcesModal').classList.remove('active-modal'); }
-
-        function toggleAccordion(idx) { document.getElementById(`acc-${idx}`).classList.toggle('open'); }
-        function changeTab(idx) { activeTabIdx = idx; initView(); }
-
-        function activateMobile(k) {
+        
+        function activateSource(k) {
             const view = document.getElementById('productsView');
-            const block = document.getElementById(`block-${k}-mob`);
-            if (mobileKey === k) { view.classList.add('hidden'); mobileKey = null; calculate(); return; }
-            mobileKey = k;
-            document.getElementById('priceSource').value = k;
+            if (activeSourceKey === k) { view.classList.add('hidden'); activeSourceKey = null; calculate(); return; }
+            activeSourceKey = k;
             ['ipec', 'alvear', 'coto'].forEach(key => {
                 document.getElementById(`btn-${key}`).className = (key === k) ? "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl flex justify-between items-center shadow-md" : "w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center";
             });
-            block.appendChild(view); view.classList.remove('hidden'); initView();
+            view.classList.remove('hidden');
+            activeTabIdx = 0;
+            initView();
         }
 
-        async function createPoster(headTxt, percentTxt, statusTxt) {
-            const poster = document.getElementById('canvas-poster');
-            document.getElementById('poster-header').innerText = headTxt;
-            document.getElementById('poster-status').innerText = statusTxt;
-            document.getElementById('poster-percent').innerText = percentTxt;
-            poster.style.background = parseFloat(percentTxt) < 0 ? '#dc2626' : '#16a34a';
-            if(percentTxt === "--%") poster.style.background = '#64748b';
-            await new Promise(r => setTimeout(r, 150));
-            const canvas = await html2canvas(poster, { useCORS: true, logging: false, scale: 2 });
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile && navigator.share) {
-                const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                const file = new File([blob], "PoderAdquisitivo.png", { type: 'image/png' });
-                try { await navigator.share({ files: [file], title: 'Mi Poder Adquisitivo' }); } catch (err) {}
-            } else { downloadFallback(canvas, headTxt); }
-        }
-        
-        function downloadFallback(canvas, t) {
-            const link = document.createElement('a');
-            link.download = `Resultado_${t.replace(/\s+/g, '_')}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-        }
+        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; initView(); }
+        function openModal() { document.getElementById('sourcesModal').classList.add('active-modal'); }
+        function closeModal() { document.getElementById('sourcesModal').classList.remove('active-modal'); }
+        function toggleAccordion(idx) { document.getElementById(`acc-${idx}`).classList.toggle('open'); }
+        function changeTab(idx) { activeTabIdx = idx; initView(); }
 
-        function handlePosterRequest(id = null, name = "") {
-            let h, p, s;
-            const src = document.getElementById('priceSource').value;
-            const srcName = src === 'ipec' ? "CANASTA IPEC" : (src === 'alvear' ? "PRODUCTOS ALVEAR" : "PRODUCTOS COTO");
-            if(id) { h = name.toUpperCase(); p = document.querySelector(`[data-id="${id}"] .res-v`).innerText; s = document.querySelector(`[data-id="${id}"] .res-status`).innerText; }
-            else { h = selectionMode ? "SELECCIÓN ELEGIDA" : srcName; p = document.getElementById('barPercent').innerText; s = document.getElementById('barStatus').innerText; }
-            createPoster(h, p, s);
+        function calculate() {
+            const sKey = document.getElementById('presetIncome').value;
+            let i23 = getVal('inc2023'); let iH = getVal('incHoy');
+            if (sKey !== 'custom' && i23 === 0) { i23 = presets[sKey].v23; iH = presets[sKey].vh; }
+
+            // Actualizar botones superiores de canastas
+            ['ipec', 'alvear', 'coto'].forEach(k => {
+                const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
+                let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
+                const el = document.getElementById(`dash-${k}`);
+                if (i23 > 0) {
+                    const r = (((iH/sh)/(i23/s23))-1)*100;
+                    el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%";
+                    el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`;
+                } else { el.innerText = "--%"; el.className = "text-xl font-black text-slate-400"; }
+            });
+
+            if (!activeSourceKey) return;
+            const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
+            let t23 = 0, tH = 0, count = 0;
+
+            data.forEach((group, gIdx) => {
+                let g23 = 0, gH = 0;
+                group.items.forEach((p, pIdx) => {
+                    const id = `${activeSourceKey}-${gIdx}-${pIdx}`;
+                    const isSelected = globalSelection[id] !== undefined ? globalSelection[id] : !selectionMode;
+                    if (isSelected) { t23 += p.p23; tH += p.ph; count++; g23 += p.p23; gH += p.ph; }
+
+                    const containers = document.querySelectorAll(`[data-pid="${id}"]`);
+                    containers.forEach(container => {
+                        const rv = container.querySelector('.res-v');
+                        if (i23 > 0 && isSelected) {
+                            const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
+                            rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
+                            rv.className = `font-black text-xl res-v ${v < 0 ? 'text-red-600' : 'text-green-600'}`;
+                            if(container.querySelector('.res-u23')) container.querySelector('.res-u23').innerText = (i23/p.p23).toFixed(1);
+                            if(container.querySelector('.res-uh')) container.querySelector('.res-uh').innerText = (iH/p.ph).toFixed(1);
+                        } else { rv.innerText = "--%"; rv.className = "font-black text-xl text-slate-300"; }
+                    });
+                });
+
+                // Actualizar badges de rubro
+                const groupV = g23 > 0 ? (((iH/gH)/(i23/g23))-1)*100 : 0;
+                document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => {
+                    if (i23 > 0 && g23 > 0) {
+                        b.innerText = (groupV > 0 ? "+" : "") + groupV.toFixed(1) + "%";
+                        b.className = `res-group-v tab-v-badge font-black ${groupV < 0 ? 'text-red-600' : 'text-green-600'}`;
+                    } else { b.innerText = "--%"; }
+                });
+            });
+
+            // Sticky Bar
+            const bar = document.getElementById('stickyBar');
+            if (count > 0 && i23 > 0) {
+                const total = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
+                document.getElementById('barPercent').innerText = (total>0?"+":"")+total.toFixed(1)+"%";
+                bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
+                const srcT = activeSourceKey === 'ipec' ? "Canasta IPEC" : (activeSourceKey === 'alvear' ? "Productos Alvear" : "Productos Coto");
+                document.getElementById('barLabel').innerText = selectionMode ? "Selección Elegida" : srcT;
+            } else { bar.classList.add('hidden'); }
         }
 
         function initView() {
-            const src = document.getElementById('priceSource').value;
-            const data = (src === 'ipec') ? dataIPEC : (src === 'alvear' ? dataAlvear : dataCoto);
+            if (!activeSourceKey) return;
+            const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
             const content = document.getElementById('dynamicContent');
             const tabsCont = document.getElementById('pcTabs');
             const wrapper = document.getElementById('productsView');
             wrapper.className = selectionMode ? "" : "hidden-checks";
-            
-            if(!selectionMode && !mobileKey && window.innerWidth < 768) { wrapper.classList.add('hidden'); }
-            
-            content.innerHTML = "";
-            tabsCont.innerHTML = "";
+            content.innerHTML = ""; tabsCont.innerHTML = "";
 
-            // PC TABS & TABLE
             data.forEach((group, gIdx) => {
                 tabsCont.innerHTML += `<button onclick="changeTab(${gIdx})" class="tab-btn ${activeTabIdx === gIdx ? 'active' : ''}">${group.cat} <span class="tab-v-badge" data-tab-v="${gIdx}">--%</span></button>`;
             });
 
             let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">En 2023 comprabas</th><th class="p-4 text-center">Hoy comprás</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
-            tableHtml += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" class="cat-master" data-g="${activeTabIdx}" ${selectionMode ? '' : 'checked'} onchange="toggleGroup(${activeTabIdx}, this.checked)"></td><td colspan="4" class="p-2">${data[activeTabIdx].cat}</td></tr>`;
+            tableHtml += `<tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" class="cat-master" data-g="${activeTabIdx}" onchange="toggleGroup(${activeTabIdx}, this.checked)"></td><td colspan="4" class="p-2">${data[activeTabIdx].cat}</td></tr>`;
 
-            // MÓVIL ACORDEÓN
             let mobileHtml = "";
-
             data.forEach((group, gIdx) => {
-                mobileHtml += `
-                    <div class="category-block md:hidden">
-                        <div class="category-header" onclick="toggleAccordion(${gIdx})">
-                            <div class="flex items-center gap-3">
-                                <div class="check-col" onclick="event.stopPropagation()">
-                                    <input type="checkbox" class="cat-master w-6 h-6" data-g="${gIdx}" ${selectionMode ? '' : 'checked'} onchange="toggleGroup(${gIdx}, this.checked)">
-                                </div>
-                                <span class="category-title">${group.cat}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="category-variation res-group-v" data-g="${gIdx}">--%</span>
-                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-                            </div>
-                        </div>
-                        <div class="product-list-container" id="acc-${gIdx}">`;
-
+                mobileHtml += `<div class="category-block md:hidden"><div class="category-header" onclick="toggleAccordion(${gIdx})"><div class="flex items-center gap-3"><div class="check-col" onclick="event.stopPropagation()"><input type="checkbox" class="cat-master w-6 h-6" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></div><span class="category-title">${group.cat}</span></div><div class="flex items-center gap-2"><span class="category-variation res-group-v" data-g="${gIdx}">--%</span><svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"/></svg></div></div><div class="product-list-container" id="acc-${gIdx}">`;
                 group.items.forEach((p, pIdx) => {
-                    const id = `it-${gIdx}-${pIdx}`;
-                    
+                    const id = `${activeSourceKey}-${gIdx}-${pIdx}`;
+                    const isChecked = globalSelection[id] !== undefined ? globalSelection[id] : !selectionMode;
                     if(gIdx === activeTabIdx) {
-                        tableHtml += `
-                            <tr class="border-b" data-id="${id}">
-                                <td class="p-4 text-center check-col"><input type="checkbox" class="p-check w-5 h-5" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" ${selectionMode ? '' : 'checked'} onchange="syncAndCalc('${id}', this.checked)"></td>
-                                <td class="p-4 font-bold text-slate-700">${p.n}</td>
-                                <td class="p-4 text-center js-data"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td>
-                                <td class="p-4 text-center js-data"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td>
-                                <td class="p-4 text-center js-data relative">
-                                    <div class="card-label italic res-status text-[8px] mb-1">Variación</div>
-                                    <span class="font-black text-xl res-v">-</span>
-                                    <button onclick="handlePosterRequest('${id}', '${p.n}')" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 opacity-20 hover:opacity-100 transition"><svg class="w-3 h-3" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button>
-                                </td>
-                            </tr>`;
+                        tableHtml += `<tr class="border-b" data-pid="${id}"><td class="p-4 text-center check-col"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${id}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center js-data"><span class="res-u23 font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</span></td><td class="p-4 text-center js-data"><span class="res-uh font-black">-</span><br><span class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</span></td><td class="p-4 text-center js-data relative"><span class="font-black text-xl res-v">-</span><button onclick="handlePosterRequest('${id}', '${p.n}')" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 opacity-20 hover:opacity-100 transition"><svg class="w-3 h-3" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></td></tr>`;
                     }
-
-                    mobileHtml += `
-                        <div class="product-card" data-id="${id}">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span>
-                                <div class="check-col"><input type="checkbox" class="p-check w-6 h-6" data-g="${gIdx}" data-p23="${p.p23}" data-ph="${p.ph}" ${selectionMode ? '' : 'checked'} onchange="syncAndCalc('${id}', this.checked)"></div>
-                            </div>
-                            <div class="card-grid js-data">
-                                <div><div class="card-label italic text-blue-900">En 2023 comprabas</div><div class="card-val res-u23">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div>
-                                <div><div class="card-label italic text-blue-900">Hoy comprás</div><div class="card-val res-uh">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div>
-                                <div class="col-span-2 pt-2 border-t mt-1 flex justify-between items-center">
-                                    <div class="flex-1">
-                                        <div class="card-label italic res-status">Variación</div>
-                                        <div class="text-xl font-black res-v">-</div>
-                                    </div>
-                                    <button onclick="handlePosterRequest('${id}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button>
-                                </div>
-                            </div>
-                        </div>`;
+                    mobileHtml += `<div class="product-card" data-pid="${id}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${id}', this.checked)"></div></div><div class="card-grid js-data"><div><div class="card-label italic text-blue-900">2023 comprabas</div><div class="card-val res-u23">-</div><div class="text-[9px] text-slate-400">$ ${p.p23.toLocaleString('es-AR')}</div></div><div><div class="card-label italic text-blue-900">Hoy comprás</div><div class="card-val res-uh">-</div><div class="text-[9px] text-slate-400">$ ${p.ph.toLocaleString('es-AR')}</div></div><div class="col-span-2 pt-2 border-t mt-1 flex justify-between items-center"><div class="flex-1"><div class="card-label italic res-status">Variación</div><div class="text-xl font-black res-v">-</div></div><button onclick="handlePosterRequest('${id}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div></div>`;
                 });
                 mobileHtml += `</div></div>`;
             });
-
             tableHtml += `</tbody></table>`;
             content.innerHTML = mobileHtml + tableHtml;
             calculate();
         }
 
-        function syncAndCalc(id, state) {
-            const targets = document.querySelectorAll(`[data-id="${id}"] .p-check`);
-            targets.forEach(t => t.checked = state);
-            calculate();
+        function syncCheck(pid, state) { globalSelection[pid] = state; calculate(); }
+        function toggleGroup(gIdx, val) {
+            const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
+            data[gIdx].items.forEach((p, pIdx) => { globalSelection[`${activeSourceKey}-${gIdx}-${pIdx}`] = val; });
+            initView();
         }
 
-        function calculate() {
-            const sKey = document.getElementById('presetIncome').value;
-            let i23 = getVal('inc2023'); let iH = getVal('incHoy');
-            if (sKey !== 'custom' && (i23 === 0 || isNaN(i23))) { i23 = presets[sKey].v23; iH = presets[sKey].vh; }
-
-            const src = document.getElementById('priceSource').value;
-            const data = (src === 'ipec') ? dataIPEC : (src === 'alvear' ? dataAlvear : dataCoto);
-            let t23 = 0, tH = 0, count = 0;
-
-            data.forEach((group, gIdx) => {
-                let g23 = 0, gH = 0, gSelectedCount = 0;
-                group.items.forEach((p, pIdx) => {
-                    const id = `it-${gIdx}-${pIdx}`;
-                    const cb = document.querySelector(`.p-check[data-g="${gIdx}"][data-p23="${p.p23}"]`);
-                    if (!cb) return;
-                    const isSelected = cb.checked;
-                    if (isSelected) { t23 += p.p23; tH += p.ph; count++; g23 += p.p23; gH += p.ph; gSelectedCount++; }
-
-                    // Actualizar UI producto visible
-                    const containers = document.querySelectorAll(`[data-id="${id}"]`);
-                    containers.forEach(container => {
-                        const dataBox = container.querySelectorAll('.js-data');
-                        dataBox.forEach(box => { box.style.display = (selectionMode && !isSelected) ? 'none' : (container.tagName === 'DIV' ? 'grid' : 'table-cell'); });
-                        if (i23 > 0 && (!selectionMode || isSelected)) {
-                            const rv = container.querySelector('.res-v');
-                            if (i23 >= p.p23) {
-                                const u23 = i23/p.p23, uh = iH/p.ph, v = ((uh/u23)-1)*100;
-                                if(container.querySelector('.res-u23')) container.querySelector('.res-u23').innerText = u23.toFixed(1);
-                                if(container.querySelector('.res-uh')) container.querySelector('.res-uh').innerText = uh.toFixed(1);
-                                rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
-                                rv.className = `font-black res-v ${v < 0 ? 'text-red-600' : 'text-green-600'} text-xl`;
-                            } else { rv.innerText = "--%"; rv.className = "font-black res-v text-slate-300"; }
-                        }
-                    });
-                });
-
-                // Variación Rubro (Móvil y PC)
-                const groupV = g23 > 0 ? (((iH/gH)/(i23/g23))-1)*100 : 0;
-                const badges = document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`);
-                badges.forEach(b => {
-                    if (i23 > 0 && g23 > 0) {
-                        b.innerText = (groupV > 0 ? "+" : "") + groupV.toFixed(1) + "%";
-                        b.className = `res-group-v tab-v-badge ${groupV < 0 ? 'text-red-600' : 'text-green-600'}`;
-                    } else { b.innerText = "--%"; }
-                });
-            });
-
-            // Sticky Bar & General
-            const bar = document.getElementById('stickyBar');
-            if (count > 0 && i23 > 0 && (mobileKey || window.innerWidth > 768)) {
-                if (i23 >= t23) {
-                    const total = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
-                    document.getElementById('barPercent').innerText = (total>0?"+":"")+total.toFixed(1)+"%";
-                    bar.className = `sticky-result-bar ${total < 0 ? 'bg-loss' : 'bg-gain'}`;
-                    const srcT = src === 'ipec' ? "Canasta IPEC" : (src === 'alvear' ? "Productos Alvear" : "Productos Coto");
-                    document.getElementById('barLabel').innerText = selectionMode ? "Selección Elegida" : srcT;
-                } else { bar.classList.remove('hidden'); document.getElementById('barPercent').innerText = "--%"; bar.className = `sticky-result-bar bg-slate-500`; }
-            } else { bar.classList.add('hidden'); }
-        }
-
-        function toggleGroup(gIdx, val) { 
-            const checks = document.querySelectorAll(`.p-check[data-g="${gIdx}"]`);
-            checks.forEach(c => { c.checked = val; const parentId = c.closest('[data-id]').dataset.id; document.querySelectorAll(`[data-id="${parentId}"] .p-check`).forEach(s => s.checked = val); });
-            document.querySelectorAll(`.cat-master[data-g="${gIdx}"]`).forEach(m => m.checked = val);
-            calculate(); 
-        }
-        initView();
+        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
     </script>
 </body>
 </html>
