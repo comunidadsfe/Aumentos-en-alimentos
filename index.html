@@ -121,8 +121,12 @@
         function toggleAccordion(idx) { document.getElementById(`acc-${idx}`).classList.toggle('open'); }
         function changeTab(idx) { activeTabIdx = idx; initView(); }
         function resetAll() { location.reload(); }
-        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; selections = {}; initView(); }
-        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
+
+        function toggleSelectionMode() { 
+            selectionMode = !selectionMode; 
+            document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección";
+            selections = {}; initView();
+        }
 
         function activateSource(k) {
             const v = document.getElementById('productsView');
@@ -138,7 +142,6 @@
             const i23 = getVal('inc2023') || (presets[document.getElementById('presetIncome').value]?.v23 || 0);
             const iH = getVal('incHoy') || (presets[document.getElementById('presetIncome').value]?.vh || 0);
 
-            // Botones cabecera
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
@@ -161,23 +164,8 @@
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
                     
                     if(isChecked) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
-
-                    document.querySelectorAll(`[data-pid="${pid}"]`).forEach(c => {
-                        const rv = c.querySelector('.res-v');
-                        const r23 = c.querySelector('.res-u23');
-                        const rh = c.querySelector('.res-uh');
-                        if (i23 > 0 && isChecked) {
-                            const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
-                            rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
-                            rv.className = `font-black text-xl ${v < 0 ? 'text-red-600' : 'text-green-600'}`;
-                            if(r23) r23.innerText = (i23/p.p23).toFixed(1);
-                            if(rh) rh.innerText = (iH/p.ph).toFixed(1);
-                        } else {
-                            rv.innerText = "--%"; rv.className = "font-black text-xl text-slate-300";
-                            if(r23) r23.innerText = "-"; if(rh) rh.innerText = "-";
-                        }
-                    });
                 });
+                
                 const gV = gr23 > 0 ? (((iH/grH)/(i23/gr23))-1)*100 : 0;
                 document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => {
                     b.innerText = (i23 > 0 && grCount > 0) ? (gV > 0 ? "+" : "") + gV.toFixed(1) + "%" : "--%";
@@ -190,8 +178,7 @@
                 const tot = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
                 document.getElementById('barPercent').innerText = (tot>0?"+":"")+tot.toFixed(1)+"%";
                 bar.className = `sticky-result-bar ${tot < 0 ? 'bg-loss' : 'bg-gain'}`;
-                const srcT = activeSourceKey === 'ipec' ? "IPEC" : activeSourceKey.toUpperCase();
-                document.getElementById('barLabel').innerText = selectionMode ? "Selección" : srcT;
+                document.getElementById('barLabel').innerText = selectionMode ? "Selección" : (activeSourceKey === 'ipec' ? "IPEC" : activeSourceKey.toUpperCase());
             } else bar.classList.add('hidden');
         }
 
@@ -200,6 +187,9 @@
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
             const content = document.getElementById('dynamicContent');
             const tabsCont = document.getElementById('pcTabs');
+            const i23 = getVal('inc2023') || (presets[document.getElementById('presetIncome').value]?.v23 || 0);
+            const iH = getVal('incHoy') || (presets[document.getElementById('presetIncome').value]?.vh || 0);
+
             document.getElementById('productsView').className = selectionMode ? "" : "hide-selection";
             content.innerHTML = ""; tabsCont.innerHTML = "";
 
@@ -208,16 +198,29 @@
                 tabsCont.innerHTML += `<div class="flex items-center bg-slate-50 border rounded-lg px-2"><div class="check-col"><input type="checkbox" class="w-4 h-4" ${checked?'checked':''} onchange="toggleGroup(${idx}, this.checked)"></div><button onclick="changeTab(${idx})" class="tab-btn ${activeTabIdx === idx ? 'active' : ''}">${g.cat} <span class="tab-v-badge" data-tab-v="${idx}">--%</span></button></div>`;
             });
 
-            let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden mt-4"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">2023 comprabas</th><th class="p-4 text-center">Hoy comprás</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
+            let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden mt-4"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">2023</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
             let mobileHtml = "";
 
             data.forEach((g, gIdx) => {
                 mobileHtml += `<div class="category-block md:hidden"><div class="category-header"><div class="flex items-center gap-3"><div class="check-col"><input type="checkbox" class="cat-master w-6 h-6" ${isGroupSelected(gIdx)?'checked':''} onchange="toggleGroup(${gIdx}, this.checked)"></div><span class="category-title" onclick="toggleAccordion(${gIdx})">${g.cat}</span></div><div class="flex items-center gap-2" onclick="toggleAccordion(${gIdx})"><span class="res-group-v" data-g="${gIdx}">--%</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"/></svg></div></div><div class="product-list-container" id="acc-${gIdx}">`;
+                
                 g.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
-                    if(gIdx === activeTabIdx) tableHtml += `<tr class="border-b" data-pid="${pid}"><td class="p-4 text-center check-col"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center font-black res-u23">-</td><td class="p-4 text-center font-black res-uh">-</td><td class="p-4 text-center relative"><span class="font-black text-xl res-v">-</span></td></tr>`;
-                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="grid grid-cols-2 gap-4 text-center py-2 border-t"><div class="border-r"><p class="text-[8px] uppercase font-black text-blue-900 italic">2023</p><p class="text-lg font-black res-u23">-</p></div><div><p class="text-[8px] uppercase font-black text-blue-900 italic">Hoy</p><p class="text-lg font-black res-uh">-</p></div></div><div class="flex justify-between items-center pt-2 border-t mt-1"><div class="text-xl font-black res-v">-</div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div>`;
+                    let vStr = "--%", u23Str = "-", uhStr = "-", vClass = "text-slate-300";
+
+                    if (isChecked && i23 > 0) {
+                        const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
+                        vStr = (v>0?"+":"") + v.toFixed(1) + "%";
+                        u23Str = (i23/p.p23).toFixed(1);
+                        uhStr = (iH/p.ph).toFixed(1);
+                        vClass = v < 0 ? "text-red-600" : "text-green-600";
+                    }
+
+                    if(gIdx === activeTabIdx) {
+                        tableHtml += `<tr class="border-b" data-pid="${pid}"><td class="p-4 text-center check-col"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center font-black">${u23Str}</td><td class="p-4 text-center font-black">${uhStr}</td><td class="p-4 text-center relative"><span class="font-black text-xl ${vClass}">${vStr}</span></td></tr>`;
+                    }
+                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="grid grid-cols-2 gap-4 text-center py-2 border-t"><div class="border-r"><p class="text-[8px] uppercase font-black text-blue-900 italic">2023</p><p class="text-lg font-black">${u23Str}</p></div><div><p class="text-[8px] uppercase font-black text-blue-900 italic">Hoy</p><p class="text-lg font-black">${uhStr}</p></div></div><div class="flex justify-between items-center pt-2 border-t mt-1"><div class="text-xl font-black ${vClass}">${vStr}</div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div>`;
                 });
                 mobileHtml += `</div></div>`;
             });
@@ -227,16 +230,13 @@
 
         function isGroupSelected(gIdx) {
             const d = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
-            return d[gIdx].items.every(p => {
-                const pid = `${activeSourceKey}-${gIdx}-${d[gIdx].items.indexOf(p)}`;
-                return selections[pid] === true || (!selectionMode && selections[pid] === undefined);
-            });
+            return d[gIdx].items.every(p => selections[`${activeSourceKey}-${gIdx}-${d[gIdx].items.indexOf(p)}`] === true || (!selectionMode && selections[`${activeSourceKey}-${gIdx}-${d[gIdx].items.indexOf(p)}`] === undefined));
         }
 
-        function syncCheck(pid, state) { selections[pid] = state; calculate(); }
+        function syncCheck(pid, state) { selections[pid] = state; initView(); }
         function toggleGroup(gIdx, val) {
             const d = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
-            d[gIdx].items.forEach((p, i) => { selections[`${activeSourceKey}-${gIdx}-${i}`] = val; });
+            d[gIdx].items.forEach((p, i) => selections[`${activeSourceKey}-${gIdx}-${i}`] = val);
             initView();
         }
 
@@ -248,19 +248,23 @@
             await new Promise(r => setTimeout(r, 100));
             html2canvas(c).then(can => {
                 can.toBlob(blob => {
-                    const f = new File([blob], "PoderAdquisitivo.png", { type: 'image/png' });
+                    const f = new File([blob], "Resultado.png", { type: 'image/png' });
                     if (navigator.share) navigator.share({ files: [f] });
                     else { const a = document.createElement('a'); a.download="resultado.png"; a.href=can.toDataURL(); a.click(); }
                 });
             });
         }
 
-        function handlePosterRequest(id=null, n="") {
-            let h, p;
-            if(id) { h=n.toUpperCase(); p=document.querySelector(`[data-pid="${id}"] .res-v`).innerText; }
-            else { h=document.getElementById('barLabel').innerText; p=document.getElementById('barPercent').innerText; }
-            createPoster(h,p);
+        function handlePosterRequest(pid, n) {
+            const i23 = getVal('inc2023') || (presets[document.getElementById('presetIncome').value]?.v23 || 0);
+            const iH = getVal('incHoy') || (presets[document.getElementById('presetIncome').value]?.vh || 0);
+            const keys = pid.split('-');
+            const d = keys[0] === 'ipec' ? dataIPEC : (keys[0] === 'alvear' ? dataAlvear : dataCoto);
+            const p = d[parseInt(keys[1])].items[parseInt(keys[2])];
+            const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
+            createPoster(n.toUpperCase(), (v>0?"+":"")+v.toFixed(1)+"%");
         }
+        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
     </script>
 </body>
 </html>
