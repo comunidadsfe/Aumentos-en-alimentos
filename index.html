@@ -19,6 +19,7 @@
         .sticky-result-bar { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); }
         .category-block { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
         .category-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .category-title { font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #1e3a8a; }
         .product-list-container { display: none; background: white; padding: 10px; border-top: 1px solid #e2e8f0; }
         .product-list-container.open { display: block; }
         @media (max-width: 768px) { .desktop-table, .tabs-container { display: none; } }
@@ -85,12 +86,12 @@
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Elegir Productos</h2>
-                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200">Fuentes</button>
+                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200 transition">Fuentes</button>
                     </div>
                     <div class="space-y-3" id="mainSources">
-                        <div id="container-ipec"><button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition"><span class="text-[11px] font-black text-slate-600 uppercase italic text-left leading-tight">Canasta IPEC<br><small class="opacity-60">48 productos</small></span><span id="dash-ipec" class="text-xl font-black text-slate-400">--%</span></button></div>
-                        <div id="container-alvear"><button onclick="activateSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition"><span class="text-[11px] font-black text-slate-600 uppercase italic text-left leading-tight">Productos ALVEAR<br><small class="opacity-60">43 productos</small></span><span id="dash-alvear" class="text-xl font-black text-slate-400">--%</span></button></div>
-                        <div id="container-coto"><button onclick="activateSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition"><span class="text-[11px] font-black text-slate-600 uppercase italic text-left leading-tight">Productos COTO<br><small class="opacity-60">23 productos</small></span><span id="dash-coto" class="text-xl font-black text-slate-400">--%</span></button></div>
+                        <div id="container-ipec"><button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md"><span class="text-[11px] font-black text-slate-600 uppercase italic text-left leading-tight">Canasta IPEC<br><small class="opacity-60">48 productos</small></span><span id="dash-ipec" class="text-xl font-black text-slate-400">--%</span></button></div>
+                        <div id="container-alvear"><button onclick="activateSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md"><span class="text-[11px] font-black text-slate-600 uppercase italic text-left leading-tight">Productos ALVEAR<br><small class="opacity-60">43 productos</small></span><span id="dash-alvear" class="text-xl font-black text-slate-400">--%</span></button></div>
+                        <div id="container-coto"><button onclick="activateSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md"><span class="text-[11px] font-black text-slate-600 uppercase italic text-left leading-tight">Productos COTO<br><small class="opacity-60">23 productos</small></span><span id="dash-coto" class="text-xl font-black text-slate-400">--%</span></button></div>
                     </div>
                 </div>
             </div>
@@ -129,8 +130,6 @@
             initView();
         }
 
-        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
-
         function activateSource(k) {
             const v = document.getElementById('productsView');
             if(activeSourceKey === k) { v.classList.add('hidden'); activeSourceKey = null; calculate(); return; }
@@ -166,22 +165,23 @@
                 let gr23 = 0, grH = 0, grCount = 0;
                 group.items.forEach((p, pIdx) => {
                     const id = `${activeSourceKey}-${gIdx}-${pIdx}`;
-                    const isSelected = selections[id] !== undefined ? selections[id] : !selectionMode;
+                    const isSelected = selections[id] === true || (!selectionMode && selections[id] === undefined);
                     
                     if(isSelected) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
 
                     document.querySelectorAll(`[data-pid="${id}"]`).forEach(c => {
                         const rv = c.querySelector('.res-v');
+                        const r23 = c.querySelector('.res-u23');
+                        const rh = c.querySelector('.res-uh');
                         if (i23 > 0 && isSelected) {
                             const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
                             rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
                             rv.className = `font-black text-xl ${v < 0 ? 'text-red-600' : 'text-green-600'}`;
-                            if(c.querySelector('.res-u23')) c.querySelector('.res-u23').innerText = (i23/p.p23).toFixed(1);
-                            if(c.querySelector('.res-uh')) c.querySelector('.res-uh').innerText = (iH/p.ph).toFixed(1);
+                            if(r23) r23.innerText = (i23/p.p23).toFixed(1);
+                            if(rh) rh.innerText = (iH/p.ph).toFixed(1);
                         } else {
-                            rv.innerText = "--%";
-                            if(c.querySelector('.res-u23')) c.querySelector('.res-u23').innerText = "-";
-                            if(c.querySelector('.res-uh')) c.querySelector('.res-uh').innerText = "-";
+                            rv.innerText = "--%"; rv.className = "font-black text-xl text-slate-300";
+                            if(r23) r23.innerText = "-"; if(rh) rh.innerText = "-";
                         }
                     });
                 });
@@ -227,7 +227,7 @@
                 mobileHtml += `<div class="category-block md:hidden">
                     <div class="category-header">
                         <div class="flex items-center gap-3">
-                            <div class="check-col"><input type="checkbox" class="cat-master w-6 h-6" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"></div>
+                            <div class="check-col"><input type="checkbox" class="cat-master w-6 h-6" data-g="${gIdx}" ${isGroupChecked(gIdx)?'checked':''} onchange="toggleGroup(${gIdx}, this.checked)"></div>
                             <span class="category-title" onclick="toggleAccordion(${gIdx})">${g.cat}</span>
                         </div>
                         <div class="flex items-center gap-2" onclick="toggleAccordion(${gIdx})">
@@ -239,17 +239,25 @@
 
                 g.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
-                    const isChecked = selections[pid] === true;
+                    const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
 
                     if(gIdx === activeTabIdx) {
                         tableHtml += `<tr class="border-b" data-pid="${pid}"><td class="p-4 text-center check-col"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center font-black res-u23">-</td><td class="p-4 text-center font-black res-uh">-</td><td class="p-4 text-center relative"><span class="font-black text-xl res-v">-</span><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 opacity-20 hover:opacity-100"><svg class="w-3 h-3" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></td></tr>`;
                     }
-                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="grid grid-cols-2 gap-4 text-center py-2 border-t"><div class="border-r"><p class="text-[8px] uppercase font-black text-blue-900">2023 comprabas</p><p class="text-lg font-black res-u23">-</p></div><div><p class="text-[8px] uppercase font-black text-blue-900">Hoy comprás</p><p class="text-lg font-black res-uh">-</p></div></div><div class="flex justify-between items-center pt-2 border-t mt-1"><div class="text-xl font-black res-v">-</div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div>`;
+                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="grid grid-cols-2 gap-4 text-center py-2 border-t"><div class="border-r"><p class="text-[8px] uppercase font-black text-blue-900">En 2023 comprabas</p><p class="text-lg font-black res-u23">-</p></div><div><p class="text-[8px] uppercase font-black text-blue-900">Hoy comprás</p><p class="text-lg font-black res-uh">-</p></div></div><div class="flex justify-between items-center pt-2 border-t mt-1"><div class="text-xl font-black res-v">-</div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div>`;
                 });
                 mobileHtml += `</div></div>`;
             });
             content.innerHTML = mobileHtml + tableHtml + "</tbody></table>";
             calculate();
+        }
+
+        function isGroupChecked(gIdx) {
+            const d = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
+            return d[gIdx].items.every(p => {
+                const pid = `${activeSourceKey}-${gIdx}-${d[gIdx].items.indexOf(p)}`;
+                return selections[pid] === true || (!selectionMode && selections[pid] === undefined);
+            });
         }
 
         function syncCheck(pid, state) { selections[pid] = state; calculate(); }
@@ -275,11 +283,12 @@
         }
 
         function handlePosterRequest(id=null, n="") {
-            let h, p, s;
-            if(id) { h=n.toUpperCase(); p=document.querySelector(`[data-pid="${id}"] .res-v`).innerText; s="Variación"; }
-            else { h=document.getElementById('barLabel').innerText; p=document.getElementById('barPercent').innerText; s="Variación Total"; }
-            createPoster(h,p,s);
+            let h, p;
+            if(id) { h=n.toUpperCase(); p=document.querySelector(`[data-pid="${id}"] .res-v`).innerText; }
+            else { h=document.getElementById('barLabel').innerText; p=document.getElementById('barPercent').innerText; }
+            createPoster(h,p,"Variación");
         }
+        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
     </script>
 </body>
 </html>
