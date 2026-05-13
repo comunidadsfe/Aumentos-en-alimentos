@@ -35,13 +35,24 @@
                 <h3 class="font-black text-blue-900 uppercase italic">Fuentes de Información</h3>
                 <button onclick="closeModal()" class="text-2xl font-bold">&times;</button>
             </div>
-            <div class="space-y-4 text-sm font-bold text-blue-700">
-                <a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="block">→ Portal Oficial IPEC Santa Fe</a>
-                <a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view" target="_blank" class="block">→ Alvear 16/11/23</a>
-                <a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view" target="_blank" class="block">→ Alvear 23/11/23</a>
-                <a href="https://drive.google.com/file/d/1pz5CgBiq86pImI1ONlEY220ZEKdV6w1i/view" target="_blank" class="block">→ Alvear 30/11/23</a>
-                <a href="https://drive.google.com/file/d/1BiZ1QfAsnGP_xJ0di7mqHfyb8ywmeTZ1/view" target="_blank" class="block">→ Alvear 07/12/23</a>
-                <a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view" target="_blank" class="block">→ Coto Noviembre 2023</a>
+            <div class="space-y-6 text-sm font-bold text-blue-700">
+                <div>
+                    <p class="text-[10px] text-slate-400 uppercase mb-1">Canasta IPEC</p>
+                    <a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="block hover:underline">→ Portal Oficial IPEC Santa Fe</a>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 uppercase mb-1">Productos Alvear</p>
+                    <div class="space-y-1">
+                        <a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view" target="_blank" class="block hover:underline">→ Revista Alvear 16/11/23</a>
+                        <a href="https://drive.google.com/file/d/1R13XADOBCzzl3kIzG11yxi4VLdAnuz-U/view" target="_blank" class="block hover:underline">→ Revista Alvear 23/11/23</a>
+                        <a href="https://drive.google.com/file/d/1pz5CgBiq86pImI1ONlEY220ZEKdV6w1i/view" target="_blank" class="block hover:underline">→ Revista Alvear 30/11/23</a>
+                        <a href="https://drive.google.com/file/d/1BiZ1QfAsnGP_xJ0di7mqHfyb8ywmeTZ1/view" target="_blank" class="block hover:underline">→ Revista Alvear 07/12/23</a>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-[10px] text-slate-400 uppercase mb-1">Productos Coto</p>
+                    <a href="https://drive.google.com/file/d/18DXFJVy6458Pfk-pwuZ7kMFMGCDChKIH/view" target="_blank" class="block hover:underline">→ Revista Coto noviembre 2023</a>
+                </div>
             </div>
         </div>
     </div>
@@ -54,8 +65,8 @@
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Variación del poder adquisitivo según tus ingresos</p>
+            <h1 class="text-xl md:text-3xl font-black italic uppercase italic">Calculá como cambió tu poder adquisitivo en el supermercado</h1>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy. Mirá cómo varió tu poder de compra.</p>
         </div>
 
         <div class="p-4 md:p-10">
@@ -66,19 +77,21 @@
                         <option value="custom">CARGA MANUAL</option>
                         <option value="smvm">Salario Mínimo (SMVM)</option>
                         <option value="jubilacion">Jubilación Mínima</option>
-                        <option value="municipal">Mínimo FESTRAM</option>
+                        <option value="municipal">Mínimo Garantizado Municipal</option>
                         <option value="comercio">Salario Comercio</option>
                         <option value="docente">Salario Docente</option>
                     </select>
-                    <div id="incomeNote" class="text-[11px] font-semibold text-blue-800 uppercase mb-4 h-4 italic"></div>
+                    <div id="incomeNote" class="text-[10px] font-semibold text-blue-800 uppercase mb-4 h-4 italic"></div>
+                    
                     <div class="grid grid-cols-2 gap-4">
                         <input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
                         <input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)">
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-4">
+
+                    <div class="grid grid-cols-2 gap-2 mt-4">
                         <button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200">Armá tu propia selección</button>
-                        <button onclick="shareTool()" class="py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700">Compartir Herramienta</button>
                         <button onclick="resetAll()" class="py-2 border-2 border-slate-300 text-slate-500 text-[10px] font-black uppercase rounded-lg hover:bg-slate-200">Reiniciar Datos</button>
+                        <button onclick="shareTool()" class="col-span-2 py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700">Compartir Herramienta</button>
                     </div>
                 </div>
 
@@ -115,7 +128,16 @@
 
         function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\./g, '').replace(/[^\d]/g, '')) || 0; }
         function formatAndCalc(input) { let v = input.value.replace(/\D/g, ""); if (v !== "") input.value = new Intl.NumberFormat('es-AR').format(v); calculate(); }
-        function handlePresetChange() { const k = document.getElementById('presetIncome').value, n = document.getElementById('incomeNote'); document.getElementById('inc2023').value=""; document.getElementById('incHoy').value=""; n.innerText = k === "municipal" ? "FESTRAM" : k === "docente" ? "Maestro" : k === "comercio" ? "Maestranza" : ""; calculate(); }
+        
+        function handlePresetChange() { 
+            const k = document.getElementById('presetIncome').value, n = document.getElementById('incomeNote'); 
+            document.getElementById('inc2023').value=""; document.getElementById('incHoy').value=""; 
+            if(k === "municipal") n.innerText = "Mínimo Garantizado Municipal (Fuente: Paritarias Festram)"; 
+            else if(k === "comercio") n.innerText = "Salario Comercio: (Fuente: CUEC, Categoría Maestranza A, sin antigüedad)"; 
+            else if(k === "docente") n.innerText = "Salario Docente: (Fuente: Paritaria docente, Maestro de Grado, sin antigüedad)"; 
+            else n.innerText = ""; calculate(); 
+        }
+
         function openModal() { document.getElementById('sourcesModal').classList.remove('hidden'); document.getElementById('sourcesModal').classList.add('flex'); }
         function closeModal() { document.getElementById('sourcesModal').classList.add('hidden'); }
         
@@ -268,7 +290,6 @@
             const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
             createPoster(n.toUpperCase(), (v>0?"+":"")+v.toFixed(1)+"%");
         }
-        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
     </script>
 </body>
 </html>
