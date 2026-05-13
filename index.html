@@ -54,7 +54,7 @@
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
+            <h1 class="text-3xl font-black italic uppercase">¿CUÁNTO PERDIMOS?</h1>
             <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Variación del poder adquisitivo según tus ingresos</p>
         </div>
 
@@ -111,22 +111,25 @@
         const dataCoto = [{cat:"Carnicería", items:[{n:"Cuadril novillito",p23:3099,ph:17699},{n:"Chuleta Jamón",p23:1399,ph:6200},{n:"Chuleta Paleta",p23:1399.9,ph:4800},{n:"Pata Muslo c/piel",p23:999.9,ph:3999},{n:"Fiambre Campo kg",p23:3440,ph:9799},{n:"Jamón Lario kg",p23:4669,ph:21935},{n:"Salamín La Chacra",p23:6475,ph:33999}]},{cat:"Fiambrería", items:[{n:"Queso cremoso",p23:2099,ph:10999},{n:"Leche Entera",p23:479,ph:1890},{n:"Manteca",p23:649.9,ph:3400},{n:"Crema",p23:719.9,ph:4705},{n:"Queso provoleta",p23:3799,ph:21499},{n:"Queso pategras",p23:3399,ph:19999},{n:"Queso Reggianito",p23:3999,ph:23999},{n:"Queso Tybo",p23:2899,ph:17699}]},{cat:"Almacén", items:[{n:"Jardinera",p23:365.9,ph:896.35},{n:"Tostadas",p23:654.9,ph:1857},{n:"Salsa pizza",p23:172.9,ph:1499},{n:"Salsa pomarola",p23:228.9,ph:1499},{n:"Heineken s/alc",p23:424,ph:1500}]},{cat:"Limpieza", items:[{n:"Skip 800g",p23:769.99,ph:4420.99},{n:"Papel Felpita",p23:1299.99,ph:4295.87}]}];
         const presets = { smvm:{v23:156000,vh:363000}, jubilacion:{v23:160713,vh:463174}, municipal:{v23:246008,vh:1065000}, comercio:{v23:332959,vh:1095562}, docente:{v23:269522,vh:1037205} };
 
-        let selectionMode = false, activeSourceKey = null, activeTabIdx = 0, selections = {};
+        let selectionMode = false, activeSourceKey = null, activeTabIdx = 0, selections = {}, openAccordions = [];
 
         function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\./g, '').replace(/[^\d]/g, '')) || 0; }
         function formatAndCalc(input) { let v = input.value.replace(/\D/g, ""); if (v !== "") input.value = new Intl.NumberFormat('es-AR').format(v); calculate(); }
         function handlePresetChange() { const k = document.getElementById('presetIncome').value, n = document.getElementById('incomeNote'); document.getElementById('inc2023').value=""; document.getElementById('incHoy').value=""; n.innerText = k === "municipal" ? "FESTRAM" : k === "docente" ? "Maestro" : k === "comercio" ? "Maestranza" : ""; calculate(); }
         function openModal() { document.getElementById('sourcesModal').classList.remove('hidden'); document.getElementById('sourcesModal').classList.add('flex'); }
         function closeModal() { document.getElementById('sourcesModal').classList.add('hidden'); }
-        function toggleAccordion(idx) { document.getElementById(`acc-${idx}`).classList.toggle('open'); }
+        
+        function toggleAccordion(idx) { 
+            const index = openAccordions.indexOf(idx);
+            if (index > -1) openAccordions.splice(index, 1);
+            else openAccordions.push(idx);
+            document.getElementById(`acc-${idx}`).classList.toggle('open'); 
+        }
+
         function changeTab(idx) { activeTabIdx = idx; initView(); }
         function resetAll() { location.reload(); }
-
-        function toggleSelectionMode() { 
-            selectionMode = !selectionMode; 
-            document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección";
-            selections = {}; initView();
-        }
+        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; selections = {}; initView(); }
+        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
 
         function activateSource(k) {
             const v = document.getElementById('productsView');
@@ -162,7 +165,6 @@
                 group.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
-                    
                     if(isChecked) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
                 });
                 
@@ -178,7 +180,8 @@
                 const tot = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
                 document.getElementById('barPercent').innerText = (tot>0?"+":"")+tot.toFixed(1)+"%";
                 bar.className = `sticky-result-bar ${tot < 0 ? 'bg-loss' : 'bg-gain'}`;
-                document.getElementById('barLabel').innerText = selectionMode ? "Selección" : (activeSourceKey === 'ipec' ? "IPEC" : activeSourceKey.toUpperCase());
+                const srcT = activeSourceKey === 'ipec' ? "IPEC" : activeSourceKey.toUpperCase();
+                document.getElementById('barLabel').innerText = selectionMode ? "Selección" : srcT;
             } else bar.classList.add('hidden');
         }
 
@@ -202,7 +205,8 @@
             let mobileHtml = "";
 
             data.forEach((g, gIdx) => {
-                mobileHtml += `<div class="category-block md:hidden"><div class="category-header"><div class="flex items-center gap-3"><div class="check-col"><input type="checkbox" class="cat-master w-6 h-6" ${isGroupSelected(gIdx)?'checked':''} onchange="toggleGroup(${gIdx}, this.checked)"></div><span class="category-title" onclick="toggleAccordion(${gIdx})">${g.cat}</span></div><div class="flex items-center gap-2" onclick="toggleAccordion(${gIdx})"><span class="res-group-v" data-g="${gIdx}">--%</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"/></svg></div></div><div class="product-list-container" id="acc-${gIdx}">`;
+                const isOpen = openAccordions.includes(gIdx);
+                mobileHtml += `<div class="category-block md:hidden"><div class="category-header"><div class="flex items-center gap-3"><div class="check-col"><input type="checkbox" class="cat-master w-6 h-6" data-g="${gIdx}" ${isGroupSelected(gIdx)?'checked':''} onchange="toggleGroup(${gIdx}, this.checked)"></div><span class="category-title" onclick="toggleAccordion(${gIdx})">${g.cat}</span></div><div class="flex items-center gap-2" onclick="toggleAccordion(${gIdx})"><span class="res-group-v" data-g="${gIdx}">--%</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"/></svg></div></div><div class="product-list-container ${isOpen?'open':''}" id="acc-${gIdx}">`;
                 
                 g.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
