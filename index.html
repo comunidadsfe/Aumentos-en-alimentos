@@ -13,7 +13,6 @@
             .tabs-container { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; }
             .tab-btn { padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; transition: all 0.2s; border: 2px solid transparent; display: flex; align-items: center; gap: 8px; background: #f8fafc; color: #64748b; }
             .tab-btn.active { background: #1e3a8a; color: white; border-color: #1e3a8a; }
-            .tab-v-badge { font-size: 0.75rem; font-weight: 900; opacity: 0.9; }
         }
 
         .bg-loss { background: #dc2626; color: white; }
@@ -29,7 +28,6 @@
         @media (max-width: 768px) {
             .desktop-table, .tabs-container { display: none; }
             .product-card { border-bottom: 1px solid #f1f5f9; padding: 12px 0; }
-            .product-card:last-child { border-bottom: none; }
         }
         
         .hidden-checks .check-col-prod { display: none; }
@@ -45,7 +43,7 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-6 border-b pb-4">
                 <h3 class="font-black text-blue-900 uppercase italic">Fuentes de Información</h3>
-                <button onclick="closeModal()" class="text-slate-400 font-bold text-2xl">&times;</button>
+                <button onclick="closeModal()" class="text-slate-400 font-bold text-2xl hover:text-slate-600">&times;</button>
             </div>
             <div class="space-y-6 text-sm font-bold text-blue-700">
                 <a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="block">→ IPEC Santa Fe</a>
@@ -65,8 +63,8 @@
 
     <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase">¿CUÁNTO PERDIMOS?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium italic tracking-tight">Variación del poder adquisitivo según tus ingresos</p>
+            <h1 class="text-3xl font-black italic uppercase italic">¿CUÁNTO PERDIMOS?</h1>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Variación del poder adquisitivo según tus ingresos</p>
         </div>
 
         <div class="p-4 md:p-10">
@@ -91,28 +89,13 @@
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic">2. Elegir Productos</h2>
-                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200">Fuentes</button>
+                        <button onclick="openModal()" class="text-blue-900 bg-blue-100 px-3 py-1 rounded-full font-black text-[10px] uppercase hover:bg-blue-200 transition">Fuentes</button>
                     </div>
                     
-                    <div class="space-y-3 mb-6" id="sourceSelector">
-                        <div id="block-ipec-anchor">
-                            <button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition">
-                                <span class="text-[11px] font-black text-slate-600 uppercase italic">Canasta IPEC</span>
-                                <span id="dash-ipec" class="text-xl font-black text-slate-400">--%</span>
-                            </button>
-                        </div>
-                        <div id="block-alvear-anchor">
-                            <button onclick="activateSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition">
-                                <span class="text-[11px] font-black text-slate-600 uppercase italic">Productos ALVEAR</span>
-                                <span id="dash-alvear" class="text-xl font-black text-slate-400">--%</span>
-                            </button>
-                        </div>
-                        <div id="block-coto-anchor">
-                            <button onclick="activateSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition">
-                                <span class="text-[11px] font-black text-slate-600 uppercase italic">Productos COTO</span>
-                                <span id="dash-coto" class="text-xl font-black text-slate-400">--%</span>
-                            </button>
-                        </div>
+                    <div class="space-y-2 mb-4">
+                        <div id="btn-container-ipec"><button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition"><span class="text-[11px] font-black text-slate-600 uppercase italic">Canasta IPEC</span><span id="dash-ipec" class="text-xl font-black text-slate-400">--%</span></button></div>
+                        <div id="btn-container-alvear"><button onclick="activateSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition"><span class="text-[11px] font-black text-slate-600 uppercase italic">Productos ALVEAR</span><span id="dash-alvear" class="text-xl font-black text-slate-400">--%</span></button></div>
+                        <div id="btn-container-coto"><button onclick="activateSource('coto')" id="btn-coto" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition"><span class="text-[11px] font-black text-slate-600 uppercase italic">Productos COTO</span><span id="dash-coto" class="text-xl font-black text-slate-400">--%</span></button></div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -123,6 +106,7 @@
             </div>
 
             <div id="pcTabs" class="tabs-container hidden md:flex"></div>
+
             <div id="productsView" class="hidden">
                 <div id="dynamicContent"></div>
             </div>
@@ -149,24 +133,24 @@
         let selectionMode = false;
         let activeSourceKey = null;
         let activeTabIdx = 0;
-        let selectionState = {}; // Persistencia de checks id: bool
+        let persistentSelections = {}; // Estructura: {sourceKey: {prodId: bool}}
 
         function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\./g, '').replace(/[^\d]/g, '')) || 0; }
         function formatAndCalc(input) { let val = input.value.replace(/\D/g, ""); if (val !== "") { input.value = new Intl.NumberFormat('es-AR').format(val); } calculate(); }
         function handlePresetChange() { const k = document.getElementById('presetIncome').value; const n = document.getElementById('incomeNote'); document.getElementById('inc2023').value = ""; document.getElementById('incHoy').value = ""; if(k === "municipal") n.innerText = "Fuente: Paritarias FESTRAM"; else if(k === "docente") n.innerText = "Fuente: Maestro de Grado, sin antigüedad"; else if(k === "comercio") n.innerText = "Fuente: Categoría Maestranza A, sin antigüedad"; else n.innerText = ""; calculate(); }
         
         function activateSource(k) {
-            activeSourceKey = (activeSourceKey === k) ? null : k;
+            const view = document.getElementById('productsView');
+            if (activeSourceKey === k) { view.classList.add('hidden'); activeSourceKey = null; calculate(); return; }
+            activeSourceKey = k;
             ['ipec', 'alvear', 'coto'].forEach(s => {
                 document.getElementById(`btn-${s}`).className = (activeSourceKey === s) ? "w-full p-4 bg-blue-50 border-2 border-blue-900 rounded-xl flex justify-between items-center shadow-md" : "w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center";
             });
-            const v = document.getElementById('productsView');
-            if(activeSourceKey) {
-                v.classList.remove('hidden');
-                document.getElementById(`block-${activeSourceKey}-anchor`).appendChild(v);
-                activeTabIdx = 0;
-                initView();
-            } else { v.classList.add('hidden'); }
+            view.classList.remove('hidden');
+            // En móvil, mover el contenedor justo debajo del botón activo
+            if(window.innerWidth <= 768) { document.getElementById(`btn-container-${k}`).appendChild(view); }
+            activeTabIdx = 0;
+            initView();
         }
 
         function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; initView(); }
@@ -179,7 +163,7 @@
             const i23 = getVal('inc2023') || (presets[document.getElementById('presetIncome').value]?.v23 || 0);
             const iH = getVal('incHoy') || (presets[document.getElementById('presetIncome').value]?.vh || 0);
 
-            // Variación General de Canastas
+            // 1. Variación global de los 3 botones principales
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
                 let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
@@ -195,38 +179,43 @@
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
             let t23 = 0, tH = 0, count = 0;
 
+            // 2. Cálculo profundo por rubro y producto
             data.forEach((group, gIdx) => {
                 let gr23 = 0, grH = 0;
                 group.items.forEach((p, pIdx) => {
-                    const id = `${activeSourceKey}-${gIdx}-${pIdx}`;
-                    const isSelected = selectionState[id] !== undefined ? selectionState[id] : !selectionMode;
+                    const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
+                    const isSelected = persistentSelections[pid] !== undefined ? persistentSelections[pid] : !selectionMode;
+                    
                     if(isSelected) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; }
 
-                    document.querySelectorAll(`[data-pid="${id}"]`).forEach(c => {
+                    // Actualizar UI del producto si es visible
+                    document.querySelectorAll(`[data-pid="${pid}"]`).forEach(c => {
                         const rv = c.querySelector('.res-v');
                         if (i23 > 0 && isSelected) {
                             const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
                             rv.innerText = (v>0?"+":"")+v.toFixed(1)+"%";
                             rv.className = `font-black text-xl ${v < 0 ? 'text-red-600' : 'text-green-600'}`;
-                            if(c.querySelector('.res-u23')) c.querySelector('.res-u23').innerText = (i23/p.p23).toFixed(1);
-                            if(c.querySelector('.res-uh')) c.querySelector('.res-uh').innerText = (iH/p.ph).toFixed(1);
-                        } else { rv.innerText = "--%"; rv.className = "text-xl font-black text-slate-300"; }
+                        } else { rv.innerText = "--%"; rv.className = "font-black text-xl text-slate-300"; }
                     });
                 });
 
+                // Actualizar badges de rubro (Móvil y PC)
                 const gV = gr23 > 0 ? (((iH/grH)/(i23/gr23))-1)*100 : 0;
                 document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => {
                     b.innerText = (i23 > 0 && gr23 > 0) ? (gV > 0 ? "+" : "") + gV.toFixed(1) + "%" : "--%";
-                    b.className = `res-group-v font-black ${gV < 0 ? 'text-red-600' : 'text-green-600'}`;
+                    b.className = `font-black ${gV < 0 ? 'text-red-600' : 'text-green-600'}`;
                 });
             });
 
+            // 3. Barra Sticky Inferior
             const bar = document.getElementById('stickyBar');
             if (count > 0 && i23 > 0) {
                 const tot = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden');
                 document.getElementById('barPercent').innerText = (tot>0?"+":"")+tot.toFixed(1)+"%";
                 bar.className = `sticky-result-bar ${tot < 0 ? 'bg-loss' : 'bg-gain'}`;
-                document.getElementById('barLabel').innerText = selectionMode ? "Selección Elegida" : (activeSourceKey === 'ipec' ? "Canasta IPEC" : "Productos " + activeSourceKey.toUpperCase());
+                const srcT = activeSourceKey === 'ipec' ? "Canasta IPEC" : (activeSourceKey === 'alvear' ? "Productos Alvear" : "Productos Coto");
+                document.getElementById('barLabel').innerText = selectionMode ? "Selección Elegida" : srcT;
+                document.getElementById('barStatus').innerText = tot < 0 ? "Pérdida de poder adquisitivo" : "Mejora de poder adquisitivo";
             } else { bar.classList.add('hidden'); }
         }
 
@@ -235,23 +224,31 @@
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
             const content = document.getElementById('dynamicContent');
             const tabsCont = document.getElementById('pcTabs');
-            document.getElementById('productsView').className = selectionMode ? "" : "hidden-checks";
+            const wrapper = document.getElementById('productsView');
+            wrapper.className = selectionMode ? "" : "hidden-checks";
             content.innerHTML = ""; tabsCont.innerHTML = "";
 
+            // PC: Generar Pestañas
             data.forEach((g, idx) => {
                 tabsCont.innerHTML += `<button onclick="changeTab(${idx})" class="tab-btn ${activeTabIdx === idx ? 'active' : ''}">${g.cat} <span class="tab-v-badge" data-tab-v="${idx}">--%</span></button>`;
             });
 
-            let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Rubro</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">2023 comprabas</th><th class="p-4 text-center">Hoy comprás</th><th class="p-4 text-center">Variación</th></tr></thead><tbody><tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" class="cat-master w-5 h-5" data-g="${activeTabIdx}" onchange="toggleGroup(${activeTabIdx}, this.checked)"></td><td colspan="4" class="p-2 font-black">${data[activeTabIdx].cat}</td></tr>`;
-            let mobileHtml = "";
+            // PC: Generar Tabla (solo rubro activo)
+            let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden mt-4"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 w-16 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Variación</th></tr></thead><tbody><tr class="category-row"><td class="p-2 text-center check-col"><input type="checkbox" class="cat-master w-5 h-5" data-g="${activeTabIdx}" onchange="toggleGroup(${activeTabIdx}, this.checked)"></td><td colspan="2" class="p-2 font-black">${data[activeTabIdx].cat}</td></tr>`;
 
+            // Móvil: Generar Acordeones
+            let mobileHtml = "";
             data.forEach((g, gIdx) => {
                 mobileHtml += `<div class="category-block md:hidden"><div class="category-header"><div class="flex items-center gap-3"><input type="checkbox" class="cat-master w-6 h-6" data-g="${gIdx}" onchange="toggleGroup(${gIdx}, this.checked)"><span class="category-title" onclick="toggleAccordion(${gIdx})">${g.cat}</span></div><div class="flex items-center gap-2" onclick="toggleAccordion(${gIdx})"><span class="res-group-v" data-g="${gIdx}">--%</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="3"/></svg></div></div><div class="product-list-container" id="acc-${gIdx}">`;
+                
                 g.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
-                    const isChecked = selectionState[pid] !== undefined ? selectionState[pid] : !selectionMode;
-                    if(gIdx === activeTabIdx) tableHtml += `<tr class="border-b" data-pid="${pid}"><td class="p-4 text-center check-col-prod"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center"><span class="res-u23 font-black">-</span></td><td class="p-4 text-center"><span class="res-uh font-black">-</span></td><td class="p-4 text-center relative"><span class="font-black text-xl res-v">-</span><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 opacity-20 hover:opacity-100 transition"><svg class="w-3 h-3" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></td></tr>`;
-                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col-prod"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="card-grid js-data"><div><div class="card-label italic text-blue-900">2023 compras</div><div class="card-val res-u23">-</div></div><div><div class="card-label italic text-blue-900">Hoy compras</div><div class="card-val res-uh">-</div></div><div class="col-span-2 pt-2 border-t mt-1 flex justify-between items-center"><div class="flex-1"><div class="text-xl font-black res-v">-</div></div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div></div>`;
+                    const isChecked = persistentSelections[pid] !== undefined ? persistentSelections[pid] : !selectionMode;
+                    
+                    if(gIdx === activeTabIdx) {
+                        tableHtml += `<tr class="border-b" data-pid="${pid}"><td class="p-4 text-center check-col-prod"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center relative"><span class="font-black text-xl res-v">-</span><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="absolute right-2 top-1/2 -translate-y-1/2 p-1 opacity-20 hover:opacity-100 transition"><svg class="w-3 h-3" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></td></tr>`;
+                    }
+                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col-prod"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="flex justify-between items-center pt-2 border-t mt-1"><div><div class="text-xl font-black res-v">-</div></div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div>`;
                 });
                 mobileHtml += `</div></div>`;
             });
@@ -259,12 +256,14 @@
             calculate();
         }
 
-        function syncCheck(pid, state) { selectionState[pid] = state; calculate(); }
+        function syncCheck(pid, state) { persistentSelections[pid] = state; calculate(); }
         function toggleGroup(gIdx, val) {
             const d = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
-            d[gIdx].items.forEach((p, i) => { selectionState[`${activeSourceKey}-${gIdx}-${i}`] = val; });
+            d[gIdx].items.forEach((p, i) => { persistentSelections[`${activeSourceKey}-${gIdx}-${i}`] = val; });
             initView();
         }
+
+        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
 
         async function createPoster(h, p, s) {
             const c = document.getElementById('canvas-poster');
@@ -288,8 +287,6 @@
             else { h=document.getElementById('barLabel').innerText; p=document.getElementById('barPercent').innerText; s=document.getElementById('barStatus').innerText; }
             createPoster(h,p,s);
         }
-
-        function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
     </script>
 </body>
 </html>
