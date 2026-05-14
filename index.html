@@ -8,7 +8,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @media (min-width: 769px) {
-            .container-main { max-width: 1200px; width: 95%; margin: 40px auto; display: block; }
+            .container-main { 
+                width: 100% !important; 
+                max-width: 1200px !important; 
+                margin: 40px auto; 
+                display: block; 
+                min-height: 600px;
+                background: white;
+            }
             .panel-control { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
             .tabs-container { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; }
             .tab-btn { padding: 10px 15px; border-radius: 8px; font-weight: 800; font-size: 0.65rem; text-transform: uppercase; transition: all 0.2s; border: 2px solid transparent; display: flex; align-items: center; gap: 6px; background: #f8fafc; color: #64748b; }
@@ -33,7 +40,7 @@
     <div id="sourcesModal" class="fixed inset-0 bg-black/60 z-[2000] hidden items-center justify-center p-4" onclick="closeModal()">
         <div class="bg-white w-full max-w-md rounded-2xl p-6" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h3 class="font-black text-blue-900 uppercase italic">Fuentes de Información</h3>
+                <h3 class="font-black text-blue-900 uppercase italic text-lg">Fuentes de Información</h3>
                 <button onclick="closeModal()" class="text-2xl font-bold">&times;</button>
             </div>
             <div class="space-y-6 text-sm font-bold text-blue-700">
@@ -46,9 +53,9 @@
 
     <div id="canvas-poster"><div id="poster-header" style="font-size: 18px; font-weight: 900; text-transform: uppercase;">NOMBRE</div><div id="poster-percent" style="font-size: 90px; font-weight: 900; font-style: italic;">-0.0%</div><div style="font-size: 18px; margin-top: 40px; font-weight: 900; border-top: 2px solid white; padding-top: 20px;">Comunidad</div></div>
 
-    <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
+    <div class="container-main shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase italic">¿Cuánto perdimos?</h1>
+            <h1 class="text-3xl font-black italic uppercase">¿Cuánto perdimos?</h1>
             <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy.</p>
         </div>
 
