@@ -7,9 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        .container-main { width: 100%; max-width: 1200px; margin: 0 auto; background: white; min-height: 100vh; }
         @media (min-width: 769px) {
-            .container-main { margin: 40px auto; border-radius: 1rem; min-height: 800px; }
+            .container-main { max-width: 1200px; margin: 40px auto; }
             .panel-control { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
             .tabs-container { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; }
             .tab-btn { padding: 10px 15px; border-radius: 8px; font-weight: 800; font-size: 0.65rem; text-transform: uppercase; transition: all 0.2s; border: 2px solid transparent; display: flex; align-items: center; gap: 6px; background: #f8fafc; color: #64748b; }
@@ -27,8 +26,7 @@
         .hide-selection .check-col { display: none !important; }
         #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif; }
         .source-active-badge { background: #1e3a8a; color: white; border-radius: 999px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-        input[readonly] { background-color: #f1f5f9; cursor: not-allowed; color: transparent !important; text-shadow: 0 0 0 #64748b; }
-        .preset-active input { color: transparent !important; }
+        input[readonly] { background-color: #f1f5f9; cursor: not-allowed; color: transparent !important; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
@@ -49,15 +47,15 @@
 
     <div id="canvas-poster"><div id="poster-header" style="font-size: 18px; font-weight: 900; text-transform: uppercase;">NOMBRE</div><div id="poster-percent" style="font-size: 90px; font-weight: 900; font-style: italic;">-0.0%</div><div style="font-size: 18px; margin-top: 40px; font-weight: 900; border-top: 2px solid white; padding-top: 20px;">Comunidad</div></div>
 
-    <div class="container-main shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
+    <div class="container-main bg-white shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
-            <h1 class="text-3xl font-black italic uppercase">¿Cuánto perdimos?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy.</p>
+            <h1 class="text-3xl font-black italic uppercase italic">¿Cuánto perdimos?</h1>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy. ¿Cómo era tu poder de compra antes y hoy?</p>
         </div>
 
         <div class="p-4 md:p-10">
             <div class="panel-control mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">
-                <div id="incomeArea" class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
+                <div class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
                     <h2 class="text-xs font-black text-blue-900 uppercase mb-2 tracking-widest italic">1. Ingreso de referencia</h2>
                     <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-1" onchange="handlePresetChange()"><option value="custom">CARGA MANUAL</option><option value="smvm">Salario Mínimo (SMVM)</option><option value="jubilacion">Jubilación Mínima</option><option value="municipal">Mínimo Garantizado Municipal</option><option value="comercio">Salario Comercio</option><option value="docente">Salario Docente</option></select>
                     <div id="incomeNote" class="text-[9px] font-black inline-block bg-blue-50 text-blue-800 px-2 py-1 rounded uppercase mb-4 h-6 italic leading-none flex items-center opacity-0 transition-opacity duration-300"></div>
@@ -93,26 +91,41 @@
         const presets = { smvm:{v23:156000,vh:363000}, jubilacion:{v23:160713,vh:463174}, municipal:{v23:246008,vh:1065000}, comercio:{v23:332959,vh:1095562}, docente:{v23:269522,vh:1037205} };
 
         let selectionMode = false, activeSourceKey = null, activeTabIdx = 0, selections = {}, openAccordions = [];
-        function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\./g, '').replace(/[^\d]/g, '')) || 0; }
-        function formatAndCalc(input) { let v = input.value.replace(/\D/g, ""); if (v !== "") input.value = new Intl.NumberFormat('es-AR').format(v); calculate(); if(activeSourceKey) initView(); }
+        let p23_cache = 0, ph_cache = 0;
+
+        function getVal(id) { 
+            let val = document.getElementById(id).value;
+            if (document.getElementById('presetIncome').value !== 'custom') {
+                return id === 'inc2023' ? p23_cache : ph_cache;
+            }
+            return parseFloat(val.replace(/\./g, '').replace(/[^\d]/g, '')) || 0; 
+        }
+
+        function formatAndCalc(input) { 
+            let v = input.value.replace(/\D/g, ""); 
+            if (v !== "") input.value = "$ " + new Intl.NumberFormat('es-AR').format(v); 
+            else input.value = "";
+            calculate(); 
+            if(activeSourceKey) initView(); 
+        }
         
         function handlePresetChange() { 
             const k = document.getElementById('presetIncome').value, n = document.getElementById('incomeNote'); 
-            const i23 = document.getElementById('inc2023'), ih = document.getElementById('incHoy'), area = document.getElementById('incomeArea');
+            const i23 = document.getElementById('inc2023'), ih = document.getElementById('incHoy');
             
             if(k !== "custom") {
-                i23.value = presets[k].v23; ih.value = presets[k].vh;
+                p23_cache = presets[k].v23; ph_cache = presets[k].vh;
+                i23.value = "Ingreso oficial"; ih.value = "Ingreso oficial";
                 i23.readOnly = true; ih.readOnly = true;
-                area.classList.add('preset-active');
                 n.classList.remove('opacity-0');
                 if(k === "municipal") n.innerText = "Fuente: Paritarias Festram"; 
                 else if(k === "comercio") n.innerText = "Fuente: CUEC, Categoría Maestranza A, sin antigüedad"; 
                 else if(k === "docente") n.innerText = "Fuente: Paritaria docente, Maestro de Grado, sin antigüedad"; 
                 else n.innerText = "";
             } else { 
+                p23_cache = 0; ph_cache = 0;
                 i23.value = ""; ih.value = "";
                 i23.readOnly = false; ih.readOnly = false;
-                area.classList.remove('preset-active');
                 n.classList.add('opacity-0'); 
             }
             calculate(); if(activeSourceKey) initView();
@@ -145,54 +158,29 @@
 
         function calculate() {
             const i23 = getVal('inc2023'), iH = getVal('incHoy');
-            const hasData = i23 > 0 && iH > 0;
+            const validData = i23 > 0 && iH > 0;
 
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
-                let s23 = 0, sh = 0, canBuyAny = false;
-                d.forEach(g => g.items.forEach(p => { 
-                    s23 += p.p23; sh += p.ph; 
-                    if(i23 >= p.p23 || iH >= p.ph) canBuyAny = true;
-                }));
+                let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
                 const el = document.getElementById(`dash-${k}`);
-                if (hasData && canBuyAny) { 
-                    const r = (((iH/sh)/(i23/s23))-1)*100; 
-                    el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; 
-                    el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; 
-                } else el.innerText = "--%";
+                if (validData) { const r = (((iH/sh)/(i23/s23))-1)*100; el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; } else el.innerText = "--%";
             });
-
             if(!activeSourceKey) return;
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
-            let t23 = 0, tH = 0, count = 0, hasValidProduct = false;
+            let t23 = 0, tH = 0, count = 0;
             data.forEach((group, gIdx) => {
                 let gr23 = 0, grH = 0, grCount = 0;
                 group.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
-                    if(isChecked) {
-                        if(i23 >= p.p23 || iH >= p.ph) {
-                            t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++;
-                            hasValidProduct = true;
-                        }
-                    }
+                    if(isChecked) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
                 });
-                const gV = (hasData && grCount > 0) ? (((iH/grH)/(i23/gr23))-1)*100 : null;
-                document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => { 
-                    b.innerText = gV !== null ? (gV > 0 ? "+" : "") + gV.toFixed(1) + "%" : "--%"; 
-                    b.className = `font-black ${gV < 0 ? 'text-red-600' : 'text-green-600'}`; 
-                });
+                const gV = (validData && grCount > 0) ? (((iH/grH)/(i23/gr23))-1)*100 : 0;
+                document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => { b.innerText = (validData && grCount > 0) ? (gV > 0 ? "+" : "") + gV.toFixed(1) + "%" : "--%"; b.className = `font-black ${gV < 0 ? 'text-red-600' : 'text-green-600'}`; });
             });
-
             const bar = document.getElementById('stickyBar');
-            if (hasData && count > 0 && hasValidProduct) { 
-                const tot = (((iH/tH)/(i23/t23))-1)*100; 
-                bar.classList.remove('hidden'); 
-                document.getElementById('barPercent').innerText = (tot>0?"+":"")+tot.toFixed(1)+"%"; 
-                bar.className = `sticky-result-bar ${tot < 0 ? 'bg-loss' : 'bg-gain'}`; 
-                const srcT = activeSourceKey === 'ipec' ? "IPEC" : activeSourceKey.toUpperCase(); 
-                document.getElementById('barLabel').innerText = selectionMode ? "Selección" : srcT; 
-            } else bar.classList.add('hidden');
+            if (validData && count > 0) { const tot = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden'); document.getElementById('barPercent').innerText = (tot>0?"+":"")+tot.toFixed(1)+"%"; bar.className = `sticky-result-bar ${tot < 0 ? 'bg-loss' : 'bg-gain'}`; const srcT = activeSourceKey === 'ipec' ? "IPEC" : activeSourceKey.toUpperCase(); document.getElementById('barLabel').innerText = selectionMode ? "Selección" : srcT; } else bar.classList.add('hidden');
         }
 
         function initView() {
@@ -200,12 +188,11 @@
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
             const content = document.getElementById('dynamicContent'), tabsCont = document.getElementById('pcTabs');
             const i23 = getVal('inc2023'), iH = getVal('incHoy');
-            const hasData = i23 > 0 && iH > 0;
+            const validData = i23 > 0 && iH > 0;
 
             document.getElementById('productsView').className = selectionMode ? "" : "hide-selection";
             content.innerHTML = ""; tabsCont.innerHTML = "";
             data.forEach((g, idx) => { const checked = isGroupSelected(idx); tabsCont.innerHTML += `<div class="flex items-center bg-slate-50 border rounded-lg px-2"><div class="check-col"><input type="checkbox" class="w-4 h-4" ${checked?'checked':''} onchange="toggleGroup(${idx}, this.checked)"></div><button onclick="changeTab(${idx})" class="tab-btn ${activeTabIdx === idx ? 'active' : ''}">${g.cat} <span class="tab-v-badge" data-tab-v="${idx}">--%</span></button></div>`; });
-            
             let tableHtml = `<table class="w-full text-sm desktop-table border rounded-xl overflow-hidden mt-4"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 check-col">Elegir</th><th class="p-4 text-left">Producto</th><th class="p-4 text-center">En 2023 comprabas</th><th class="p-4 text-center">Hoy comprás</th><th class="p-4 text-center">Variación</th></tr></thead><tbody>`;
             let mobileHtml = "";
             data.forEach((g, gIdx) => {
@@ -215,16 +202,13 @@
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
                     let vStr = "--%", u23Str = "-", uhStr = "-", vClass = "text-slate-300";
-                    const canBuySomething = (i23 >= p.p23 || iH >= p.ph);
-                    if (isChecked && hasData && canBuySomething) { 
-                        const v = (((iH/p.ph)/(i23/p.p23))-1)*100; 
-                        vStr = (v>0?"+":"") + v.toFixed(1) + "%"; 
-                        u23Str = (i23/p.p23).toFixed(1); 
-                        uhStr = (iH/p.ph).toFixed(1); 
-                        vClass = v < 0 ? "text-red-600" : "text-green-600"; 
-                    }
-                    if(gIdx === activeTabIdx) tableHtml += `<tr class="border-b" data-pid="${pid}"><td class="p-4 text-center check-col"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center font-black">${u23Str}</td><td class="p-4 text-center font-black">${uhStr}</td><td class="p-4 text-center relative"><span class="font-black text-xl ${vClass}">${vStr}</span></td></tr>`;
-                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}</span><div class="check-col"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="grid grid-cols-2 gap-4 text-center py-2 border-t"><div class="border-r"><p class="text-[8px] uppercase font-black text-blue-900 italic">En 2023 comprabas</p><p class="text-lg font-black">${u23Str}</p></div><div><p class="text-[8px] uppercase font-black text-blue-900 italic">Hoy comprás</p><p class="text-lg font-black">${uhStr}</p></div></div><div class="flex justify-between items-center pt-2 border-t mt-1"><div class="text-xl font-black ${vClass}">${vStr}</div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div>`;
+                    const hasUnits = (i23 >= p.p23 && iH >= p.ph);
+                    if (isChecked && validData && hasUnits) { const v = (((iH/p.ph)/(i23/p.p23))-1)*100; vStr = (v>0?"+":"") + v.toFixed(1) + "%"; u23Str = (i23/p.p23).toFixed(1); uhStr = (iH/p.ph).toFixed(1); vClass = v < 0 ? "text-red-600" : "text-green-600"; }
+                    
+                    const priceRef = `<div class="text-[9px] text-slate-400 font-bold mt-1 uppercase leading-none">Precio Ref: $${new Intl.NumberFormat('es-AR').format(p.p23)} / $${new Intl.NumberFormat('es-AR').format(p.ph)}</div>`;
+                    
+                    if(gIdx === activeTabIdx) tableHtml += `<tr class="border-b" data-pid="${pid}"><td class="p-4 text-center check-col"><input type="checkbox" class="p-check w-5 h-5" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></td><td class="p-4 font-bold text-slate-700">${p.n}${priceRef}</td><td class="p-4 text-center font-black">${u23Str}</td><td class="p-4 text-center font-black">${uhStr}</td><td class="p-4 text-center relative"><span class="font-black text-xl ${vClass}">${vStr}</span></td></tr>`;
+                    mobileHtml += `<div class="product-card" data-pid="${pid}"><div class="flex justify-between items-start mb-2"><span class="font-bold text-slate-800 text-xs leading-tight">${p.n}${priceRef}</span><div class="check-col"><input type="checkbox" class="p-check w-6 h-6" ${isChecked?'checked':''} onchange="syncCheck('${pid}', this.checked)"></div></div><div class="grid grid-cols-2 gap-4 text-center py-2 border-t"><div class="border-r"><p class="text-[8px] uppercase font-black text-blue-900 italic">En 2023 comprabas</p><p class="text-lg font-black">${u23Str}</p></div><div><p class="text-[8px] uppercase font-black text-blue-900 italic">Hoy comprás</p><p class="text-lg font-black">${uhStr}</p></div></div><div class="flex justify-between items-center pt-2 border-t mt-1"><div class="text-xl font-black ${vClass}">${vStr}</div><button onclick="handlePosterRequest('${pid}', '${p.n}')" class="p-2 bg-slate-100 rounded-full"><svg class="w-4 h-4 fill-slate-400" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg></button></div></div>`;
                 });
                 mobileHtml += `</div></div>`;
             });
