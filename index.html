@@ -27,7 +27,8 @@
         .hide-selection .check-col { display: none !important; }
         #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif; }
         .source-active-badge { background: #1e3a8a; color: white; border-radius: 999px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
-        input[readonly] { background-color: #f1f5f9; cursor: not-allowed; color: #64748b; }
+        input[readonly] { background-color: #f1f5f9; cursor: not-allowed; color: transparent !important; text-shadow: 0 0 0 #64748b; }
+        .preset-active input { color: transparent !important; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
@@ -51,12 +52,12 @@
     <div class="container-main shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
             <h1 class="text-3xl font-black italic uppercase">¿Cuánto perdimos?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy. ¿Cómo era tu poder de compra antes y hoy?</p>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy.</p>
         </div>
 
         <div class="p-4 md:p-10">
             <div class="panel-control mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">
-                <div class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
+                <div id="incomeArea" class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
                     <h2 class="text-xs font-black text-blue-900 uppercase mb-2 tracking-widest italic">1. Ingreso de referencia</h2>
                     <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-1" onchange="handlePresetChange()"><option value="custom">CARGA MANUAL</option><option value="smvm">Salario Mínimo (SMVM)</option><option value="jubilacion">Jubilación Mínima</option><option value="municipal">Mínimo Garantizado Municipal</option><option value="comercio">Salario Comercio</option><option value="docente">Salario Docente</option></select>
                     <div id="incomeNote" class="text-[9px] font-black inline-block bg-blue-50 text-blue-800 px-2 py-1 rounded uppercase mb-4 h-6 italic leading-none flex items-center opacity-0 transition-opacity duration-300"></div>
@@ -97,20 +98,21 @@
         
         function handlePresetChange() { 
             const k = document.getElementById('presetIncome').value, n = document.getElementById('incomeNote'); 
-            const i23 = document.getElementById('inc2023'), ih = document.getElementById('incHoy');
+            const i23 = document.getElementById('inc2023'), ih = document.getElementById('incHoy'), area = document.getElementById('incomeArea');
             
             if(k !== "custom") {
-                i23.value = new Intl.NumberFormat('es-AR').format(presets[k].v23);
-                ih.value = new Intl.NumberFormat('es-AR').format(presets[k].vh);
+                i23.value = presets[k].v23; ih.value = presets[k].vh;
                 i23.readOnly = true; ih.readOnly = true;
+                area.classList.add('preset-active');
                 n.classList.remove('opacity-0');
                 if(k === "municipal") n.innerText = "Fuente: Paritarias Festram"; 
                 else if(k === "comercio") n.innerText = "Fuente: CUEC, Categoría Maestranza A, sin antigüedad"; 
                 else if(k === "docente") n.innerText = "Fuente: Paritaria docente, Maestro de Grado, sin antigüedad"; 
-                else n.innerText = "Referencia oficial";
+                else n.innerText = "";
             } else { 
                 i23.value = ""; ih.value = "";
                 i23.readOnly = false; ih.readOnly = false;
+                area.classList.remove('preset-active');
                 n.classList.add('opacity-0'); 
             }
             calculate(); if(activeSourceKey) initView();
@@ -147,9 +149,13 @@
 
             ['ipec', 'alvear', 'coto'].forEach(k => {
                 const d = k === 'ipec' ? dataIPEC : (k === 'alvear' ? dataAlvear : dataCoto);
-                let s23 = 0, sh = 0; d.forEach(g => g.items.forEach(p => { s23 += p.p23; sh += p.ph; }));
+                let s23 = 0, sh = 0, canBuyAny = false;
+                d.forEach(g => g.items.forEach(p => { 
+                    s23 += p.p23; sh += p.ph; 
+                    if(i23 >= p.p23 || iH >= p.ph) canBuyAny = true;
+                }));
                 const el = document.getElementById(`dash-${k}`);
-                if (hasData) { 
+                if (hasData && canBuyAny) { 
                     const r = (((iH/sh)/(i23/s23))-1)*100; 
                     el.innerText = (r > 0 ? "+" : "") + r.toFixed(1) + "%"; 
                     el.className = `text-xl font-black ${r < 0 ? 'text-red-600' : 'text-green-600'}`; 
@@ -158,13 +164,18 @@
 
             if(!activeSourceKey) return;
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
-            let t23 = 0, tH = 0, count = 0;
+            let t23 = 0, tH = 0, count = 0, hasValidProduct = false;
             data.forEach((group, gIdx) => {
                 let gr23 = 0, grH = 0, grCount = 0;
                 group.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
-                    if(isChecked) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
+                    if(isChecked) {
+                        if(i23 >= p.p23 || iH >= p.ph) {
+                            t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++;
+                            hasValidProduct = true;
+                        }
+                    }
                 });
                 const gV = (hasData && grCount > 0) ? (((iH/grH)/(i23/gr23))-1)*100 : null;
                 document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => { 
@@ -174,7 +185,7 @@
             });
 
             const bar = document.getElementById('stickyBar');
-            if (hasData && count > 0) { 
+            if (hasData && count > 0 && hasValidProduct) { 
                 const tot = (((iH/tH)/(i23/t23))-1)*100; 
                 bar.classList.remove('hidden'); 
                 document.getElementById('barPercent').innerText = (tot>0?"+":"")+tot.toFixed(1)+"%"; 
@@ -204,7 +215,8 @@
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
                     let vStr = "--%", u23Str = "-", uhStr = "-", vClass = "text-slate-300";
-                    if (isChecked && hasData) { 
+                    const canBuySomething = (i23 >= p.p23 || iH >= p.ph);
+                    if (isChecked && hasData && canBuySomething) { 
                         const v = (((iH/p.ph)/(i23/p.p23))-1)*100; 
                         vStr = (v>0?"+":"") + v.toFixed(1) + "%"; 
                         u23Str = (i23/p.p23).toFixed(1); 
