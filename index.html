@@ -13,7 +13,7 @@
                 max-width: 1200px !important; 
                 margin: 40px auto; 
                 display: block; 
-                min-height: 600px;
+                min-height: 700px;
                 background: white;
             }
             .panel-control { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
@@ -26,15 +26,13 @@
         .sticky-result-bar { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); transition: background 0.3s ease; }
         .category-block { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
         .category-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .category-title { font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: #1e3a8a; }
         .product-list-container { display: none; background: white; padding: 10px; border-top: 1px solid #e2e8f0; }
         .product-list-container.open { display: block; }
         @media (max-width: 768px) { .desktop-table, .tabs-container { display: none; } }
-        .hide-selection .check-col { display: none !important; }
-        #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif; }
     </style>
 </head>
 <body class="bg-slate-100 pb-40">
+
     <div id="sourcesModal" class="fixed inset-0 bg-black/60 z-[2000] hidden items-center justify-center p-4" onclick="closeModal()">
         <div class="bg-white w-full max-w-md rounded-2xl p-6" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
@@ -43,56 +41,57 @@
             </div>
             <div class="space-y-6 text-sm font-bold text-blue-700">
                 <div><p class="text-[10px] text-slate-400 uppercase mb-1">Canasta IPEC</p><a href="https://www.estadisticasantafe.gob.ar/" target="_blank" class="block hover:underline">→ Portal Oficial IPEC Santa Fe</a></div>
-                <div><p class="text-[10px] text-slate-400 uppercase mb-1">Productos Alvear</p><div class="space-y-1"><a href="https://drive.google.com/file/d/1xjyng7cjofHuQvpsEF_eAUNAi-zKLmD0/view" target="_blank" class="block hover:underline">→ Revista Alvear</a></div></div>
+                <div><p class="text-[10px] text-slate-400 uppercase mb-1">Supermercados</p><p class="opacity-70">Relevamiento directo de folletos y revistas digitales (Coto/Alvear) Nov-Dic 2023 vs Actualidad.</p></div>
             </div>
         </div>
     </div>
+
     <div class="container-main shadow-2xl md:rounded-2xl border-t-8 border-blue-900 overflow-hidden">
         <div class="bg-blue-900 p-8 text-white text-center">
             <h1 class="text-3xl font-black italic uppercase">¿Cuánto perdimos?</h1>
             <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Variación de precios entre diciembre de 2023 y hoy.</p>
+            <button onclick="openModal()" class="mt-4 text-[10px] uppercase font-black bg-white/20 px-3 py-1 rounded-full hover:bg-white/30 transition">Ver fuentes</button>
         </div>
+
         <div class="p-4 md:p-10">
             <div class="panel-control mb-8 p-6 bg-slate-50 rounded-xl border border-slate-200">
                 <div class="border-b md:border-b-0 md:border-r border-slate-300 pb-6 md:pb-0 md:pr-10">
                     <h2 class="text-xs font-black text-blue-900 uppercase mb-2 tracking-widest italic">1. Ingreso de referencia</h2>
-                    <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-1" onchange="handlePresetChange()"><option value="custom">CARGA MANUAL</option><option value="smvm">Salario Mínimo (SMVM)</option><option value="jubilacion">Jubilación Mínima</option><option value="municipal">Mínimo Municipal</option><option value="comercio">Salario Comercio</option><option value="docente">Salario Docente</option></select>
-                    <div id="incomeNote" class="text-[9px] font-black inline-block bg-blue-50 text-blue-800 px-2 py-1 rounded uppercase mb-4 h-6 italic leading-none flex items-center opacity-0"></div>
+                    <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-4" onchange="handlePresetChange()"><option value="custom">CARGA MANUAL</option><option value="smvm">Salario Mínimo (SMVM)</option><option value="jubilacion">Jubilación Mínima</option><option value="municipal">Mínimo Municipal</option><option value="comercio">Salario Comercio</option><option value="docente">Salario Docente</option></select>
                     <div class="grid grid-cols-2 gap-4"><input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)"><input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)"></div>
                 </div>
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <h2 class="text-xs font-black text-blue-900 uppercase tracking-widest italic mb-4">2. Elegir Productos</h2>
-                    <div class="space-y-3" id="mainSources">
+                    <div class="space-y-3">
                         <button onclick="activateSource('ipec')" id="btn-ipec" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md"><span>Canasta IPEC</span><span id="dash-ipec" class="text-xl font-black text-slate-400">--%</span></button>
                         <button onclick="activateSource('alvear')" id="btn-alvear" class="w-full p-4 bg-white border-2 border-slate-200 rounded-xl flex justify-between items-center transition hover:shadow-md"><span>Productos ALVEAR</span><span id="dash-alvear" class="text-xl font-black text-slate-400">--%</span></button>
                     </div>
                 </div>
             </div>
-            <div id="pcTabs" class="tabs-container hidden md:flex"></div><div id="productsView" class="hidden"><div id="dynamicContent"></div></div>
+            <div id="productsView" class="hidden"><div id="dynamicContent"></div></div>
         </div>
     </div>
-    <div id="stickyBar" class="sticky-result-bar hidden">
-        <div id="barLabel" class="text-[10px] font-black uppercase italic">Canasta</div>
-        <div id="barPercent" class="text-4xl font-black italic">0%</div>
-    </div>
+
     <script>
         const dataIPEC = [{cat:"Almacén", items:[{n:"Pan francés (Kg.)",p23:913.97,ph:3066.99},{n:"Arroz (Kg.)",p23:1068.42,ph:1858.11},{n:"Fideos (500 g.)",p23:642.99,ph:1471.06},{n:"Aceite (1,5 L.)",p23:1495.50,ph:6541.07},{n:"Azúcar (Kg.)",p23:1083.62,ph:1435.80},{n:"Yerba (500 g.)",p23:1181.03,ph:2359.58}]}];
         const dataAlvear = [{cat:"Carnicería", items:[{n:"Asado",p23:3949,ph:30990},{n:"Nalga",p23:4290,ph:26990},{n:"Pollo",p23:1299,ph:6199}]}];
         const presets = { smvm:{v23:156000,vh:363000}, jubilacion:{v23:160713,vh:463174}, municipal:{v23:246008,vh:1065000}, comercio:{v23:332959,vh:1095562}, docente:{v23:269522,vh:1037205} };
 
-        let activeSourceKey = null, activeTabIdx = 0, selections = {};
         function getVal(id) { let s = document.getElementById(id).value; return parseFloat(s.replace(/\./g, '').replace(/[^\d]/g, '')) || 0; }
         function formatAndCalc(input) { let v = input.value.replace(/\D/g, ""); if (v !== "") input.value = new Intl.NumberFormat('es-AR').format(v); calculate(); }
-        
+        function openModal() { document.getElementById('sourcesModal').classList.remove('hidden'); }
+        function closeModal() { document.getElementById('sourcesModal').classList.add('hidden'); }
+
         function handlePresetChange() { 
             const k = document.getElementById('presetIncome').value;
             if(presets[k]) {
                 document.getElementById('inc2023').value = new Intl.NumberFormat('es-AR').format(presets[k].v23);
                 document.getElementById('incHoy').value = new Intl.NumberFormat('es-AR').format(presets[k].vh);
             }
-            calculate(); if(activeSourceKey) initView();
+            calculate();
         }
 
+        let activeSourceKey = null;
         function activateSource(k) { 
             activeSourceKey = k;
             document.getElementById('productsView').classList.remove('hidden');
@@ -114,13 +113,14 @@
         function initView() {
             const data = activeSourceKey === 'ipec' ? dataIPEC : dataAlvear;
             const content = document.getElementById('dynamicContent');
-            let tableHtml = `<table class="w-full text-sm mt-4 border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 text-left">Producto</th><th class="p-4 text-center">2023</th><th class="p-4 text-center">Hoy</th><th class="p-4 text-center">Var.</th></tr></thead><tbody>`;
+            const i23 = getVal('inc2023') || 1;
+            const iH = getVal('incHoy') || 1;
+            let tableHtml = `<table class="w-full text-sm mt-4 border rounded-xl overflow-hidden"><thead class="bg-slate-800 text-white uppercase text-[10px]"><tr><th class="p-4 text-left">Producto</th><th class="p-4 text-center">Unid. 2023</th><th class="p-4 text-center">Unid. Hoy</th><th class="p-4 text-center">Var.</th></tr></thead><tbody>`;
             data.forEach(g => g.items.forEach(p => {
-                const v = (((getVal('incHoy')/p.ph)/(getVal('inc2023')/p.p23))-1)*100;
-                tableHtml += `<tr class="border-b"><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center font-black">${(getVal('inc2023')/p.p23).toFixed(1)}</td><td class="p-4 text-center font-black">${(getVal('incHoy')/p.ph).toFixed(1)}</td><td class="p-4 text-center font-black ${v < 0 ? 'text-red-600' : 'text-green-600'}">${v.toFixed(1)}%</td></tr>`;
+                const v = (((iH/p.ph)/(i23/p.p23))-1)*100;
+                tableHtml += `<tr class="border-b"><td class="p-4 font-bold text-slate-700">${p.n}</td><td class="p-4 text-center font-black">${(i23/p.p23).toFixed(1)}</td><td class="p-4 text-center font-black">${(iH/p.ph).toFixed(1)}</td><td class="p-4 text-center font-black ${v < 0 ? 'text-red-600' : 'text-green-600'}">${v.toFixed(1)}%</td></tr>`;
             }));
             content.innerHTML = tableHtml + "</tbody></table>";
-            calculate();
         }
     </script>
 </body>
