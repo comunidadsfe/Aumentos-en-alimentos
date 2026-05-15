@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Poder Adquisitivo</title>
+    <!-- CARGA DE FUENTE MONTSERRAT -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -18,9 +19,11 @@
             .tab-btn { padding: 10px 15px; border-radius: 8px; font-weight: 800; font-size: 0.65rem; text-transform: uppercase; transition: all 0.2s; border: 2px solid transparent; display: flex; align-items: center; gap: 6px; background: #f8fafc; color: #64748b; }
             .tab-btn.active { background: var(--comunidad-violeta) !important; color: white !important; border-color: var(--comunidad-fucsia) !important; }
         }
+
         .bg-loss { background: #dc2626; color: white; }
         .bg-gain { background: #16a34a; color: white; }
         .sticky-result-bar { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); transition: background 0.3s ease; }
+        
         .category-block { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
         .category-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .category-title { font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: var(--comunidad-violeta); }
@@ -28,6 +31,7 @@
         .product-list-container.open { display: block; }
         @media (max-width: 768px) { .desktop-table, .tabs-container { display: none; } }
         .hide-selection .check-col { display: none !important; }
+        
         #canvas-poster { position: absolute; left: -9999px; width: 600px; height: 500px; color: white; padding: 40px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: sans-serif; }
         .source-active-badge { background: var(--comunidad-violeta); color: white; border-radius: 999px; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; }
         input[readonly] { background-color: #f1f5f9; cursor: not-allowed; color: transparent !important; }
@@ -60,7 +64,7 @@
     <div class="container-main bg-white shadow-2xl md:rounded-2xl overflow-hidden">
         <div class="p-8 text-white text-center" style="background-color: var(--comunidad-violeta);">
             <h1 class="text-3xl font-black italic uppercase italic">¿Cuánto perdimos?</h1>
-            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy. ¿Cómo era tu poder de compra antes y hoy?</p>
+            <p class="text-sm mt-2 opacity-90 font-medium tracking-tight italic">Relevamos la variación de los precios en supermercados entre diciembre de 2023 y hoy. ¿Cuánto comprabas con tus ingresos en 2023 y cuánto comprás hoy, producto por producto?</p>
         </div>
 
         <div class="p-4 md:p-10">
@@ -70,7 +74,7 @@
                     <select id="presetIncome" class="w-full p-3 bg-white border-2 border-slate-300 rounded-lg font-bold mb-1" onchange="handlePresetChange()"><option value="custom">CARGA MANUAL</option><option value="smvm">Salario Mínimo (SMVM)</option><option value="jubilacion">Jubilación Mínima</option><option value="municipal">Mínimo Garantizado Municipal</option><option value="comercio">Salario Comercio</option><option value="docente">Salario Docente</option></select>
                     <div id="incomeNote" class="text-[9px] font-black inline-block bg-blue-50 text-blue-800 px-2 py-1 rounded uppercase mb-4 h-6 italic leading-none flex items-center opacity-0 transition-opacity duration-300"></div>
                     <div class="grid grid-cols-2 gap-4"><input type="text" id="inc2023" placeholder="$ 2023" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)"><input type="text" id="incHoy" placeholder="$ Hoy" class="w-full p-3 border-2 rounded-lg text-center font-bold" oninput="formatAndCalc(this)"></div>
-                    <div class="grid grid-cols-2 gap-2 mt-4"><button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200">Armá tu propia selección</button><button onclick="resetAll()" class="py-2 border-2 border-slate-300 text-slate-500 text-[10px] font-black uppercase rounded-lg hover:bg-slate-200">Reiniciar Datos</button><button onclick="shareTool()" class="col-span-2 py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700">Compartir Herramienta</button></div>
+                    <div class="grid grid-cols-2 gap-2 mt-4"><button id="btnMode" onclick="toggleSelectionMode()" class="py-2 bg-blue-100 text-blue-900 text-[10px] font-black uppercase rounded-lg hover:bg-blue-200">Armá tu propia canasta</button><button onclick="resetAll()" class="py-2 border-2 border-slate-300 text-slate-500 text-[10px] font-black uppercase rounded-lg hover:bg-slate-200">Reiniciar Datos</button><button onclick="shareTool()" class="col-span-2 py-2 bg-green-600 text-white text-[10px] font-black uppercase rounded-lg hover:bg-green-700">Compartir Herramienta</button></div>
                 </div>
                 <div class="pt-6 md:pt-0 md:pl-10">
                     <div class="flex justify-between items-center mb-4">
@@ -150,8 +154,8 @@
                 i23.value = ""; ih.value = ""; i23.readOnly = true; ih.readOnly = true;
                 n.classList.remove('opacity-0');
                 if(k === "municipal") n.innerText = "Fuente: Paritarias Festram"; 
-                else if(k === "comercio") n.innerText = "Fuente: CUEC"; 
-                else if(k === "docente") n.innerText = "Fuente: Paritaria docente"; 
+                else if(k === "comercio") n.innerText = "Fuente: CUEC, Categoría Maestranza A, sin antigüedad"; 
+                else if(k === "docente") n.innerText = "Fuente: Paritaria docente, Maestro de Grado, sin antigüedad"; 
                 else n.innerText = "";
             } else { 
                 p23_cache = 0; ph_cache = 0; i23.value = ""; ih.value = ""; i23.readOnly = false; ih.readOnly = false; n.classList.add('opacity-0'); 
@@ -164,7 +168,7 @@
         function toggleAccordion(idx) { const index = openAccordions.indexOf(idx); if (index > -1) openAccordions.splice(index, 1); else openAccordions.push(idx); document.getElementById(`acc-${idx}`).classList.toggle('open'); }
         function changeTab(idx) { activeTabIdx = idx; initView(); }
         function resetAll() { location.reload(); }
-        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia selección"; selections = {}; initView(); }
+        function toggleSelectionMode() { selectionMode = !selectionMode; document.getElementById('btnMode').innerText = selectionMode ? "Ver listado completo" : "Armá tu propia canasta"; selections = {}; initView(); }
         function shareTool() { window.open(`https://wa.me/?text=${encodeURIComponent("¿Cuánto poder adquisitivo perdimos? Calculalo acá: " + window.location.href)}`); }
         
         function activateSource(k) { 
