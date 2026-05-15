@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Poder Adquisitivo</title>
     
-    <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/comunidadsfe/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/logo.jpg?v=2">
-    <link rel="shortcut icon" href="https://raw.githubusercontent.com/comunidadsfe/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/logo.jpg?v=2">
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/comunidadsfe/Lo-que-cuesta-vivir-en-Santa-Fe/main/Informes/logo.jpg?v=2">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/comunidadsfe/Calculadora-IPEC-2023/main/logo.png">
+    <link rel="shortcut icon" href="https://raw.githubusercontent.com/comunidadsfe/Calculadora-IPEC-2023/main/logo.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/comunidadsfe/Calculadora-IPEC-2023/main/logo.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -46,16 +46,13 @@
         .pdf-viewer { width: 100%; height: 200px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #eee; }
         .btn-descargar-pdf { display: block; background: var(--comunidad-fucsia); color: white; padding: 12px; border-radius: 10px; font-weight: 800; text-transform: uppercase; text-decoration: none; font-size: 0.7rem; }
 
+        /* Estilos Formulario Dinámico */
         .form-container { background: white; border-radius: 24px; padding: 30px; max-width: 550px; margin: 40px auto; color: var(--comunidad-violeta); box-shadow: 0 20px 40px rgba(0,0,0,0.2); border: 2px solid var(--comunidad-fucsia); }
         .form-input { width: 100%; padding: 12px 15px; border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 12px; font-weight: 600; outline: none; }
         .form-input:focus { border-color: var(--comunidad-fucsia); }
         .option-btn { flex: 1; padding: 10px; border: 2px solid #e2e8f0; border-radius: 10px; font-weight: 800; text-transform: uppercase; font-size: 0.7rem; color: #64748b; transition: all 0.2s; }
         .option-btn.active { background: var(--comunidad-violeta); color: white; border-color: var(--comunidad-violeta); }
         .btn-submit { background: var(--comunidad-fucsia); color: white; width: 100%; padding: 15px; border-radius: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; margin-top: 10px; }
-
-        /* Estilo Botón Instagram */
-        .btn-instagram { display: inline-flex; align-items: center; gap: 8px; background: var(--comunidad-violeta); color: white; padding: 8px 16px; border-radius: 999px; font-weight: 800; text-transform: uppercase; font-size: 0.65rem; text-decoration: none; margin-bottom: 20px; transition: transform 0.2s; }
-        .btn-instagram:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
@@ -108,13 +105,7 @@
     </div>
 
     <div class="form-container" id="formSection">
-        <div class="text-center">
-            <a href="https://www.instagram.com/comunidadsf" target="_blank" class="btn-instagram italic">
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-                Seguir en Instagram
-            </a>
-            <h3 class="text-xl font-black uppercase italic mb-6 text-center">¿Querés recibir nuestros informes?</h3>
-        </div>
+        <h3 class="text-xl font-black uppercase italic mb-6 text-center">¿Querés recibir nuestros informes?</h3>
         
         <div class="flex gap-4 mb-6">
             <button onclick="setFormMode('wa')" id="optWA" class="option-btn active italic">Por WhatsApp</button>
@@ -122,7 +113,8 @@
         </div>
 
         <form id="contactForm" target="hidden_iframe" onsubmit="return handleFormSubmit()">
-            <div id="fieldsContainer"></div>
+            <div id="fieldsContainer">
+                </div>
             <button type="submit" class="btn-submit italic">Enviar Datos</button>
         </form>
         <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) {showSuccess();}"></iframe>
@@ -195,6 +187,7 @@
                     return false;
                 }
             }
+            
             const action = "https://docs.google.com/forms/d/e/1FAIpQLScC1OTPDh4_Xupab8GMIwe9XqWdxTLCPYgv4H8UqDOL3YZE2A/formResponse";
             document.getElementById('contactForm').action = action;
             submitted = true;
@@ -208,6 +201,9 @@
                 </div>
             `;
         }
+
+        // Inicializar modo WhatsApp
+        setFormMode('wa');
 
         // LÓGICA CALCULADORA (MATRIZ IPEC, ALVEAR, COTO)
         const dataIPEC = [{cat:"Almacén", items:[{n:"Pan francés mignón (Kg.)",p23:913.97,ph:3066.99},{n:"Pan de mesa (390 g.)",p23:891.44,ph:3993.77},{n:"Galletitas dulces (150 g.)",p23:420.35,ph:1464.71},{n:"Galletitas de agua (250 g.)",p23:446.46,ph:1415.21},{n:"Harina de trigo común (Kg.)",p23:402.46,ph:951.40},{n:"Arroz blanco simple (Kg.)",p23:1068.42,ph:1858.11},{n:"Fideos Secos Guisero (500 g.)",p23:642.99,ph:1471.06},{n:"Aceite de girasol (1,5 L.)",p23:1495.50,ph:6541.07},{n:"Azúcar (Kg.)",p23:1083.62,ph:1435.80},{n:"Yerba mate (500 g.)",p23:1181.03,ph:2359.58},{n:"Café molido (500 g.)",p23:2740.36,ph:12325.65},{n:"Dulce de leche (450 g.)",p23:1039.08,ph:3571.45},{n:"Tomate en conserva (lata)",p23:418.04,ph:1301.98},{n:"Lentejas secas (400 g.)",p23:813.91,ph:1727.29},{n:"Sal fina (500 g.)",p23:318.53,ph:1355.67}]},{cat:"Carnicería", items:[{n:"Asado (Kg.)",p23:4116.28,ph:22305.00},{n:"Carne picada especial (Kg.)",p23:3674.89,ph:17076.20},{n:"Paleta (Kg.)",p23:3759.50,ph:19063.86},{n:"Cuadril (Kg.)",p23:4526.12,ph:22569.99},{n:"Nalga (Kg.)",p23:4429.40,ph:22524.60},{n:"Hígado (Kg.)",p23:1097.16,ph:5542.88},{n:"Hamburguesas (4 u.)",p23:1609.24,ph:6702.00},{n:"Pollo entero (Kg.)",p23:1417.83,ph:5279.56},{n:"Filet de merluza fresco (Kg.)",p23:2994.08,ph:12684.06},{n:"Salchicha tipo viena (6 u.)",p23:690.01,ph:2562.66},{n:"Jamón cocido (Kg.)",p23:5763.80,ph:18956.52},{n:"Salchichón (Kg.)",p23:3531.42,ph:11963.98},{n:"Salame (Kg.)",p23:6402.78,ph:23098.17}]},{cat:"Lácteos", items:[{n:"Leche sachet (L.)",p23:560.48,ph:1811.38},{n:"Leche polvo (800 g.)",p23:3513.07,ph:12855.28},{n:"Queso crema (280 g.)",p23:1213.22,ph:4015.38},{n:"Queso Sardo (Kg.)",p23:4982.96,ph:21766.92},{n:"Manteca (150 g.)",p23:792.13,ph:3048.66},{n:"Yogur firme (195 cc.)",p23:430.21,ph:1780.65},{n:"Huevos (12 u.)",p23:1196.71,ph:3599.42}]},{cat:"Verdulería", items:[{n:"Manzana (Kg.)",p23:1084.17,ph:4315.55},{n:"Naranja (Kg.)",p23:562.89,ph:2070.54},{n:"Banana (Kg.)",p23:1281.06,ph:3015.44},{n:"Papa (Kg.)",p23:579.67,ph:1232.51},{n:"Cebolla (Kg.)",p23:358.53,ph:1011.09},{n:"Lechuga (Kg.)",p23:4427.59,ph:4427.59},{n:"Tomate (Kg.)",p23:1387.50,ph:2419.70}]},{cat:"Bebidas", items:[{n:"Gaseosa (1,5 L.)",p23:955.46,ph:3807.16},{n:"Agua sin Gas (1,5 L.)",p23:379.88,ph:1899.67},{n:"Soda sifón (2 L.)",p23:551.25,ph:1590.26},{n:"Cerveza botella (L.)",p23:1100.56,ph:3794.73},{n:"Cerveza lata (350 cc.)",p23:505.06,ph:1589.57},{n:"Vino común (L.)",p23:1094.44,ph:2409.64}]}];
@@ -325,9 +321,6 @@
         function toggleGroup(gIdx, val) { const d = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto); d[gIdx].items.forEach((p, i) => selections[`${activeSourceKey}-${gIdx}-${i}`] = val); initView(); }
         async function createPoster(h, p) { const c = document.getElementById('canvas-poster'); document.getElementById('poster-header').innerText = h; document.getElementById('poster-percent').innerText = p; c.style.background = parseFloat(p) < 0 ? '#dc2626' : '#16a34a'; await new Promise(r => setTimeout(r, 100)); html2canvas(c).then(can => { can.toBlob(blob => { const f = new File([blob], "Resultado.png", { type: 'image/png' }); if (navigator.share) navigator.share({ files: [f] }); else { const a = document.createElement('a'); a.download="resultado.png"; a.href=can.toDataURL(); a.click(); } }); }); }
         function handlePosterRequest(pid=null, n="") { const i23 = getVal('inc2023'), iH = getVal('incHoy'); if (i23 <= 0 || iH <= 0) return; if(!pid) { n=document.getElementById('barLabel').innerText; var p=document.getElementById('barPercent').innerText; createPoster(n.toUpperCase(), p); return; } const keys = pid.split('-'); const d = keys[0] === 'ipec' ? dataIPEC : (keys[0] === 'alvear' ? dataAlvear : dataCoto); const prod = d[parseInt(keys[1])].items[parseInt(keys[2])]; const v = (((iH/prod.ph)/(i23/prod.p23))-1)*100; createPoster(n.toUpperCase(), (v>0?"+":"")+v.toFixed(1)+"%"); }
-
-        // Inicializar modo WhatsApp
-        setFormMode('wa');
     </script>
 </body>
 </html>
