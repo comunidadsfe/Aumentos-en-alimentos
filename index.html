@@ -38,7 +38,7 @@
         :root { --comunidad-violeta: #3D1488; --comunidad-fucsia: #EF3C6B; }
         html { scroll-behavior: smooth; }
         @media (max-width: 768px) { #quickGrid.collapsed .quick-extra { display: none; } }
-        body { font-family: 'Montserrat', sans-serif; background-color: var(--comunidad-violeta); padding-bottom: 160px; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--comunidad-violeta); }
         
         @media (min-width: 769px) {
             .container-main { max-width: 1200px; margin: 40px auto; border-top: 10px solid var(--comunidad-fucsia); }
@@ -50,8 +50,6 @@
 
         .bg-loss { background: #dc2626; color: white; }
         .bg-gain { background: #16a34a; color: white; }
-        .sticky-result-bar { position: fixed; bottom: 0; left: 0; width: 100%; z-index: 1000; padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); transition: background 0.3s ease; }
-        
         .category-block { background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
         .category-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .category-title { font-weight: 900; text-transform: uppercase; font-size: 0.75rem; color: var(--comunidad-violeta); }
@@ -200,16 +198,6 @@
         </div>
     </div>
 
-    <div id="stickyBar" class="sticky-result-bar hidden">
-        <div><div id="barLabel" class="text-[10px] font-black uppercase italic opacity-80">Canasta</div><div id="barStatus" class="text-[10px] font-black uppercase italic">Pérdida</div></div>
-        <div class="flex items-center gap-2 md:gap-4">
-            <div id="barPercent" class="text-4xl font-black italic tracking-tighter">0%</div>
-            <button onclick="handlePosterRequest()" class="bg-white text-blue-900 px-4 py-2 rounded-full flex items-center gap-2 shadow-lg hover:scale-105 transition">
-                <span class="text-[10px] font-black uppercase">Descargar Placa</span>
-                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/></svg>
-            </button>
-        </div>
-    </div>
 
     <script>
         // LÓGICA FORMULARIO DINÁMICO
@@ -599,19 +587,16 @@
             });
             if(!activeSourceKey) return;
             const data = activeSourceKey === 'ipec' ? dataIPEC : (activeSourceKey === 'alvear' ? dataAlvear : dataCoto);
-            let t23 = 0, tH = 0, count = 0;
             data.forEach((group, gIdx) => {
                 let gr23 = 0, grH = 0, grCount = 0;
                 group.items.forEach((p, pIdx) => {
                     const pid = `${activeSourceKey}-${gIdx}-${pIdx}`;
                     const isChecked = selections[pid] === true || (!selectionMode && selections[pid] === undefined);
-                    if(isChecked && (i23 >= p.p23 || iH >= p.ph)) { t23 += p.p23; tH += p.ph; count++; gr23 += p.p23; grH += p.ph; grCount++; }
+                    if(isChecked && (i23 >= p.p23 || iH >= p.ph)) { gr23 += p.p23; grH += p.ph; grCount++; }
                 });
                 const gV = (validData && grCount > 0) ? (((iH/grH)/(i23/gr23))-1)*100 : 0;
                 document.querySelectorAll(`[data-g="${gIdx}"].res-group-v, [data-tab-v="${gIdx}"]`).forEach(b => { b.innerText = (validData && grCount > 0) ? (gV > 0 ? "+" : "") + gV.toFixed(1) + "%" : "--%"; b.className = `font-black ${gV < 0 ? 'text-red-600' : 'text-green-600'}`; });
             });
-            const bar = document.getElementById('stickyBar');
-            if (validData && count > 0) { const tot = (((iH/tH)/(i23/t23))-1)*100; bar.classList.remove('hidden'); document.getElementById('barLabel').innerText = sourceNames[activeSourceKey] || "Canasta"; document.getElementById('barPercent').innerText = (tot>0?"+":"")+tot.toFixed(1)+"%"; bar.className = `sticky-result-bar ${tot < 0 ? 'bg-loss' : 'bg-gain'}`; } else bar.classList.add('hidden');
         }
 
         function initView() {
@@ -675,19 +660,13 @@
                 alert("No se pudo generar la placa. Probá de nuevo en unos segundos.");
             }
         }
-        function handlePosterRequest(pid=null, n="") {
+        function handlePosterRequest(pid, n="") {
             const i23 = getVal('inc2023'), iH = getVal('incHoy');
             if (i23 <= 0 || iH <= 0) return;
-            let v;
-            if (!pid) {
-                n = document.getElementById('barLabel').innerText;
-                v = parseFloat(document.getElementById('barPercent').innerText);
-            } else {
-                const keys = pid.split('-');
-                const d = keys[0] === 'ipec' ? dataIPEC : (keys[0] === 'alvear' ? dataAlvear : dataCoto);
-                const prod = d[parseInt(keys[1])].items[parseInt(keys[2])];
-                v = (((iH/prod.ph)/(i23/prod.p23))-1)*100;
-            }
+            const keys = pid.split('-');
+            const d = keys[0] === 'ipec' ? dataIPEC : (keys[0] === 'alvear' ? dataAlvear : dataCoto);
+            const prod = d[parseInt(keys[1])].items[parseInt(keys[2])];
+            const v = (((iH/prod.ph)/(i23/prod.p23))-1)*100;
             const pctStr = (v > 0 ? "+" : "") + arNum(v) + "%";
             createPoster(n.toUpperCase(), pctStr, null, buildFrase(v, n));
         }
